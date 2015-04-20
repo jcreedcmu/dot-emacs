@@ -227,10 +227,8 @@
 
 
 (setq tex-dvi-view-command "xdvi")
-(ifat office (setq tex-dvi-view-command "xdvi.bin"))
 
 (setq tex-dvi-view-args '("-s" "5" "-geometry" "1024x600+0+600"))
-(ifat office (setq tex-dvi-view-args '("-s" "5" "-geometry" "1206x991+64+0")))
 
 (defun jcreed-tex-bibtex-file ()
   "Run BibTeX on the current buffer's file."
@@ -393,10 +391,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (global-set-key (kbd "<mouse-5>") 'sd-mousewheel-scroll-up)
 (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
 
-;; (ifat blendie
-;;       (setq twelf-root "/home/jcreed/build/twelf/")
-;;       (load (concat twelf-root "emacs/twelf-init.el")))
-
 (defun match-paren (arg)
   "Go to the matching paren if on a paren."
   (interactive "p")
@@ -425,13 +419,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 ;(require 'browse-kill-ring)
 ;(browse-kill-ring-default-keybindings)
-
-(ifat laptop
-      (add-hook 'text-mode-hook
-		'(lambda ()
-		   (require 'rules)
-		   (local-set-key "\C-c\C-r" 'rules-center-this-infrule)))
-      (setq auto-mode-alist (cons '("\\.txt$" . text-mode) auto-mode-alist)))
 
 (set-time-zone-rule "EST")
 
@@ -767,18 +754,7 @@ displayed in the mode-line.")
 
 ;(global-set-key (kbd "M-r") 'jcreed-recolor)
 
-
-(add-to-list 'load-path "~/tidal")
-;(require 'haskell-mode)
-;(require 'tidal)
-
-(ifat blendie
-      (load "/home/jcreed/.site-lisp/extempore.el"))
-
 (ifat baez (require 'web-mode))
-
-
-
 
 
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
@@ -796,14 +772,12 @@ displayed in the mode-line.")
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "https://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
+(require 'package)
 
 (ifat chef
       (add-to-list 'auto-mode-alist '("\\.js" . js-mode))
       (add-to-list 'auto-mode-alist '("\\.erl" . erlang-mode)))
 
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
