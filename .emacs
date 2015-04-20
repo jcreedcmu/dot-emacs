@@ -1,8 +1,11 @@
-(setq load-path (cons "/home/jcreed/.site-lisp/" load-path))
+(setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
 (defmacro ifat (loc &rest body) (if (equal location loc) (cons 'progn body) nil))
 
 (load "location.el")
+
+(ifat chef
+      (setq mac-command-modifier 'meta))
 
 (defface jcreed-header-face nil "Jcreed Header Face")
 (defface jcreed-question-face nil "Jcreed Question Face")
@@ -89,13 +92,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "cbp" :family "codon"))))
- '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Firebrick" :slant italic))))
- '(font-lock-constant-face ((t (:foreground "cyan3"))))
- '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "firebrick"))))
- '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "DarkGreen"))))
- '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
- '(italic ((((supports :underline t)) (:slant italic :family "codon"))))
  '(jcreed-answer-face ((((class color) (min-colors 88) (background light)) (:foreground "#268bd2"))) t)
  '(jcreed-bad-face ((((class color) (min-colors 88) (background light)) (:foreground "yellow" :background "#dc322f"))) t)
  '(jcreed-command-face ((((class color) (min-colors 88) (background light)) (:foreground "gray20" :weight bold))) t)
@@ -106,33 +102,45 @@
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
- '(link ((t (:foreground "RoyalBlue3"))))
- '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
- '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
- '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
- '(rainbow-delimiters-depth-4-face ((t (:foreground "#d33682"))))
- '(rainbow-delimiters-depth-5-face ((t (:foreground "#6c71c4"))))
- '(rainbow-delimiters-depth-6-face ((t (:foreground "gray40"))))
- '(region ((t (:background "#ffd"))))
- '(tex-verbatim ((t (:background "gray90"))))
- '(trailing-whitespace ((t (:background "#ffbfbf"))))
- '(twelf-font-decl-face ((t (:stipple nil :background "white" :foreground "green4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 96 :width normal :foundry "cbp" :family "Codon"))) t)
- '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant italic :weight normal :height 116 :width normal :family "cbp-codon"))) t)
- '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
+ )
 
-(ifat chef (custom-theme-set-faces 'user
- '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
- '(font-lock-comment-face ((nil (:foreground "#93a1a1"))))
- '(font-lock-constant-face ((nil (:foreground "#dc322f"))))
- '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
- '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
- '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
- '(font-lock-string-face ((nil (:foreground "#2aa198"))))
- '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
- '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
- '(highlight ((t (:background "#fff"))))
- '(italic ((((supports :underline t)) (:slant italic))))
-))
+(ifat baez
+      (custom-theme-set-faces
+       'user
+       '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "cbp" :family "codon"))))
+       '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Firebrick" :slant italic))))
+       '(font-lock-constant-face ((t (:foreground "cyan3"))))
+       '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "firebrick"))))
+       '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "DarkGreen"))))
+       '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
+       '(italic ((((supports :underline t)) (:slant italic :family "codon"))))
+       '(link ((t (:foreground "RoyalBlue3"))))
+       '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
+       '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
+       '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
+       '(rainbow-delimiters-depth-4-face ((t (:foreground "#d33682"))))
+       '(rainbow-delimiters-depth-5-face ((t (:foreground "#6c71c4"))))
+       '(rainbow-delimiters-depth-6-face ((t (:foreground "gray40"))))
+       '(region ((t (:background "#ffd"))))
+       '(tex-verbatim ((t (:background "gray90"))))
+       '(trailing-whitespace ((t (:background "#ffbfbf"))))
+       '(twelf-font-decl-face ((t (:stipple nil :background "white" :foreground "green4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 96 :width normal :foundry "cbp" :family "Codon"))) t)
+       '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant italic :weight normal :height 116 :width normal :family "cbp-codon"))) t)
+       '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold))))))
+
+(ifat chef (custom-theme-set-faces
+            'user
+            '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
+            '(font-lock-comment-face ((nil (:foreground "#93a1a1"))))
+            '(font-lock-constant-face ((nil (:foreground "#dc322f"))))
+            '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
+            '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
+            '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
+            '(font-lock-string-face ((nil (:foreground "#2aa198"))))
+            '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
+            '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
+            '(highlight ((t (:background "#fff"))))
+            '(italic ((((supports :underline t)) (:slant italic))))))
 
 ; from http://ck.kennt-wayne.de/2013/may/emacs:-jump-to-matching-paren-beginning-of-block
 (defun goto-matching-ruby-block ()
@@ -500,9 +508,10 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
       (remove-hook 'find-file-hooks 'vc-find-file-hook) ; perf win
       (setq vc-handled-backends nil)
 
-      (add-to-list 'load-path "/home/jcreed/.site-lisp/expand-region.el")
-      (require 'expand-region)
-      (global-set-key (kbd "C-=") 'er/expand-region))
+;      (add-to-list 'load-path "/home/jcreed/.site-lisp/expand-region.el")
+;      (require 'expand-region)
+;      (global-set-key (kbd "C-=") 'er/expand-region)
+      )
 
 
 (defun jcreed-inc (start end)
@@ -766,7 +775,7 @@ displayed in the mode-line.")
 (ifat blendie
       (load "/home/jcreed/.site-lisp/extempore.el"))
 
-(require 'web-mode)
+(ifat baez (require 'web-mode))
 
 
 
