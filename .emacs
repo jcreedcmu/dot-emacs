@@ -782,16 +782,15 @@ displayed in the mode-line.")
 
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
-; this doesn't work, whyyy?
-;; (add-hook 'after-init-hook
-;;           (lambda ()
-;;             (setq rainbow-delimiters-max-face-count 4)
-;;             (require 'button-lock)
-;;             (global-button-lock-mode 1)
-;;             (button-lock-register-global-button
-;;              "https?://[^[:space:]\n]+"
-;;              'browse-url-at-mouse
-;;              :face 'link :face-policy 'prepend)))
+(add-hook 'after-init-hook
+          (lambda ()
+            (setq rainbow-delimiters-max-face-count 4)
+            (require 'button-lock)
+            (global-button-lock-mode 1)
+            (button-lock-register-global-button
+             "https?://[^[:space:]\n]+"
+             'browse-url-at-mouse
+             :face 'link :face-policy 'prepend)))
 
 (setq paragraph-start "[A-Z]+:\\|\f\\|[ \t]*$")
 (setq paragraph-separate "\\$\\|[a-z]+//\\|https?:\\|[A-Z]+:$\\|: \\|<<<$\\|>>>$\\|[ \t\f]*$")
