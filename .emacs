@@ -402,7 +402,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (menu-bar-mode -1)
 (when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (boundp 'tool-bar-mode) (tool-bar-mode -1))
+(when (and (boundp 'tool-bar-mode) (functionp 'tool-bar-mode)) (tool-bar-mode -1))
 
 (setq visible-bell t)
 (defun my-bell-function ()
@@ -557,8 +557,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (display-time)
 
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "google-chrome")
+(ifat baez
+ (setq browse-url-browser-function 'browse-url-generic
+       browse-url-generic-program "google-chrome"))
 
 (defun jcreed-browse-thing-at-point (pos)
   (interactive "d")
