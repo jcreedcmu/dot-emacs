@@ -102,6 +102,7 @@
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
+ '(link ((t (:foreground "#007" :background "#eef"))))
  )
 
 (ifat baez
@@ -114,7 +115,6 @@
        '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "DarkGreen"))))
        '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
        '(italic ((((supports :underline t)) (:slant italic :family "codon"))))
-       '(link ((t (:foreground "RoyalBlue3"))))
        '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
        '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
        '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
@@ -648,6 +648,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
             ("<<<\n" . 'jcreed-shell-face)
             (">>>\n" . 'jcreed-shell-face)
             ("\\([a-z]+\\)@[^a-z]" 1 'jcreed-person-face t)
+            ("https?://[^[:space:]\n]+" . 'link)
 	    ("\\bD[0-9]+\\b" . 'jcreed-diff-face)
             ("\\bT[0-9]+\\b" . 'jcreed-task-face)
             ("\\bP[0-9]+\\b" . 'jcreed-paste-face)
@@ -785,12 +786,13 @@ displayed in the mode-line.")
 (add-hook 'after-init-hook
           (lambda ()
             (setq rainbow-delimiters-max-face-count 4)
-            (require 'button-lock)
-            (global-button-lock-mode 1)
-            (button-lock-register-global-button
-             "https?://[^[:space:]\n]+"
-             'browse-url-at-mouse
-             :face 'link :face-policy 'prepend)))
+            ;(require 'button-lock)
+            ;(global-button-lock-mode 1)
+            ;; (button-lock-register-global-button
+            ;;  "https?://[^[:space:]\n]+"
+            ;;  'browse-url-at-mouse
+            ;;  :face 'link :face-policy 'prepend)
+            ))
 
 (setq paragraph-start "[A-Z]+:\\|\f\\|[ \t]*$")
 (setq paragraph-separate "\\$\\|[a-z]+//\\|https?:\\|[A-Z]+:$\\|: \\|<<<$\\|>>>$\\|[ \t\f]*$")
