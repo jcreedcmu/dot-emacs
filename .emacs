@@ -807,10 +807,11 @@ displayed in the mode-line.")
 (defun jcreed-sort-buffers-by-file ()
   (interactive)
   (Buffer-menu-sort 6))
+
 (add-hook 'Buffer-menu-mode-hook
           (lambda ()
-            (jcreed-sort-buffers-by-file)
-;            (define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)
+;            (jcreed-sort-buffers-by-file)
+            (define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)
             ))
 
 
