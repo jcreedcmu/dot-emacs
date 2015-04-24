@@ -121,7 +121,7 @@
        '(rainbow-delimiters-depth-4-face ((t (:foreground "#d33682"))))
        '(rainbow-delimiters-depth-5-face ((t (:foreground "#6c71c4"))))
        '(rainbow-delimiters-depth-6-face ((t (:foreground "gray40"))))
-       '(region ((t (:background "#ffd"))))
+       '(region ((t (:background "#aff"))))
        '(tex-verbatim ((t (:background "gray90"))))
        '(trailing-whitespace ((t (:background "#ffbfbf"))))
        '(twelf-font-decl-face ((t (:stipple nil :background "white" :foreground "green4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 96 :width normal :foundry "cbp" :family "Codon"))) t)
