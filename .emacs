@@ -102,6 +102,7 @@
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
+ '(link ((t (:foreground "#007" :background "#eef"))))
  )
 
 (ifat baez
@@ -114,7 +115,6 @@
        '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "DarkGreen"))))
        '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
        '(italic ((((supports :underline t)) (:slant italic :family "codon"))))
-       '(link ((t (:foreground "RoyalBlue3"))))
        '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
        '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
        '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
@@ -402,7 +402,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (menu-bar-mode -1)
 (when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (boundp 'tool-bar-mode) (tool-bar-mode -1))
+(when (and (boundp 'tool-bar-mode) (functionp 'tool-bar-mode)) (tool-bar-mode -1))
 
 (setq visible-bell t)
 (defun my-bell-function ()
@@ -557,8 +557,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (display-time)
 
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "google-chrome")
+(ifat baez
+ (setq browse-url-browser-function 'browse-url-generic
+       browse-url-generic-program "google-chrome"))
 
 (defun jcreed-browse-thing-at-point (pos)
   (interactive "d")
@@ -647,6 +648,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
             ("<<<\n" . 'jcreed-shell-face)
             (">>>\n" . 'jcreed-shell-face)
             ("\\([a-z]+\\)@[^a-z]" 1 'jcreed-person-face t)
+            ("https?://[^[:space:]\n]+" . 'link)
 	    ("\\bD[0-9]+\\b" . 'jcreed-diff-face)
             ("\\bT[0-9]+\\b" . 'jcreed-task-face)
             ("\\bP[0-9]+\\b" . 'jcreed-paste-face)
@@ -781,16 +783,16 @@ displayed in the mode-line.")
 
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
-; this doesn't work, whyyy?
-;; (add-hook 'after-init-hook
-;;           (lambda ()
-;;             (setq rainbow-delimiters-max-face-count 4)
-;;             (require 'button-lock)
-;;             (global-button-lock-mode 1)
-;;             (button-lock-register-global-button
-;;              "https?://[^[:space:]\n]+"
-;;              'browse-url-at-mouse
-;;              :face 'link :face-policy 'prepend)))
+(add-hook 'after-init-hook
+          (lambda ()
+            (setq rainbow-delimiters-max-face-count 4)
+            ;(require 'button-lock)
+            ;(global-button-lock-mode 1)
+            ;; (button-lock-register-global-button
+            ;;  "https?://[^[:space:]\n]+"
+            ;;  'browse-url-at-mouse
+            ;;  :face 'link :face-policy 'prepend)
+            ))
 
 (setq paragraph-start "[A-Z]+:\\|\f\\|[ \t]*$")
 (setq paragraph-separate "\\$\\|[a-z]+//\\|https?:\\|[A-Z]+:$\\|: \\|<<<$\\|>>>$\\|[ \t\f]*$")
@@ -805,10 +807,11 @@ displayed in the mode-line.")
 (defun jcreed-sort-buffers-by-file ()
   (interactive)
   (Buffer-menu-sort 6))
+
 (add-hook 'Buffer-menu-mode-hook
           (lambda ()
-            (jcreed-sort-buffers-by-file)
-;            (define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)
+;            (jcreed-sort-buffers-by-file)
+            (define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)
             ))
 
 
