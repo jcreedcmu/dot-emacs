@@ -79,7 +79,7 @@
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
- '(safe-local-variable-values (quote ((css-indent-offset . 2))))
+ '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(sentence-end-double-space nil)
  '(show-paren-mode t nil (paren))
@@ -92,6 +92,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
+ '(font-lock-comment-face ((nil (:foreground "#93a1a1"))))
+ '(font-lock-constant-face ((nil (:foreground "#dc322f"))))
+ '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
+ '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
+ '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
+ '(font-lock-string-face ((nil (:foreground "#2aa198"))))
+ '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
+ '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
+ '(highlight ((t (:background "#fff"))))
+ '(italic ((((supports :underline t)) (:slant italic))))
  '(jcreed-answer-face ((((class color) (min-colors 88) (background light)) (:foreground "#268bd2"))) t)
  '(jcreed-bad-face ((((class color) (min-colors 88) (background light)) (:foreground "yellow" :background "#dc322f"))) t)
  '(jcreed-command-face ((((class color) (min-colors 88) (background light)) (:foreground "gray20" :weight bold))) t)
@@ -102,8 +113,7 @@
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
- '(link ((t (:foreground "#007" :background "#eef"))))
- )
+ '(link ((t (:foreground "#007" :background "#eef")))))
 
 (ifat baez
       (custom-theme-set-faces
