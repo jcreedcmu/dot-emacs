@@ -163,10 +163,7 @@
    ;; or are we at a keyword itself?
    ((string-match (current-word) "\\(else\\|for\\|while\\|until\\|if\\|class\\|module\\|case\\|unless\\|def\\|begin\\|do\\)")
     (ruby-end-of-block)
-    (forward-word)
-    )
-   )
-  )
+    (forward-word))))
 
 (defun jcreed-tcons (x) (cons x x))
 (setq jcreed-completion (mapcar 'jcreed-tcons '("lemma" "corollary" "theorem" "conjecture" "proposition" "question" "definition" "remark" "postulate" "prooftree" "easyrule")))
@@ -215,10 +212,7 @@
                   '(lambda ()
                          (define-key tex-mode-map
                            "\C-cz"
-                           'jcreed-insert-other
-                           )
-                         )
-                  )
+                           'jcreed-insert-other)))
 
 (define-key global-map "\M-," 'pop-tag-mark)
 (define-key global-map "\M-." 'jcreed-find-tag)
@@ -231,10 +225,7 @@
   (if mark-active (progn
 ;		    (deactivate-mark)
 		    (find-tag (buffer-substring-no-properties b e)))
-    (find-tag (find-tag-default)))
-
-)
-
+    (find-tag (find-tag-default))))
 
 (setq tex-dvi-view-command "xdvi")
 
@@ -273,8 +264,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
       (progn
 ;       (debug)
 	(apply 'start-process (append '("xdvi" "*xdvi*") (cons tex-dvi-view-command nil)
-		        tex-dvi-view-args (cons view-file-name-dvi nil)))
-	))))
+		        tex-dvi-view-args (cons view-file-name-dvi nil)))))))
 
 (defvar jcreed-tex-main-buffer nil
 "Set jcreed-tex-main-buffer to be something to always tex that rather than the current buffer")
@@ -405,8 +395,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   "Go to the matching paren if on a paren."
   (interactive "p")
   (cond ((looking-at "\\s\(") (forward-list 1))
-	((looking-back "\\s\)" (1- (point-marker))) (backward-list 1)))
-)
+	((looking-back "\\s\)" (1- (point-marker))) (backward-list 1))))
 
 (global-set-key "\M-)" 'match-paren)
 
@@ -821,8 +810,7 @@ displayed in the mode-line.")
 (add-hook 'Buffer-menu-mode-hook
           (lambda ()
 ;            (jcreed-sort-buffers-by-file)
-            (define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)
-            ))
+            (define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)))
 
 
 (ifat chef
