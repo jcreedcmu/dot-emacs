@@ -101,7 +101,9 @@
  '(font-lock-string-face ((nil (:foreground "#2aa198"))))
  '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
  '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
+ '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
  '(highlight ((t (:background "#fff"))))
+ '(idris-loaded-region-face ((t (:background "#ffffee"))))
  '(italic ((((supports :underline t)) (:slant italic))))
  '(jcreed-answer-face ((((class color) (min-colors 88) (background light)) (:foreground "#268bd2"))) t)
  '(jcreed-bad-face ((((class color) (min-colors 88) (background light)) (:foreground "yellow" :background "#dc322f"))) t)
@@ -113,7 +115,19 @@
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
- '(link ((t (:foreground "#007" :background "#eef")))))
+ '(link ((t (:foreground "#007" :background "#eef"))))
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
+ '(rainbow-delimiters-depth-4-face ((t (:foreground "#d33682"))))
+ '(rainbow-delimiters-depth-5-face ((t (:foreground "#6c71c4"))))
+ '(rainbow-delimiters-depth-6-face ((t (:foreground "gray40"))))
+ '(region ((t (:background "#aff"))))
+ '(tex-verbatim ((t (:background "gray90"))))
+ '(trailing-whitespace ((t (:background "#ffbfbf"))))
+ '(twelf-font-decl-face ((t (:stipple nil :background "white" :foreground "green4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 96 :width normal :foundry "cbp" :family "Codon"))) t)
+ '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant italic :weight normal :height 116 :width normal :family "cbp-codon"))) t)
+ '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
 
 (ifat baez
       (custom-theme-set-faces
@@ -815,3 +829,8 @@ displayed in the mode-line.")
 
 (ifat chef
       (define-key global-map (kbd "M-`") 'other-frame))
+
+(ifat baez
+      (setq load-path (cons (expand-file-name "~/.site-lisp/idris-mode") load-path))
+      (autoload 'idris-mode "idris-mode" "Idris editing mode." t)
+      (require 'idris-mode))
