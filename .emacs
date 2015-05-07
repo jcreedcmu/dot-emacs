@@ -405,8 +405,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   "Go to the matching paren if on a paren."
   (interactive "p")
   (cond ((looking-at "\\s\(") (forward-list 1))
-	((looking-back "\\s\)" (1- (point-marker))) (backward-list 1)))
-)
+        ((looking-back "\\s\)" (1- (point-marker))) (backward-list 1))
+        ((eq major-mode 'ruby-mode) (goto-matching-ruby-block))))
 
 (global-set-key "\M-)" 'match-paren)
 
@@ -449,10 +449,13 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (add-hook 'paredit-mode-hook
 	  '(lambda ()
-	     (define-key paredit-mode-map "\M-)" 'match-paren)
-	     (define-key paredit-mode-map "\M-[" 'paredit-wrap-square)))
+	     (define-key paredit-mode-map (kbd "M-)") 'match-paren)
+	     (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
+             (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
+             (define-key paredit-mode-map (kbd "M-r") 'revert-buffer)
+             (define-key paredit-mode-map (kbd "M-R") 'paredit-raise-sexp)))
 
- (add-hook 'comint-mode-hook
+(add-hook 'comint-mode-hook
  	  '(lambda ()
  	     (define-key comint-mode-map
  	       [mouse-2]
