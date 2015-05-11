@@ -451,13 +451,24 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (defun paredit () (interactive) (enable-paredit-mode))
 
+(defun jcreed-kill-sexp-tail ()
+  (interactive)
+  (let ((begin (point))
+        (end 0))
+    (save-excursion
+      (paredit-forward-up)
+      (backward-char)
+      (setq end (point)))
+    (kill-region begin end)))
+
 (add-hook 'paredit-mode-hook
 	  '(lambda ()
 	     (define-key paredit-mode-map (kbd "M-)") 'match-paren)
 	     (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
              (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
              (define-key paredit-mode-map (kbd "M-r") 'revert-buffer)
-             (define-key paredit-mode-map (kbd "M-R") 'paredit-raise-sexp)))
+             (define-key paredit-mode-map (kbd "M-R") 'paredit-raise-sexp)
+             (define-key paredit-mode-map (kbd "M-k") 'jcreed-kill-sexp-tail)))
 
 (add-hook 'comint-mode-hook
  	  '(lambda ()
