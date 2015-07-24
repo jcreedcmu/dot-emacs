@@ -641,7 +641,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
                      (path (match-string 2 thing)))
                  (message (concat path " - " repo))
                      (cond ((equal repo "occ")
-                            (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path))))))))
+                            (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
+                           ((equal repo "home")
+                            (jcreed-find-file-other-window (concat "/Users/jreed/" path))))))))
           (t (jcreed-browse-thing-at-point)))))
 
 (defun jcreed-thing-at-point (pos)
