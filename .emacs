@@ -84,6 +84,7 @@
  '(sentence-end-double-space nil)
  '(show-paren-mode t nil (paren))
  '(show-trailing-whitespace t)
+ '(sml-indent-level 2)
  '(tab-always-indent t)
  '(transient-mark-mode t))
 
