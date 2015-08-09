@@ -1,0 +1,15 @@
+[user]
+        name = Jason Reed
+        email = jreed@chef.io
+[alias]
+        cim = commit -a -m
+        cima = commit -a --amend
+        ci = commit
+        co = checkout
+        b = branch
+        tla = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(black)%s%C(reset) %C(dim black)- %an%C(reset)%C(bold red)%d%C(reset)' --all
+        tl = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(black)%s%C(reset) %C(dim black)- %an%C(reset)%C(bold red)%d%C(reset)' 
+[core]
+        editor = emacs -nw
+[push]
+        default = current 
