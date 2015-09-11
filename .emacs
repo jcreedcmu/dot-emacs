@@ -73,6 +73,7 @@
  '(case-fold-search t)
  '(column-number-mode t)
  '(compilation-scroll-output (quote first-error))
+ '(css-indent-offset 2)
  '(current-language-environment "English")
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
