@@ -246,7 +246,7 @@
 		    (find-tag (buffer-substring-no-properties b e)))
     (find-tag (find-tag-default))))
 
-(setq tex-dvi-view-command "xdvi")
+(setq tex-dvi-view-command "xdvi.bin")
 
 (setq tex-dvi-view-args '("-s" "5" "-geometry" "1024x600+0+600"))
 
