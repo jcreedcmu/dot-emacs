@@ -73,7 +73,7 @@
  '(case-fold-search t)
  '(column-number-mode t)
  '(compilation-scroll-output (quote first-error))
- '(css-indent-offset 2)
+ '(css-indent-offset 2 t)
  '(current-language-environment "English")
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
@@ -86,9 +86,11 @@
  '(sentence-end-double-space nil)
  '(show-paren-mode t nil (paren))
  '(show-trailing-whitespace t)
- '(sml-indent-level 2)
+ '(sml-indent-level 2 t)
  '(tab-always-indent t)
- '(transient-mark-mode t))
+ '(tab-width 3)
+ '(transient-mark-mode t)
+ '(web-mode-enable-auto-quoting nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -487,7 +489,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
 ;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
-(setq js-indent-level 2)
 
 (add-to-list 'auto-mode-alist '("\\.se$" . emacs-lisp-mode))
 (add-hook 'emacs-lisp-mode-hook '(lambda () (paredit-mode)))
@@ -789,18 +790,6 @@ displayed in the mode-line.")
 
 ;(global-set-key (kbd "M-r") 'jcreed-recolor)
 
-(ifat baez (require 'web-mode))
-
-
-(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-(autoload 'jsx-mode "jsx-mode" "JSX mode" t)
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
- (if (equal web-mode-content-type "jsx")
-      (let ((web-mode-enable-part-face nil))
-        ad-do-it)
-    ad-do-it))
-
-
 (setq verilog-auto-newline nil)
 (setq verilog-auto-indent-on-newline nil)
 
@@ -857,3 +846,30 @@ displayed in the mode-line.")
 
 (require 'dired)
 (global-set-key (kbd "C-x C-j") #'dired-jump)
+
+(autoload 'coffee-mode "coffee-mode" "Coffeescript editing mode." t)
+
+(ifat baez (require 'web-mode))
+
+(setq web-mode-content-types-alist
+  '(("jsx" . "\\.js[x]?\\'")))
+
+(defun jcreed-setup-indent (n)
+  ;; web development
+  (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
+  (setq web-mode-css-indent-offset n)    ; web-mode, css in html file
+  (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
+  (setq css-indent-offset n)
+  (setq sml-indent-level n)
+  (setq js-indent-level n))
+
+(jcreed-setup-indent 2)
+
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+   ad-do-it))
+
+(ifat chef
+      (add-hook 'before-save-hook #'gofmt-before-save))
