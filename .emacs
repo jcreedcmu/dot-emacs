@@ -541,11 +541,12 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (defun jcreed-date ()
   (interactive)
-  (cond
-   ((equal (buffer-name) "TODO") (insert (format-time-string "=== %Y-%m-%d\n\n")))
-   ((equal (buffer-name) "NOTES") (insert (format-time-string "%Y.%m.%d\n===\n")))
-   (t (insert (format-time-string "=== %Y.%m.%d\n\n")))))
+  (insert (format-time-string "=== %Y.%m.%d\n\n")))
 
+
+
+(add-to-list 'load-path "/home/jcreed/.site-lisp/sml-mode-4.0")
+(autoload 'sml-mode "sml-mode" "Sml editing mode." t)
 
 (add-to-list 'load-path "/home/jcreed/.site-lisp/lua-mode")
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -697,12 +698,13 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
              (equal "journal.txt" (file-name-nondirectory buffer-file-name)))
     (setq font-lock-keywords
           '((";\\(Checking\\);" 1 'jcreed-question-face t)
-	    (";\\(Capone\\);" 1 'jcreed-answer-face t)
-	    (";\\(Ccard\\);" 1 'jcreed-person-face t)
-	    (";\\(.*401k\\);" 1 'jcreed-shell-face t)
-	    ("^\\([0-9-]+\\);;\\(\$?[0-9.]+\\)" 2 'jcreed-command-face t)
-	    (";\\(PayPal\\);" 1 'jcreed-shell-face t)
-	    ("\\?" . 'jcreed-bad-face)))))
+				(";\\(ChaseChecking\\);" 1 'jcreed-question-face t)
+				(";\\(Capone\\);" 1 'jcreed-answer-face t)
+				(";\\(Ccard\\);" 1 'jcreed-person-face t)
+				(";\\(.*401k\\);" 1 'jcreed-shell-face t)
+				("^\\([0-9-]+\\);;\\(\$?[0-9.]+\\)" 2 'jcreed-command-face t)
+				(";\\(PayPal\\);" 1 'jcreed-shell-face t)
+				("\\?" . 'jcreed-bad-face)))))
 
 (add-hook 'find-file-hook 'journal-hook)
 
@@ -871,5 +873,8 @@ displayed in the mode-line.")
         ad-do-it)
    ad-do-it))
 
-(ifat chef
-      (add-hook 'before-save-hook #'gofmt-before-save))
+(add-hook 'before-save-hook #'gofmt-before-save)
+
+(ifat baez
+		(setq twelf-root "~/tmp/twelf/")
+		(load (concat twelf-root "emacs/twelf-init.el")))
