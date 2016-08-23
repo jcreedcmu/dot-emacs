@@ -8,6 +8,7 @@
       (setq mac-command-modifier 'meta))
 
 (defface jcreed-header-face nil "Jcreed Header Face")
+(defface jcreed-minor-header-face nil "Jcreed Minor Header Face")
 (defface jcreed-question-face nil "Jcreed Question Face")
 (defface jcreed-answer-face nil "Jcreed Answer Face")
 (defface jcreed-bad-face nil "Jcreed Bad Face")
@@ -114,6 +115,7 @@
  '(jcreed-bad-face ((((class color) (min-colors 88) (background light)) (:foreground "yellow" :background "#dc322f"))) t)
  '(jcreed-command-face ((((class color) (min-colors 88) (background light)) (:foreground "gray20" :weight bold))) t)
  '(jcreed-header-face ((((class color) (min-colors 88) (background light)) (:background "#586e75" :foreground "#fdf6e3"))) t)
+ '(jcreed-minor-header-face ((((class color) (min-colors 88) (background light)) (:background "#8ac" :foreground "#fdf6e3"))) t)
  '(jcreed-paste-face ((t (:foreground "#268bd2" :weight bold))) t)
  '(jcreed-path-face ((t (:foreground "#d33682" :weight bold))) t)
  '(jcreed-person-face ((t (:foreground "#6c71c4" :weight bold))) t)
@@ -668,29 +670,30 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (ifat chef
       (setenv "PATH" (concat (getenv "PATH") ":/Users/jcreed/Library/Haskell/bin:/usr/local/bin:/Users/jcreed/bin")))
 
+(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\)$" . notes-mode) auto-mode-alist))
+(define-derived-mode notes-mode fundamental-mode
+  (setq font-lock-defaults '(notes-mode-highlights))
+  (setq mode-name "Notes"))
 
-(defun ideas-hook ()
-  (when (and (stringp buffer-file-name)
-             (equal "IDEAS" (file-name-nondirectory buffer-file-name)))
-    (setq font-lock-keywords
-          '(("=== .*\n" . 'jcreed-header-face)
-            ("^Q:" . 'jcreed-question-face)
-            ("^TODO:" . 'jcreed-question-face)
-            ("^DONE:" . 'jcreed-answer-face)
-            ("^A:" . 'jcreed-answer-face)
-            ("^\\$ .*" . 'jcreed-shell-face)
-            ("^\\$\\( +[-a-z./]+ *\\)"  1 'jcreed-command-face t)
-            ("<<<\n" . 'jcreed-shell-face)
-            (">>>\n" . 'jcreed-shell-face)
-            ("\\([a-z]+\\)@[^a-z]" 1 'jcreed-person-face t)
-            ("https?://[^[:space:]\n]+" . 'link)
-	    ("\\bD[0-9]+\\b" . 'jcreed-diff-face)
-            ("\\bT[0-9]+\\b" . 'jcreed-task-face)
-            ("\\bP[0-9]+\\b" . 'jcreed-paste-face)
-            ("\\b[a-z]+//\\(?:\\w\\|[-_/.]\\)+" . 'jcreed-path-face)
-            ("\\?\\?\\?" . 'jcreed-bad-face)))))
-
-(add-hook 'find-file-hook 'ideas-hook)
+(setq notes-mode-highlights
+		'(("^=== .*\n" . 'jcreed-header-face)
+		  ("^---\n" . 'jcreed-minor-header-face)
+		  ("#\\w+" . 'font-lock-type-face)
+		  ("^Q:" . 'jcreed-question-face)
+		  ("^TODO:" . 'jcreed-question-face)
+		  ("^DONE:" . 'jcreed-answer-face)
+		  ("^A:" . 'jcreed-answer-face)
+		  ("^\\$ .*" . 'jcreed-shell-face)
+		  ("^\\$\\( +[-a-z./]+ *\\)"  1 'jcreed-command-face t)
+		  ("<<<\n" . 'jcreed-shell-face)
+		  (">>>\n" . 'jcreed-shell-face)
+		  ("\\([a-z]+\\)@[^a-z]" 1 'jcreed-person-face t)
+		  ("https?://[^[:space:]\n]+" . 'link)
+		  ("\\bD[0-9]+\\b" . 'jcreed-diff-face)
+		  ("\\bT[0-9]+\\b" . 'jcreed-task-face)
+		  ("\\bP[0-9]+\\b" . 'jcreed-paste-face)
+		  ("\\b[a-z]+//\\(?:\\w\\|[-_/.]\\)+" . 'jcreed-path-face)
+		  ("\\?\\?\\?" . 'jcreed-bad-face)))
 
 ; XXX split off into separate file
 (defun journal-hook ()
