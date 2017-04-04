@@ -91,7 +91,9 @@
  '(tab-always-indent t)
  '(tab-width 3)
  '(transient-mark-mode t)
- '(web-mode-enable-auto-quoting nil))
+ '(typescript-indent-level 2)
+ '(web-mode-enable-auto-quoting nil)
+ '(web-mode-extra-keywords (quote (("javascript" "type")))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -100,7 +102,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
  '(font-lock-comment-face ((nil (:foreground "#93a1a1"))))
- '(font-lock-constant-face ((nil (:foreground "#dc322f"))))
+ '(font-lock-constant-face ((t (:foreground "#0070ff"))))
  '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
  '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
@@ -132,9 +134,14 @@
  '(region ((t (:background "#aff"))))
  '(tex-verbatim ((t (:background "gray90"))))
  '(trailing-whitespace ((t (:background "#ffbfbf"))))
- '(twelf-font-decl-face ((t (:stipple nil :background "white" :foreground "green4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 96 :width normal :foundry "cbp" :family "Codon"))) t)
- '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant italic :weight normal :height 116 :width normal :family "cbp-codon"))) t)
+ '(twelf-font-decl-face ((t (:inherit nil :stipple nil :background "white" :foreground "blue" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "cbp" :family "Codon"))) t)
+ '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 116 :width normal :foundry "cbp" :family "codon"))) t)
  '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
+
+(ifat baez
+		(setq twelf-root "~/tmp/twelf/")
+		(load (concat twelf-root "emacs/twelf-init.el"))
+)
 
 (ifat baez
       (custom-theme-set-faces
@@ -678,7 +685,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (setq notes-mode-highlights
 		'(("^=== .*\n" . 'jcreed-header-face)
 		  ("^---\n" . 'jcreed-minor-header-face)
-		  ("#\\w+" . 'font-lock-type-face)
+		  ("^#\\w+" . 'font-lock-type-face)
+		  ("\\s-#\\w+" . 'font-lock-type-face)
 		  ("^Q:" . 'jcreed-question-face)
 		  ("^TODO:" . 'jcreed-question-face)
 		  ("^DONE:" . 'jcreed-answer-face)
@@ -854,10 +862,24 @@ displayed in the mode-line.")
 
 (autoload 'coffee-mode "coffee-mode" "Coffeescript editing mode." t)
 
+;; web-mode config
+
 (ifat baez (require 'web-mode))
 
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+   ad-do-it))
+
 (setq web-mode-content-types-alist
-  '(("jsx" . "\\.js[x]?\\'")))
+		'(("jsx" . "\\.js[x]?\\'")
+		  ("jsx" . "\\.ts[x]?\\'")))
+;;;;;;;;;;;
+
 
 (defun jcreed-setup-indent (n)
   ;; web development
@@ -870,14 +892,10 @@ displayed in the mode-line.")
 
 (jcreed-setup-indent 2)
 
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "jsx")
-      (let ((web-mode-enable-part-face nil))
-        ad-do-it)
-   ad-do-it))
 
 (add-hook 'before-save-hook #'gofmt-before-save)
 
-(ifat baez
-		(setq twelf-root "~/tmp/twelf/")
-		(load (concat twelf-root "emacs/twelf-init.el")))
+
+
+(setq default-process-coding-system '(utf-8 . utf-8))
+(define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
