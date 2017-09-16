@@ -70,6 +70,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
+; '(agda2-program-name "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda")
  '(allout-command-prefix "")
  '(case-fold-search t)
  '(column-number-mode t)
@@ -79,11 +81,13 @@
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
  '(global-font-lock-mode t nil (font-lock))
+ '(idris-interpreter-path "/home/jcreed/Idris/.cabal-sandbox/bin/idris")
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
+ '(search-whitespace-regexp nil)
  '(sentence-end-double-space nil)
  '(show-paren-mode t nil (paren))
  '(show-trailing-whitespace t)
@@ -93,7 +97,7 @@
  '(transient-mark-mode t)
  '(typescript-indent-level 2)
  '(web-mode-enable-auto-quoting nil)
- '(web-mode-extra-keywords (quote (("javascript" "type")))))
+ '(web-mode-extra-keywords (quote (("javascript" "type" "declare" "global")))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -101,7 +105,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
- '(font-lock-comment-face ((nil (:foreground "#93a1a1"))))
+ '(font-lock-comment-face ((t (:foreground "#705050"))))
  '(font-lock-constant-face ((t (:foreground "#0070ff"))))
  '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
@@ -110,8 +114,8 @@
  '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
  '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
  '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
- '(highlight ((t (:background "#fff"))))
- '(idris-loaded-region-face ((t (:background "#ffffee"))))
+ '(highlight ((t (:background "#ff0"))))
+ '(idris-loaded-region-face ((t (:background "#ffffee"))) t)
  '(italic ((((supports :underline t)) (:slant italic))))
  '(jcreed-answer-face ((((class color) (min-colors 88) (background light)) (:foreground "#268bd2"))) t)
  '(jcreed-bad-face ((((class color) (min-colors 88) (background light)) (:foreground "yellow" :background "#dc322f"))) t)
@@ -241,6 +245,8 @@
                          (define-key tex-mode-map
                            "\C-cz"
                            'jcreed-insert-other)))
+
+(define-key global-map "\M-=" 'backward-up-list)
 
 (define-key global-map "\M-," 'pop-tag-mark)
 (define-key global-map "\M-." 'jcreed-find-tag)
@@ -677,7 +683,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (ifat chef
       (setenv "PATH" (concat (getenv "PATH") ":/Users/jcreed/Library/Haskell/bin:/usr/local/bin:/Users/jcreed/bin")))
 
-(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\)$" . notes-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\)$" . notes-mode) auto-mode-alist))
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
   (setq mode-name "Notes"))
@@ -685,7 +691,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (setq notes-mode-highlights
 		'(("^=== .*\n" . 'jcreed-header-face)
 		  ("^---\n" . 'jcreed-minor-header-face)
-		  ("^#\\w+" . 'font-lock-type-face)
+		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\w+" . 'font-lock-type-face)
 		  ("^Q:" . 'jcreed-question-face)
 		  ("^TODO:" . 'jcreed-question-face)
@@ -810,6 +816,7 @@ displayed in the mode-line.")
                          ("marmalade" . "https://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
 (require 'package)
+(package-initialize)
 
 (ifat chef
       (add-to-list 'auto-mode-alist '("\\.js" . js-mode))
@@ -852,10 +859,10 @@ displayed in the mode-line.")
 (ifat chef
       (define-key global-map (kbd "M-`") 'other-frame))
 
-(ifat baez
-      (setq load-path (cons (expand-file-name "~/.site-lisp/idris-mode") load-path))
-      (autoload 'idris-mode "idris-mode" "Idris editing mode." t)
-      (require 'idris-mode))
+;; (ifat baez
+;;       (setq load-path (cons (expand-file-name "~/.site-lisp/idris-mode") load-path))
+;;       (autoload 'idris-mode "idris-mode" "Idris editing mode." t)
+;;       (require 'idris-mode))
 
 (require 'dired)
 (global-set-key (kbd "C-x C-j") #'dired-jump)
@@ -895,7 +902,24 @@ displayed in the mode-line.")
 
 (add-hook 'before-save-hook #'gofmt-before-save)
 
-
-
 (setq default-process-coding-system '(utf-8 . utf-8))
 (define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
+
+(load-file (let ((coding-system-for-read 'utf-8))
+;                (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
+                (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
+					 ))
+
+(require 'unicode-fonts)
+(unicode-fonts-setup)
+
+
+(add-hook 'agda2-mode-hook
+          (lambda ()
+            (define-key agda2-mode-map "\M-," 'agda2-go-back)))
+
+(add-hook 'python-mode-hook
+          (function (lambda ()
+                      (setq indent-tabs-mode nil
+									 py-indent-offset 2
+                            tab-width 2))))
