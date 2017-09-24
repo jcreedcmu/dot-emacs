@@ -633,6 +633,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
            (browse-url (concat "redacted" (task-at-point))))
           ((equal face 'jcreed-paste-face)
            (browse-url (concat "redacted" (thing-at-point 'word))))
+          ((equal face 'jcreed-paper-face)
+           (browse-url (cadr (assoc (thing-at-point 'word) notes-data))))
           ((equal face 'jcreed-path-face)
            (let ((thing (thing-at-point 'filename)))
              (when (string-match "\\(.*\\)//\\(.*\\)" thing)
