@@ -18,6 +18,7 @@
 (defface jcreed-task-face nil "Jcreed Task Face")
 (defface jcreed-paste-face nil "Jcreed Paste Face")
 (defface jcreed-path-face nil "Jcreed Path Face")
+(defface jcreed-paper-face nil "Jcreed Paper Face")
 
 (setq solarized-base03    "#002b36")
 (setq solarized-base02    "#073642")
@@ -125,6 +126,7 @@
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
+ '(jcreed-paper-face ((((class color) (min-colors 88) (background light)) (:background "#77cc77" :foreground "black"))) t)
  '(link ((t (:foreground "#007" :background "#eef"))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
@@ -377,6 +379,10 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (defun jcreed-postprocess-path (path)
   (cond ((string-match "/Users/jreed/tiros-server/\\(.*\\)" path)
          (concat "tiros//" (match-string 1 path)))
+        ((string-match "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/\\(.*\\)" path)
+         (concat "agdalib//" (match-string 1 path)))
+        ((string-match "/Users/jreed/.cabal/sandboxes/agda-build/agda/\\(.*\\)" path)
+         (concat "agda//" (match-string 1 path)))
         (t
          path)))
 
@@ -638,9 +644,13 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
                           (replace-regexp-in-string "\\([^/]+/\\).*\\'" "\\1blob/master/" path nil nil 1)))
                      (browse-url (concat "http://github.com/chef/" lib-string))
                      ))
+                  ((equal repo "agdac")
+                   (browse-url (concat "https://github.com/agda/agda/commit/" path)))
+                  ((equal repo "agda")
+                   (browse-url (concat "https://github.com/agda/agda/blob/master/" path)))
                   ((equal repo "gh")
-                   (browse-url (concat "http://github.com/" path))
-                   ))))))
+                   (browse-url (concat "http://github.com/" path)))
+                  )))))
           (t (browse-url-at-point)))))
 
 (defun task-at-point ()
@@ -672,6 +682,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
                    (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
                   ((equal repo "agda")
                    (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/sandboxes/agda-build/agda/" path)))
+                  ((equal repo "agdalib")
+                   (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/" path)))
                   ((equal repo "home")
                    (jcreed-find-file-other-window (concat "/Users/jreed/" path)))
                   )))))
@@ -696,12 +708,29 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
       (setenv "PATH" (concat (getenv "PATH") ":/Users/jcreed/Library/Haskell/bin:/usr/local/bin:/Users/jcreed/bin")))
 
 (setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\)$" . notes-mode) auto-mode-alist))
+
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
+  (setq-local notes-data nil)
+  (let ((data-file "DATA.el"))
+    (if (file-exists-p data-file)
+        (setq notes-data
+              (with-temp-buffer
+                (with-current-buffer (find-file-noselect "DATA.el")
+                  (goto-char (point-min))
+                  (read (current-buffer)))))))
   (setq mode-name "Notes"))
 
+(defun jcreed-find-paper-name (lim)
+  (let ((succ (re-search-forward "\\[\\(.+?\\)\\]" lim t))
+        (data (match-data))
+        (good (assoc (match-string 1) notes-data)))
+    (set-match-data data)
+    (and succ good)))
+
 (setq notes-mode-highlights
-		'(("^=== .*\n" . 'jcreed-header-face)
+		'((jcreed-find-paper-name . 'jcreed-paper-face)
+        ("^=== .*\n" . 'jcreed-header-face)
 		  ("^---\n" . 'jcreed-minor-header-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\w+" . 'font-lock-type-face)
@@ -977,3 +1006,11 @@ displayed in the mode-line.")
                    ;; (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
                    (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
                    )))
+
+
+
+
+(ifat chef
+      (add-hook 'latex-mode-hook
+                '(lambda ()
+                   (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/pdflatex"))))
