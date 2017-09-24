@@ -721,12 +721,18 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
                   (read (current-buffer)))))))
   (setq mode-name "Notes"))
 
+
+
 (defun jcreed-find-paper-name (lim)
-  (let ((succ (re-search-forward "\\[\\(.+?\\)\\]" lim t))
-        (data (match-data))
-        (good (assoc (match-string 1) notes-data)))
-    (set-match-data data)
-    (and succ good)))
+  (catch 'jcreed-find-paper-name-ret
+    (while t
+      (let* ((succ (re-search-forward "\\[\\([a-zA-Z0-9]+?\\)\\]" lim t))
+             (_ (when (not succ) (throw 'jcreed-find-paper-name-ret nil)))
+             (data (match-data))
+             (good (assoc (match-string 1) notes-data)))
+        (when good
+          (set-match-data data)
+          (throw 'jcreed-find-paper-name-ret t))))))
 
 (setq notes-mode-highlights
 		'((jcreed-find-paper-name . 'jcreed-paper-face)
