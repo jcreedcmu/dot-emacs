@@ -590,8 +590,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (defun jcreed-qna-a ()
    (interactive)
-   (insert "Q: \nA: ")
-   (backward-char 1))
+   (insert "Q: \nA: "))
 
 (define-key global-map "\C-c=" 'jcreed-date)
 (ifat chef
