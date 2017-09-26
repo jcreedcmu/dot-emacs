@@ -709,20 +709,25 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (ifat chef
       (setenv "PATH" (concat (getenv "PATH") ":/Users/jcreed/Library/Haskell/bin:/usr/local/bin:/Users/jcreed/bin")))
 
-(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\)$" . notes-mode) auto-mode-alist))
-
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
   (setq-local notes-data nil)
+  (notes-reload-data)
+  (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
+  (setq mode-name "Notes"))
+
+(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\)$" . notes-mode) auto-mode-alist))
+
+(defun notes-reload-data ()
+  (interactive)
   (let ((data-file "DATA.el"))
-    (if (file-exists-p data-file)
+    (when (file-exists-p data-file)
         (setq notes-data
               (with-temp-buffer
                 (with-current-buffer (find-file-noselect "DATA.el")
                   (goto-char (point-min))
-                  (read (current-buffer)))))))
-  (setq mode-name "Notes"))
-
+                  (read (current-buffer)))))
+        (message "Loaded notes data."))))
 
 
 (defun jcreed-find-paper-name (lim)
@@ -735,6 +740,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
         (when good
           (set-match-data data)
           (throw 'jcreed-find-paper-name-ret t))))))
+
 
 (setq notes-mode-highlights
 		'((jcreed-find-paper-name . 'jcreed-paper-face)
@@ -990,13 +996,33 @@ displayed in the mode-line.")
 
 (add-hook 'agda2-mode-hook
           (lambda ()
+            (jcreed-add-agda-keys)
             (define-key agda2-mode-map "\M-," 'agda2-go-back)))
+
 
 (add-hook 'python-mode-hook
           (function (lambda ()
                       (setq indent-tabs-mode nil
 									 py-indent-offset 2
                             tab-width 2))))
+
+(defun jcreed-thingy ()
+
+  (agda-input-setup))
+
+(setq jcreed-add-agda-keys-called nil)
+(defun jcreed-add-agda-keys ()
+  (when (not jcreed-add-agda-keys-called)
+    (require 'agda-input)
+    (with-temp-buffer
+      (activate-input-method "Agda") ;; the input method has to be triggered for `quail-package-alist' to be non-nil
+      (let ((quail-current-package (assoc "Agda" quail-package-alist)))
+        (quail-define-rules ((append . t))
+                            ("\\esh" ?ʃ)
+                            ("\\prov" ?⊢)
+                            ("\\adj" ?⊣)
+                            ("\\prequiv" ["⊣⊢"]))))
+    (setq jcreed-add-agda-keys-called t)))
 
 (ifat chef
 
@@ -1015,10 +1041,11 @@ displayed in the mode-line.")
                    (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
                    )))
 
-
-
-
 (ifat chef
+      (add-hook 'notes-mode-hook
+                (lambda ()
+                  (jcreed-add-agda-keys)
+                  (set-input-method "Agda")))
       (add-hook 'latex-mode-hook
                 '(lambda ()
                    (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/pdflatex"))))
