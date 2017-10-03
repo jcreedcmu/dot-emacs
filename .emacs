@@ -260,6 +260,12 @@
 		    (find-tag (buffer-substring-no-properties b e)))
     (find-tag (find-tag-default))))
 
+(defun jcreed-find-haskell-tag ()
+  (interactive)
+  (ring-insert find-tag-marker-ring (point-marker))
+  (haskell-mode-jump-to-def (haskell-string-drop-qualifier
+     (haskell-ident-at-point))))
+
 (setq tex-dvi-view-command "xdvi.bin")
 
 (setq tex-dvi-view-args '("-s" "5" "-geometry" "1024x600+0+600"))
@@ -1025,15 +1031,19 @@ displayed in the mode-line.")
 
 (ifat chef
 
-      (setq agda-path "/Users/jreed/.cabal/sandboxes/agda-build/agda/dist/build/")
+      (setq agda-path "/Users/jreed/.cabal/bin/")
       (load-file (let ((coding-system-for-read 'utf-8))
-                   (shell-command-to-string (concat agda-path "agda-mode/agda-mode locate"))))
+                   (shell-command-to-string (concat agda-path "agda-mode locate"))))
 
       ;; (setq agda2-include-dirs '("."  "/Users/jreed/.agda/HoTT-Agda/core"))
-      (setq agda2-program-name (concat agda-path "Agda/agda"))
+      (setq agda2-program-name (concat agda-path "agda"))
 
       ;; This is so we're sure we're getting Primitive.agda from the version-controlled dev dir.
-      (setenv "Agda_datadir" "/Users/jreed/.cabal/sandboxes/agda-build/agda/src/data"))
+      (setenv "Agda_datadir" "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0")
+
+      (add-hook 'haskell-mode-hook
+                '(lambda ()
+                   (define-key haskell-mode-map "\M-." 'jcreed-find-haskell-tag))))
 
 (ifat baez
       (setq agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
