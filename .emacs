@@ -923,3 +923,34 @@ displayed in the mode-line.")
                       (setq indent-tabs-mode nil
 									 py-indent-offset 2
                             tab-width 2))))
+
+(defun jcreed-kill-prefix (prefix)
+  "Use when in the *Buffer List* buffer menu.
+Feed it a string that is a regex that matches filenames.
+All matching buffers will be marked for deletion."
+  (interactive (list (read-file-name "What prefix? " "/")))
+  (save-excursion
+	 (beginning-of-buffer)
+	 (let ((going t))
+		(while going
+		  (let* ((buffer (Buffer-menu-buffer))
+					(file-name
+					 (or (buffer-file-name buffer)
+						  ;; In dired-mode we need `dired-directory' which
+						  ;; might be a list and may not be fully expanded.
+						  (with-current-buffer buffer
+							 (and (eq major-mode 'dired-mode)
+									(expand-file-name
+									 (if (consp dired-directory)
+										  (car dired-directory)
+										dired-directory)))))))
+			 (when (and file-name
+							(string-match (concat "^" prefix) file-name))
+				(Buffer-menu-delete)
+				(forward-line -1)))
+		  (setq going (= 0 (forward-line 2)))
+		  (forward-line -1)))))
+
+(add-hook 'Buffer-menu-mode-hook
+          (lambda ()
+            (define-key Buffer-menu-mode-map "\C-k" 'jcreed-kill-prefix)))
