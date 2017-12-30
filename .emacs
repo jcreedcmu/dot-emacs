@@ -18,6 +18,7 @@
 (defface jcreed-task-face nil "Jcreed Task Face")
 (defface jcreed-paste-face nil "Jcreed Paste Face")
 (defface jcreed-path-face nil "Jcreed Path Face")
+(defface jcreed-paper-face nil "Jcreed Paper Face")
 
 (setq solarized-base03    "#002b36")
 (setq solarized-base02    "#073642")
@@ -70,8 +71,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
-; '(agda2-program-name "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda")
  '(allout-command-prefix "")
  '(case-fold-search t)
  '(column-number-mode t)
@@ -81,7 +80,7 @@
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
  '(global-font-lock-mode t nil (font-lock))
- '(idris-interpreter-path "/home/jcreed/Idris/.cabal-sandbox/bin/idris")
+; '(idris-interpreter-path "/home/jcreed/Idris/.cabal-sandbox/bin/idris")
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
@@ -105,7 +104,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
- '(font-lock-comment-face ((t (:foreground "#705050"))))
+ '(font-lock-comment-face ((t (:foreground "#93a1a1"))))
  '(font-lock-constant-face ((t (:foreground "#0070ff"))))
  '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
@@ -115,7 +114,6 @@
  '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
  '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
  '(highlight ((t (:background "#ff0"))))
- '(idris-loaded-region-face ((t (:background "#ffffee"))) t)
  '(italic ((((supports :underline t)) (:slant italic))))
  '(jcreed-answer-face ((((class color) (min-colors 88) (background light)) (:foreground "#268bd2"))) t)
  '(jcreed-bad-face ((((class color) (min-colors 88) (background light)) (:foreground "yellow" :background "#dc322f"))) t)
@@ -128,6 +126,7 @@
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
+ '(jcreed-paper-face ((((class color) (min-colors 88) (background light)) (:background "#77cc77" :foreground "black"))) t)
  '(link ((t (:foreground "#007" :background "#eef"))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
@@ -261,6 +260,12 @@
 		    (find-tag (buffer-substring-no-properties b e)))
     (find-tag (find-tag-default))))
 
+(defun jcreed-find-haskell-tag ()
+  (interactive)
+  (ring-insert find-tag-marker-ring (point-marker))
+  (haskell-mode-jump-to-def (haskell-string-drop-qualifier
+     (haskell-ident-at-point))))
+
 (setq tex-dvi-view-command "xdvi.bin")
 
 (setq tex-dvi-view-args '("-s" "5" "-geometry" "1024x600+0+600"))
@@ -377,11 +382,24 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (setq require-final-newline t))
 
-(defun copy-path ()
-  "copy buffer's full path to kill ring"
+(defun jcreed-postprocess-path (path)
+  (cond ((string-match "/Users/jreed/tiros-server/\\(.*\\)" path)
+         (concat "tiros//" (match-string 1 path)))
+        ((string-match "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/\\(.*\\)" path)
+         (concat "agdalib//" (match-string 1 path)))
+        ((string-match "/Users/jreed/.cabal/sandboxes/agda-build/agda/\\(.*\\)" path)
+         (concat "agda//" (match-string 1 path)))
+        (t
+         path)))
+
+(defun jcreed-copy-path ()
+  "copy buffer's full path to kill ring, but with some
+    postprocessing that works well with
+    jcreed-open-file-at-point"
   (interactive)
   (when buffer-file-name
-    (kill-new (file-truename buffer-file-name))))
+    (kill-new (jcreed-postprocess-path (file-truename buffer-file-name)))))
+(define-key global-map "\M-p" 'jcreed-copy-path)
 
 (defun nano-data ()
   (set-buffer (find-file-noselect "wordcount-history"))
@@ -578,8 +596,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (defun jcreed-qna-a ()
    (interactive)
-   (insert "Q: \nA: ")
-   (backward-char 1))
+   (insert "Q: \nA: "))
 
 (define-key global-map "\C-c=" 'jcreed-date)
 (ifat chef
@@ -621,6 +638,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
            (browse-url (concat "redacted" (task-at-point))))
           ((equal face 'jcreed-paste-face)
            (browse-url (concat "redacted" (thing-at-point 'word))))
+          ((equal face 'jcreed-paper-face)
+           (browse-url (cadr (assoc (thing-at-point 'word) notes-data))))
           ((equal face 'jcreed-path-face)
            (let ((thing (thing-at-point 'filename)))
              (when (string-match "\\(.*\\)//\\(.*\\)" thing)
@@ -632,9 +651,13 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
                           (replace-regexp-in-string "\\([^/]+/\\).*\\'" "\\1blob/master/" path nil nil 1)))
                      (browse-url (concat "http://github.com/chef/" lib-string))
                      ))
+                  ((equal repo "agdac")
+                   (browse-url (concat "https://github.com/agda/agda/commit/" path)))
+                  ((equal repo "agda")
+                   (browse-url (concat "https://github.com/agda/agda/blob/master/" path)))
                   ((equal repo "gh")
-                   (browse-url (concat "http://github.com/" path))
-                   ))))))
+                   (browse-url (concat "http://github.com/" path)))
+                  )))))
           (t (browse-url-at-point)))))
 
 (defun task-at-point ()
@@ -659,10 +682,18 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
                (let ((repo (match-string 1 thing))
                      (path (match-string 2 thing)))
                  (message (concat path " - " repo))
-                     (cond ((equal repo "occ")
-                            (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
-                           ((equal repo "home")
-                            (jcreed-find-file-other-window (concat "/Users/jreed/" path))))))))
+                 (cond
+                  ((equal repo "tiros")
+                   (jcreed-find-file-other-window (concat "/Users/jreed/tiros-server/" path)))
+                  ((equal repo "occ")
+                   (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
+                  ((equal repo "agda")
+                   (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/sandboxes/agda-build/agda/" path)))
+                  ((equal repo "agdalib")
+                   (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/" path)))
+                  ((equal repo "home")
+                   (jcreed-find-file-other-window (concat "/Users/jreed/" path)))
+                  )))))
           (t (jcreed-browse-thing-at-point)))))
 
 (defun jcreed-thing-at-point (pos)
@@ -683,13 +714,42 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (ifat chef
       (setenv "PATH" (concat (getenv "PATH") ":/Users/jcreed/Library/Haskell/bin:/usr/local/bin:/Users/jcreed/bin")))
 
-(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\)$" . notes-mode) auto-mode-alist))
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
+  (setq-local notes-data nil)
+  (notes-reload-data)
+  (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
   (setq mode-name "Notes"))
 
+(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\)$" . notes-mode) auto-mode-alist))
+
+(defun notes-reload-data ()
+  (interactive)
+  (let ((data-file "DATA.el"))
+    (when (file-exists-p data-file)
+        (setq notes-data
+              (with-temp-buffer
+                (with-current-buffer (find-file-noselect "DATA.el")
+                  (goto-char (point-min))
+                  (read (current-buffer)))))
+        (message "Loaded notes data."))))
+
+
+(defun jcreed-find-paper-name (lim)
+  (catch 'jcreed-find-paper-name-ret
+    (while t
+      (let* ((succ (re-search-forward "\\[\\([a-zA-Z0-9]+?\\)\\]" lim t))
+             (_ (when (not succ) (throw 'jcreed-find-paper-name-ret nil)))
+             (data (match-data))
+             (good (assoc (match-string 1) notes-data)))
+        (when good
+          (set-match-data data)
+          (throw 'jcreed-find-paper-name-ret t))))))
+
+
 (setq notes-mode-highlights
-		'(("^=== .*\n" . 'jcreed-header-face)
+		'((jcreed-find-paper-name . 'jcreed-paper-face)
+        ("^=== .*\n" . 'jcreed-header-face)
 		  ("^---\n" . 'jcreed-minor-header-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\w+" . 'font-lock-type-face)
@@ -859,11 +919,6 @@ displayed in the mode-line.")
 (ifat chef
       (define-key global-map (kbd "M-`") 'other-frame))
 
-;; (ifat baez
-;;       (setq load-path (cons (expand-file-name "~/.site-lisp/idris-mode") load-path))
-;;       (autoload 'idris-mode "idris-mode" "Idris editing mode." t)
-;;       (require 'idris-mode))
-
 (require 'dired)
 (global-set-key (kbd "C-x C-j") #'dired-jump)
 
@@ -899,30 +954,110 @@ displayed in the mode-line.")
 
 (jcreed-setup-indent 2)
 
+(ifat chef
+      (add-hook 'before-save-hook #'gofmt-before-save))
 
-(add-hook 'before-save-hook #'gofmt-before-save)
+(defun jcreed-uncamel (b e)
+  (interactive "r")
+  (replace-regexp "\\([A-Z]\\)" " \\1" nil b e)
+  ;; This is not correct; should be a larger region because of the
+  ;; spaces inserted
+  (downcase-region b e)
+  (goto-char b)
+  (delete-char 1))
+
+(global-set-key [(control shift tab)] (lambda () (interactive) (other-window -1)))
+
+(defun find-first-non-ascii-char ()
+  "Find the first non-ascii character from point onwards."
+  (interactive)
+  (let (point)
+    (save-excursion
+      (setq point
+            (catch 'non-ascii
+              (while (not (eobp))
+                (or (eq (char-charset (following-char))
+                        'ascii)
+                    (throw 'non-ascii (point)))
+                (forward-char 1)))))
+    (if point
+        (goto-char point)
+        (message "No non-ascii characters."))))
+
+(ifat chef
+      (setq twelf-root "/Applications/Twelf/")
+      (load (concat twelf-root "emacs/twelf-init.el")))
 
 (setq default-process-coding-system '(utf-8 . utf-8))
 (define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
 
-(load-file (let ((coding-system-for-read 'utf-8))
-;                (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
-                (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
-					 ))
 
-(require 'unicode-fonts)
-(unicode-fonts-setup)
+(add-to-list (quote auto-mode-alist) (quote ("\\.scala\\'" . scala-mode)))
+
+(ifat baez
+      (require 'unicode-fonts)
+      (unicode-fonts-setup))
 
 
 (add-hook 'agda2-mode-hook
           (lambda ()
+            (jcreed-add-agda-keys)
             (define-key agda2-mode-map "\M-," 'agda2-go-back)))
+
 
 (add-hook 'python-mode-hook
           (function (lambda ()
                       (setq indent-tabs-mode nil
 									 py-indent-offset 2
                             tab-width 2))))
+
+(setq jcreed-add-agda-keys-called nil)
+(defun jcreed-add-agda-keys ()
+  (when (not jcreed-add-agda-keys-called)
+    (require 'agda-input)
+    (with-temp-buffer
+      (activate-input-method "Agda") ;; the input method has to be triggered for `quail-package-alist' to be non-nil
+      (let ((quail-current-package (assoc "Agda" quail-package-alist)))
+        (quail-define-rules ((append . t))
+                            ("\\esh" ?ʃ)
+                            ("\\prov" ?⊢)
+                            ("\\adj" ?⊣)
+                            ("\\prequiv" ["⊣⊢"]))))
+    (setq jcreed-add-agda-keys-called t)))
+
+(ifat chef
+
+      (setq agda-path "/Users/jreed/.cabal/bin/")
+      (load-file (let ((coding-system-for-read 'utf-8))
+                   (shell-command-to-string (concat agda-path "agda-mode locate"))))
+
+      ;; (setq agda2-include-dirs '("."  "/Users/jreed/.agda/HoTT-Agda/core"))
+      (setq agda2-program-name (concat agda-path "agda"))
+
+      ;; This is so we're sure we're getting Primitive.agda from the version-controlled dev dir.
+      (setenv "Agda_datadir" "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0")
+
+      (add-hook 'haskell-mode-hook
+                '(lambda ()
+                   (define-key haskell-mode-map "\M-." 'jcreed-find-haskell-tag))))
+
+(ifat baez
+      (setq agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
+      (load-file (let ((coding-system-for-read 'utf-8))
+                   ;; (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
+                   (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
+                   )))
+
+(ifat chef
+      (add-hook 'notes-mode-hook
+                (lambda ()
+                  (jcreed-add-agda-keys)
+                  (set-input-method "Agda")))
+      (add-hook 'latex-mode-hook
+                '(lambda ()
+                   (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/pdflatex"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun jcreed-kill-prefix (prefix)
   "Use when in the *Buffer List* buffer menu.
@@ -954,3 +1089,5 @@ All matching buffers will be marked for deletion."
 (add-hook 'Buffer-menu-mode-hook
           (lambda ()
             (define-key Buffer-menu-mode-map "\C-k" 'jcreed-kill-prefix)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
