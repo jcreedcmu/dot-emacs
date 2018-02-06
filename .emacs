@@ -80,10 +80,12 @@
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
  '(global-font-lock-mode t nil (font-lock))
-; '(idris-interpreter-path "/home/jcreed/Idris/.cabal-sandbox/bin/idris")
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
+ '(package-selected-packages
+   (quote
+    (lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -120,13 +122,13 @@
  '(jcreed-command-face ((((class color) (min-colors 88) (background light)) (:foreground "gray20" :weight bold))) t)
  '(jcreed-header-face ((((class color) (min-colors 88) (background light)) (:background "#586e75" :foreground "#fdf6e3"))) t)
  '(jcreed-minor-header-face ((((class color) (min-colors 88) (background light)) (:background "#8ac" :foreground "#fdf6e3"))) t)
+ '(jcreed-paper-face ((((class color) (min-colors 88) (background light)) (:background "#77cc77" :foreground "black"))) t)
  '(jcreed-paste-face ((t (:foreground "#268bd2" :weight bold))) t)
  '(jcreed-path-face ((t (:foreground "#d33682" :weight bold))) t)
  '(jcreed-person-face ((t (:foreground "#6c71c4" :weight bold))) t)
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
  '(jcreed-task-face ((t (:foreground "#2aa198" :weight bold))) t)
- '(jcreed-paper-face ((((class color) (min-colors 88) (background light)) (:background "#77cc77" :foreground "black"))) t)
  '(link ((t (:foreground "#007" :background "#eef"))))
  '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
@@ -204,9 +206,9 @@
 (defun jcreed-insert-easy-template ()
   "Inserts a copy of my easyrule template"
   (interactive)
-  (insert-string "$$\n\\erule\n{}\n{")
+  (insert-string "\\[\n\\erule\n{}\n{")
   (let ((pm (point-marker)))
-    (insert-string "}\n$$")
+    (insert-string "}\n\\]")
     (goto-char pm)))
 
 (defun jcreed-insert-other ()
@@ -464,7 +466,10 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 				backward-char forward-char))
     (ding)))
 
-(setq ring-bell-function 'my-bell-function)
+; (setq ring-bell-function 'my-bell-function)
+
+;;;; I seem to have had a very conservative visual bell in the past,
+;;;; experimenting with making it more common.
 
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
@@ -1002,7 +1007,8 @@ displayed in the mode-line.")
 (add-hook 'agda2-mode-hook
           (lambda ()
             (jcreed-add-agda-keys)
-            (define-key agda2-mode-map "\M-," 'agda2-go-back)))
+            (define-key agda2-mode-map "\M-," 'agda2-go-back)
+            (define-key agda2-mode-map "\C-cs" 'jcreed-swap-agda-implicit)))
 
 
 (add-hook 'python-mode-hook
@@ -1025,6 +1031,7 @@ displayed in the mode-line.")
         (quail-define-rules ((append . t))
                             ("\\esh" ?ʃ)
                             ("\\prov" ?⊢)
+                            ("\\lol" ?⊸)
                             ("\\adj" ?⊣)
                             ("\\prequiv" ["⊣⊢"]))))
     (setq jcreed-add-agda-keys-called t)))
@@ -1060,3 +1067,18 @@ displayed in the mode-line.")
       (add-hook 'latex-mode-hook
                 '(lambda ()
                    (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/pdflatex"))))
+
+(defun jcreed-swap-agda-implicit ()
+  (interactive)
+  (save-excursion
+    (if (re-search-backward "[({]" nil t)
+        (let ((ms (match-string 0)))
+          (cond
+           ((equal ms "(")
+            (replace-match "{")
+            (re-search-forward ")")
+            (replace-match "}"))
+           ((equal ms "{")
+            (replace-match "(")
+            (re-search-forward "}")
+            (replace-match ")")))))))
