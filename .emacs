@@ -107,8 +107,8 @@
  ;; If there is more than one, they won't work right.
  '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
  '(font-lock-comment-face ((t (:foreground "#93a1a1"))))
+ '(font-lock-doc-face ((t (:foreground "#93a1a1"))))
  '(font-lock-constant-face ((t (:foreground "#0070ff"))))
- '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
  '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
  '(font-lock-string-face ((nil (:foreground "#2aa198"))))
@@ -217,7 +217,7 @@
   (let ((env (completing-read "Environment: " jcreed-completion '(lambda (x) t) t)))
     (if (equal env "easyrule") (jcreed-insert-easy-template)
       (if (assoc env jcreed-math)
-	  (insert-string "$$\n"))
+	  (insert-string "\\[\n"))
       (insert-string (concat "\\begin{" env "}\n"))
       (if (assoc env jcreed-math)
 	  (insert-string "\\[\n\\justifies\n\\]\n\\justifies\n"))
@@ -226,7 +226,7 @@
 	(if (assoc env jcreed-proof)
 	    (insert-string "\n\\begin{proof}\n\n\\cqed\n\\end{proof}\n"))
 	(if (assoc env jcreed-math)
-	    (insert-string "$$\n"))
+	    (insert-string "\\]\n"))
 	(goto-char pm)))
     (recenter)))
 
@@ -539,7 +539,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (autoload 'rust-mode "rust-mode" "Start rust-mode" t)
 (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
-
+(add-hook 'rust-mode-hook
+          (lambda ()
+            (define-key rust-mode-map "\C-c\C-c" 'rust-compile)))
 
 (defun eval-and-replace (value)
   "Evaluate the sexp at point and replace it with its value"
@@ -1008,7 +1010,9 @@ displayed in the mode-line.")
           (lambda ()
             (jcreed-add-agda-keys)
             (define-key agda2-mode-map "\M-," 'agda2-go-back)
-            (define-key agda2-mode-map "\C-cs" 'jcreed-swap-agda-implicit)))
+            (define-key agda2-mode-map "\C-cs" 'jcreed-swap-agda-implicit)
+            (define-key agda2-mode-map "\C-cc" 'jcreed-agda-copy-type)
+            (define-key agda2-mode-map "\C-c\C-c" 'agda2-make-case)))
 
 
 (add-hook 'python-mode-hook
@@ -1042,7 +1046,7 @@ displayed in the mode-line.")
       (setq agda2-program-name (concat agda-path "agda"))
 
       ;; This is so we're sure we're getting Primitive.agda from the version-controlled dev dir.
-      (setenv "Agda_datadir" "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0")
+;      (setenv "Agda_datadir" "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0")
 
       (add-hook 'haskell-mode-hook
                 '(lambda ()
@@ -1062,7 +1066,7 @@ displayed in the mode-line.")
                   (set-input-method "Agda")))
       (add-hook 'latex-mode-hook
                 '(lambda ()
-                   (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/pdflatex"))))
+                   (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/xelatex"))))
 
 (defun jcreed-swap-agda-implicit ()
   (interactive)
@@ -1113,3 +1117,31 @@ All matching buffers will be marked for deletion."
             (define-key Buffer-menu-mode-map "\C-k" 'jcreed-kill-prefix)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun jcreed-agda-copy-type ()
+  (interactive)
+  (save-excursion
+;    (agda2-goal-type) ;; doesn't seem synchronous enough? boo.
+    (set-buffer "*Agda information*")
+    (kill-ring-save (point-min) (point-max))))
+
+(ifat chef
+      (defun setup-tide-mode ()
+        (interactive)
+        (tide-setup)
+        (flycheck-mode +1)
+        (setq flycheck-check-syntax-automatically '(save mode-enabled))
+        (eldoc-mode +1)
+        (tide-hl-identifier-mode +1)
+        ;; company is an optional dependency. You have to
+        ;; install it separately via package-install
+        ;; `M-x package-install [ret] company`
+        (company-mode +1))
+
+      ;; aligns annotation to the right hand side
+      (setq company-tooltip-align-annotations t)
+
+      ;; formats the buffer before saving
+      (add-hook 'before-save-hook 'tide-format-before-save)
+
+      (add-hook 'typescript-mode-hook #'setup-tide-mode))
