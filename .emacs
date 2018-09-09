@@ -251,6 +251,9 @@
 
 (define-key global-map "\M-," 'pop-tag-mark)
 (define-key global-map "\M-." 'jcreed-find-tag)
+(defun push-tag-mark () (interactive)
+       (ring-insert find-tag-marker-ring (point-marker)))
+(define-key global-map "\C-cp" 'push-tag-mark)
 (define-key global-map "\M-\C-g" 'jcreed-deactivate-mark)
 
 (defun jcreed-deactivate-mark () (interactive) (deactivate-mark))
@@ -1144,4 +1147,21 @@ All matching buffers will be marked for deletion."
       ;; formats the buffer before saving
       (add-hook 'before-save-hook 'tide-format-before-save)
 
-      (add-hook 'typescript-mode-hook #'setup-tide-mode))
+      (add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+      (defun tide-references ()
+        "List all references to the symbol at point."
+        (interactive)
+        (let ((response (tide-command:references)))
+          (tide-on-response-success response
+              (let ((references (tide-plist-get response :body :refs)))
+                (-if-let (usage (tide-find-single-usage references))
+                    (progn
+                      (message "This is the only usage.")
+                      (tide-jump-to-filespan usage nil nil))
+                  ;; In tide's actual code, this is
+                  ;;    (tide-jump-to-filespan usage nil t)
+                  ;; but I prefer it to do
+                  ;;    (ring-insert find-tag-marker-ring (point-marker)))
+                  ;; when there's only one reference so I can M-, my way back
+                  (display-buffer (tide-insert-references references))))))))
