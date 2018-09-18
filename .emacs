@@ -1180,3 +1180,5 @@ All matching buffers will be marked for deletion."
 													  ;;    (ring-insert find-tag-marker-ring (point-marker)))
 													  ;; when there's only one reference so I can M-, my way back
 													  (display-buffer (tide-insert-references references)))))))
+
+(set-cursor-color "#700")
