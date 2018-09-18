@@ -75,7 +75,7 @@
  '(case-fold-search t)
  '(column-number-mode t)
  '(compilation-scroll-output (quote first-error))
- '(css-indent-offset 2 t)
+ '(css-indent-offset 2)
  '(current-language-environment "English")
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
@@ -84,8 +84,8 @@
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
  '(package-selected-packages
-   (quote
-    (lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
+	(quote
+	 (tide company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -445,14 +445,14 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (global-set-key (kbd "<mouse-5>") 'sd-mousewheel-scroll-up)
 (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
 
-(defun match-paren (arg)
+(defun jcreed-match-paren (arg)
   "Go to the matching paren if on a paren."
   (interactive "p")
   (cond ((looking-at "\\s\(") (forward-list 1))
         ((looking-back "\\s\)" (1- (point-marker))) (backward-list 1))
         ((eq major-mode 'ruby-mode) (goto-matching-ruby-block))))
 
-(global-set-key "\M-)" 'match-paren)
+(global-set-key "\M-)" 'jcreed-match-paren)
 
 (menu-bar-mode -1)
 (when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -1113,3 +1113,18 @@ All matching buffers will be marked for deletion."
             (define-key Buffer-menu-mode-map "\C-k" 'jcreed-kill-prefix)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-hook 'rust-mode-hook
+	  '(lambda ()
+		  (company-mode)
+		  (racer-mode)
+		  (define-key rust-mode-map (kbd "C-x ]") #'company-indent-or-complete-common)
+		  (setq company-tooltip-align-annotations t)
+		  (setq compile-command "~/.cargo/bin/cargo run")
+		  (setq compilation-read-command nil)
+	     (define-key rust-mode-map "\C-c\C-f" 'compile)
+		  (add-hook 'rust-mode-hook #'racer-mode)
+		  (add-hook 'racer-mode-hook #'eldoc-mode)
+	     ))
+
+(add-hook 'racer-mode-hook #'eldoc-mode)
