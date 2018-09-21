@@ -85,7 +85,7 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
+    (magit lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -107,8 +107,8 @@
  ;; If there is more than one, they won't work right.
  '(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
  '(font-lock-comment-face ((t (:foreground "#93a1a1"))))
- '(font-lock-doc-face ((t (:foreground "#93a1a1"))))
  '(font-lock-constant-face ((t (:foreground "#0070ff"))))
+ '(font-lock-doc-face ((t (:foreground "#93a1a1"))))
  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
  '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
  '(font-lock-string-face ((nil (:foreground "#2aa198"))))
