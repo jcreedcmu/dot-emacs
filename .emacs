@@ -506,7 +506,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (add-hook 'paredit-mode-hook
 	  '(lambda ()
-	     (define-key paredit-mode-map (kbd "M-)") 'match-paren)
+	     (define-key paredit-mode-map (kbd "M-)") 'jcreed-match-paren)
 	     (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
              (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
              (define-key paredit-mode-map (kbd "M-r") 'revert-buffer)
@@ -1179,3 +1179,41 @@ All matching buffers will be marked for deletion."
 													  (display-buffer (tide-insert-references references)))))))
 
 (set-cursor-color "#700")
+
+(defcustom mode-line-bell-string "" ; "♪"
+  "Message displayed in mode-line by `mode-line-bell' function."
+  :group 'user)
+(defcustom mode-line-bell-delay 0.1
+  "Number of seconds `mode-line-bell' displays its message."
+  :group 'user)
+
+;; internal variables
+(defvar mode-line-bell-cached-string nil)
+(defvar mode-line-bell-propertized-string nil)
+
+(ifat chef
+      ;; adapted from https://github.com/zenspider/elisp/blob/master/rwd-bell.el
+      (setq mode-line-bell-propertized-string
+            (propertize
+             (concat
+              (propertize
+               "x"
+               'display
+               `(space :align-to (- right ,(string-width mode-line-bell-string))))
+              mode-line-bell-string)
+             'face '(:background "black" :foreground "red")))
+
+;;;###autoload
+      (defun mode-line-bell ()
+        "Briefly display a highlighted message in the mode-line.
+The string displayed is the value of `mode-line-bell-string',
+with a red background; the background highlighting extends to the
+right margin.  The string is displayed for `mode-line-bell-delay'
+seconds.
+This function is intended to be used as a value of `ring-bell-function'."
+        (message mode-line-bell-propertized-string)
+        (sit-for mode-line-bell-delay)
+        (message ""))
+
+;;;###autoload
+      (setq ring-bell-function 'mode-line-bell))
