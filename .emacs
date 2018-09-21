@@ -75,7 +75,7 @@
  '(case-fold-search t)
  '(column-number-mode t)
  '(compilation-scroll-output (quote first-error))
- '(css-indent-offset 2 t)
+ '(css-indent-offset 2)
  '(current-language-environment "English")
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
@@ -83,9 +83,6 @@
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
- '(package-selected-packages
-   (quote
-    (magit lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -448,14 +445,14 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (global-set-key (kbd "<mouse-5>") 'sd-mousewheel-scroll-up)
 (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
 
-(defun match-paren (arg)
+(defun jcreed-match-paren (arg)
   "Go to the matching paren if on a paren."
   (interactive "p")
   (cond ((looking-at "\\s\(") (forward-list 1))
         ((looking-back "\\s\)" (1- (point-marker))) (backward-list 1))
         ((eq major-mode 'ruby-mode) (goto-matching-ruby-block))))
 
-(global-set-key "\M-)" 'match-paren)
+(global-set-key "\M-)" 'jcreed-match-paren)
 
 (menu-bar-mode -1)
 (when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -1121,6 +1118,22 @@ All matching buffers will be marked for deletion."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+(add-hook 'rust-mode-hook
+	  '(lambda ()
+		  (company-mode)
+		  (racer-mode)
+		  (define-key rust-mode-map (kbd "C-x ]") #'company-indent-or-complete-common)
+		  (setq company-tooltip-align-annotations t)
+		  (setq compile-command "~/.cargo/bin/cargo run")
+		  (setq compilation-read-command nil)
+	     (define-key rust-mode-map "\C-c\C-f" 'compile)
+		  (add-hook 'rust-mode-hook #'racer-mode)
+		  (add-hook 'racer-mode-hook #'eldoc-mode)
+	     ))
+
+(add-hook 'racer-mode-hook #'eldoc-mode)
+
 (defun jcreed-agda-copy-type ()
   (interactive)
   (save-excursion
@@ -1128,40 +1141,41 @@ All matching buffers will be marked for deletion."
     (set-buffer "*Agda information*")
     (kill-ring-save (point-min) (point-max))))
 
-(ifat chef
-      (defun setup-tide-mode ()
-        (interactive)
-        (tide-setup)
-        (flycheck-mode +1)
-        (setq flycheck-check-syntax-automatically '(save mode-enabled))
-        (eldoc-mode +1)
-        (tide-hl-identifier-mode +1)
-        ;; company is an optional dependency. You have to
-        ;; install it separately via package-install
-        ;; `M-x package-install [ret] company`
-        (company-mode +1))
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
 
-      ;; aligns annotation to the right hand side
-      (setq company-tooltip-align-annotations t)
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
 
-      ;; formats the buffer before saving
-      (add-hook 'before-save-hook 'tide-format-before-save)
+;; formats the buffer before saving
+(add-hook 'before-save-hook 'tide-format-before-save)
 
-      (add-hook 'typescript-mode-hook #'setup-tide-mode)
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
 
-      (defun tide-references ()
-        "List all references to the symbol at point."
-        (interactive)
-        (let ((response (tide-command:references)))
-          (tide-on-response-success response
-              (let ((references (tide-plist-get response :body :refs)))
-                (-if-let (usage (tide-find-single-usage references))
-                    (progn
-                      (message "This is the only usage.")
-                      (tide-jump-to-filespan usage nil nil))
-                  ;; In tide's actual code, this is
-                  ;;    (tide-jump-to-filespan usage nil t)
-                  ;; but I prefer it to do
-                  ;;    (ring-insert find-tag-marker-ring (point-marker)))
-                  ;; when there's only one reference so I can M-, my way back
-                  (display-buffer (tide-insert-references references))))))))
+(defun tide-references ()
+  "List all references to the symbol at point."
+  (interactive)
+  (let ((response (tide-command:references)))
+    (tide-on-response-success response
+										(let ((references (tide-plist-get response :body :refs)))
+										  (-if-let (usage (tide-find-single-usage references))
+													  (progn
+														 (message "This is the only usage.")
+														 (tide-jump-to-filespan usage nil nil))
+													  ;; In tide's actual code, this is
+													  ;;    (tide-jump-to-filespan usage nil t)
+													  ;; but I prefer it to do
+													  ;;    (ring-insert find-tag-marker-ring (point-marker)))
+													  ;; when there's only one reference so I can M-, my way back
+													  (display-buffer (tide-insert-references references)))))))
+
+(set-cursor-color "#700")
