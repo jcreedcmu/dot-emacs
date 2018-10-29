@@ -83,9 +83,6 @@
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
- '(package-selected-packages
-	(quote
-	 (magit tide company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -1182,4 +1179,44 @@ All matching buffers will be marked for deletion."
 													  (display-buffer (tide-insert-references references)))))))
 
 (set-cursor-color "#700")
+
 (define-key global-map "\C-cm" 'magit-status)
+
+
+(defcustom mode-line-bell-string "" ; "♪"
+  "Message displayed in mode-line by `mode-line-bell' function."
+  :group 'user)
+(defcustom mode-line-bell-delay 0.1
+  "Number of seconds `mode-line-bell' displays its message."
+  :group 'user)
+
+;; internal variables
+(defvar mode-line-bell-cached-string nil)
+(defvar mode-line-bell-propertized-string nil)
+
+(ifat chef
+      ;; adapted from https://github.com/zenspider/elisp/blob/master/rwd-bell.el
+      (setq mode-line-bell-propertized-string
+            (propertize
+             (concat
+              (propertize
+               "x"
+               'display
+               `(space :align-to (- right ,(string-width mode-line-bell-string))))
+              mode-line-bell-string)
+             'face '(:background "black" :foreground "red")))
+
+;;;###autoload
+      (defun mode-line-bell ()
+        "Briefly display a highlighted message in the mode-line.
+The string displayed is the value of `mode-line-bell-string',
+with a red background; the background highlighting extends to the
+right margin.  The string is displayed for `mode-line-bell-delay'
+seconds.
+This function is intended to be used as a value of `ring-bell-function'."
+        (message mode-line-bell-propertized-string)
+        (sit-for mode-line-bell-delay)
+        (message ""))
+
+;;;###autoload
+      (setq ring-bell-function 'mode-line-bell))
