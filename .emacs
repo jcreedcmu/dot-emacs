@@ -75,7 +75,7 @@
  '(case-fold-search t)
  '(column-number-mode t)
  '(compilation-scroll-output (quote first-error))
- '(css-indent-offset 2)
+ '(css-indent-offset 2 t)
  '(current-language-environment "English")
  '(dired-bind-jump t)
  '(face-font-selection-order (quote (:slant :height :weight :width)))
@@ -83,6 +83,9 @@
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
+ '(package-selected-packages
+	(quote
+	 (phi-search multiple-cursors magit tide company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -1151,7 +1154,8 @@ All matching buffers will be marked for deletion."
   ;; company is an optional dependency. You have to
   ;; install it separately via package-install
   ;; `M-x package-install [ret] company`
-  (company-mode +1))
+  (company-mode +1)
+  (define-key tide-mode-map "\C-c\C-r" 'tide-references))
 
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
@@ -1220,3 +1224,16 @@ This function is intended to be used as a value of `ring-bell-function'."
 
 ;;;###autoload
       (setq ring-bell-function 'mode-line-bell))
+
+(defun jcreed-magit-copy-region-hunk ()
+  (interactive)
+  (when (magit-section-internal-region-p)
+    (magit-section-when hunk
+      (deactivate-mark)
+      (let ((text (buffer-substring-no-properties
+                   (region-beginning) (region-end))))
+        (kill-new (replace-regexp-in-string "^[ \\+\\-]" "" text))))))
+
+;; https://www.reddit.com/r/emacs/comments/965656/orgmode_how_to_programmatically_move_to_first/
+;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
+(setq org-special-ctrl-a t)
