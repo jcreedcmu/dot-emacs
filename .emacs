@@ -1155,7 +1155,8 @@ All matching buffers will be marked for deletion."
   ;; install it separately via package-install
   ;; `M-x package-install [ret] company`
   (company-mode +1)
-  (define-key tide-mode-map "\C-c\C-r" 'tide-references))
+  (define-key tide-mode-map "\C-c\C-r" 'tide-references)
+  (define-key tide-mode-map "\C-c\C-s" 'tide-rename-symbol))
 
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
