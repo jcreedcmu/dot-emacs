@@ -1158,6 +1158,13 @@ All matching buffers will be marked for deletion."
   (define-key tide-mode-map "\C-c\C-r" 'tide-references)
   (define-key tide-mode-map "\C-c\C-s" 'tide-rename-symbol))
 
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+;; enable typescript-tslint checker
+(flycheck-add-mode 'typescript-tslint 'web-mode)
+
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
 
