@@ -84,8 +84,8 @@
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
  '(package-selected-packages
-	(quote
-	 (phi-search multiple-cursors magit tide company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
+   (quote
+    (racer yaml-mode web-mode vue-mode typescript tuareg tide sws-mode sql-indent sml-mode scala-mode scad-mode rust-mode rainbow-mode rainbow-delimiters python-mode markdown-mode magit lsp-javascript-typescript jade-mode haskell-mode go-mode gnugo erlang company coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -1162,8 +1162,10 @@ All matching buffers will be marked for deletion."
           (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
               (setup-tide-mode))))
+
 ;; enable typescript-tslint checker
-(flycheck-add-mode 'typescript-tslint 'web-mode)
+;; this gives me errors for some reason??
+; (flycheck-add-mode 'typescript-tslint 'web-mode)
 
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
@@ -1193,7 +1195,6 @@ All matching buffers will be marked for deletion."
 (set-cursor-color "#700")
 
 (define-key global-map "\C-cm" 'magit-status)
-
 
 (defcustom mode-line-bell-string "" ; "♪"
   "Message displayed in mode-line by `mode-line-bell' function."
