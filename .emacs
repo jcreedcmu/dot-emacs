@@ -721,8 +721,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (define-key global-map "\M-r" 'revert-buffer)
 
 (setenv "NODE_NO_READLINE" "1")
+
 (ifat chef
-      (setenv "PATH" (concat (getenv "PATH") ":/Users/jcreed/Library/Haskell/bin:/usr/local/bin:/Users/jcreed/bin")))
+      (setenv "PATH" (concat (getenv "PATH") ":/Users/jreed/.cargo/bin")))
 
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
