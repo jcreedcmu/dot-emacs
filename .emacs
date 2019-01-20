@@ -542,9 +542,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (autoload 'rust-mode "rust-mode" "Start rust-mode" t)
 (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
-(add-hook 'rust-mode-hook
-          (lambda ()
-            (define-key rust-mode-map "\C-c\C-c" 'rust-compile)))
+
 
 (defun eval-and-replace (value)
   "Evaluate the sexp at point and replace it with its value"
@@ -723,7 +721,10 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (setenv "NODE_NO_READLINE" "1")
 
 (ifat chef
-      (setenv "PATH" (concat (getenv "PATH") ":/Users/jreed/.cargo/bin")))
+      (setenv "PATH" (concat (getenv "PATH") ":/Users/jreed/.cargo/bin"))
+      (setq exec-path (append exec-path '("/Users/jreed/.cargo/bin")))
+      (setq rust-format-on-save t)
+)
 
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
@@ -1132,6 +1133,7 @@ All matching buffers will be marked for deletion."
 		  (setq compile-command "~/.cargo/bin/cargo build")
 		  (setq compilation-read-command nil)
 	     (define-key rust-mode-map "\C-c\C-f" 'compile)
+		  (define-key rust-mode-map "\C-c\C-d" 'rust-format-buffer)
 		  (add-hook 'rust-mode-hook #'racer-mode)
 		  (add-hook 'racer-mode-hook #'eldoc-mode)
 	     ))
