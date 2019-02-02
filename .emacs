@@ -686,8 +686,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
     (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/" path)))
    ((equal repo "home")
     (jcreed-find-file-other-window (concat "/Users/jreed/" path)))
-   ((equal repo "scode")
-    (jcreed-find-file-other-window (concat "/Users/jreed/semmle/code/" path)))
+   ((equal repo "sem")
+    (jcreed-find-file-other-window (concat "/Users/jreed/semmle/" path)))
    ))
 
 (defun task-at-point ()
