@@ -18,6 +18,7 @@
 (defface jcreed-task-face nil "Jcreed Task Face")
 (defface jcreed-paste-face nil "Jcreed Paste Face")
 (defface jcreed-path-face nil "Jcreed Path Face")
+(defface jcreed-path2-face nil "Jcreed Path2 Face")
 (defface jcreed-paper-face nil "Jcreed Paper Face")
 
 (setq solarized-base03    "#002b36")
@@ -125,6 +126,7 @@
  '(jcreed-paper-face ((((class color) (min-colors 88) (background light)) (:background "#77cc77" :foreground "black"))) t)
  '(jcreed-paste-face ((t (:foreground "#268bd2" :weight bold))) t)
  '(jcreed-path-face ((t (:foreground "#d33682" :weight bold))) t)
+ '(jcreed-path2-face ((t (:foreground "#d33682" :weight bold))) t)
  '(jcreed-person-face ((t (:foreground "#6c71c4" :weight bold))) t)
  '(jcreed-question-face ((((class color) (min-colors 88) (background light)) (:foreground "#dc322f"))) t)
  '(jcreed-shell-face ((((class color) (min-colors 88) (background light)) (:foreground "#586e75" :background "#eee8d5"))) t)
@@ -634,6 +636,21 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
  (setq browse-url-browser-function 'browse-url-generic
        browse-url-generic-program "google-chrome"))
 
+(defun jcreed-browse-repo-path (repo path)
+  (cond
+   ((equal repo "occ")
+    (let ((lib-string
+           (replace-regexp-in-string "\\([^/]+/\\).*\\'" "\\1blob/master/" path nil nil 1)))
+      (browse-url (concat "http://github.com/chef/" lib-string))
+      ))
+   ((equal repo "agdac")
+    (browse-url (concat "https://github.com/agda/agda/commit/" path)))
+   ((equal repo "agda")
+    (browse-url (concat "https://github.com/agda/agda/blob/master/" path)))
+   ((equal repo "gh")
+    (browse-url (concat "http://github.com/" path)))
+   ))
+
 (defun jcreed-browse-thing-at-point (pos)
   (interactive "d")
   (let ((face (or (get-char-property (point) 'read-face-name)
@@ -653,20 +670,25 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
              (when (string-match "\\(.*\\)//\\(.*\\)" thing)
                (let ((repo (match-string 1 thing))
                      (path (match-string 2 thing)))
-                 (cond
-                  ((equal repo "occ")
-                   (let ((lib-string
-                          (replace-regexp-in-string "\\([^/]+/\\).*\\'" "\\1blob/master/" path nil nil 1)))
-                     (browse-url (concat "http://github.com/chef/" lib-string))
-                     ))
-                  ((equal repo "agdac")
-                   (browse-url (concat "https://github.com/agda/agda/commit/" path)))
-                  ((equal repo "agda")
-                   (browse-url (concat "https://github.com/agda/agda/blob/master/" path)))
-                  ((equal repo "gh")
-                   (browse-url (concat "http://github.com/" path)))
-                  )))))
+                 (jcreed-browse-repo-path repo path)))))
           (t (browse-url-at-point)))))
+
+(defun jcreed-open-repo-path (repo path)
+  (message (concat path " - " repo))
+  (cond
+   ((equal repo "tiros")
+    (jcreed-find-file-other-window (concat "/Users/jreed/tiros-server/" path)))
+   ((equal repo "occ")
+    (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
+   ((equal repo "agda")
+    (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/sandboxes/agda-build/agda/" path)))
+   ((equal repo "agdalib")
+    (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/" path)))
+   ((equal repo "home")
+    (jcreed-find-file-other-window (concat "/Users/jreed/" path)))
+   ((equal repo "scode")
+    (jcreed-find-file-other-window (concat "/Users/jreed/semmle/code/" path)))
+   ))
 
 (defun task-at-point ()
   (let ((word (thing-at-point 'word)))
@@ -689,20 +711,20 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
              (when (string-match "\\(.*\\)//\\(.*\\)" thing)
                (let ((repo (match-string 1 thing))
                      (path (match-string 2 thing)))
-                 (message (concat path " - " repo))
-                 (cond
-                  ((equal repo "tiros")
-                   (jcreed-find-file-other-window (concat "/Users/jreed/tiros-server/" path)))
-                  ((equal repo "occ")
-                   (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
-                  ((equal repo "agda")
-                   (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/sandboxes/agda-build/agda/" path)))
-                  ((equal repo "agdalib")
-                   (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/" path)))
-                  ((equal repo "home")
-                   (jcreed-find-file-other-window (concat "/Users/jreed/" path)))
-                  )))))
+                 (jcreed-open-repo-path repo path)))))
+          ((equal face 'jcreed-path2-face)
+           (let ((thing (face-bounded-thing-at-point (point))))
+             (when (string-match "\\(.*\\):\\[\\(.*\\)\\]" thing)
+               (let ((repo (match-string 1 thing))
+                     (path (match-string 2 thing)))
+                 (jcreed-open-repo-path repo path)))))
           (t (jcreed-browse-thing-at-point)))))
+
+(defun face-bounded-thing-at-point (pos)
+(message "hi")
+  (buffer-substring-no-properties
+   (previous-single-property-change pos 'face)
+   (next-single-property-change pos 'face)))
 
 (defun jcreed-thing-at-point (pos)
   (interactive "d")
@@ -779,6 +801,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		  ("\\bT[0-9]+\\b" . 'jcreed-task-face)
 		  ("\\bP[0-9]+\\b" . 'jcreed-paste-face)
 		  ("\\b[a-z]+//\\(?:\\w\\|[-_/.]\\)+" . 'jcreed-path-face)
+		  ("\\b[a-z]+:\\[\\(?:[^]]\\)+\\]" . 'jcreed-path2-face)
 		  ("\\?\\?\\?" . 'jcreed-bad-face)))
 
 ; XXX split off into separate file
