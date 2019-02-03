@@ -401,13 +401,17 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
         (t
          path)))
 
-(defun jcreed-copy-path ()
+(defun jcreed-copy-path (inhibit-postprocess)
   "copy buffer's full path to kill ring, but with some
     postprocessing that works well with
     jcreed-open-file-at-point"
-  (interactive)
+  (interactive "P")
   (when buffer-file-name
-    (kill-new (jcreed-postprocess-path (file-truename buffer-file-name)))))
+    (let ((path (file-truename buffer-file-name)))
+      (if (not inhibit-postprocess)
+          (setq path (jcreed-postprocess-path path)))
+      (kill-new path))))
+
 (define-key global-map "\M-p" 'jcreed-copy-path)
 
 (defun nano-data ()
