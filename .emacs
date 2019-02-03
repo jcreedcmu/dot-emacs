@@ -396,6 +396,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
          (concat "agdalib//" (match-string 1 path)))
         ((string-match "/Users/jreed/.cabal/sandboxes/agda-build/agda/\\(.*\\)" path)
          (concat "agda//" (match-string 1 path)))
+        ((string-match "/Users/jreed/semmle/\\(.*\\)" path)
+         (concat "sem:[" (match-string 1 path) "]"))
         (t
          path)))
 
