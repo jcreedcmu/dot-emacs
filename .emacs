@@ -86,7 +86,7 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (racer yaml-mode web-mode vue-mode typescript tuareg tide sws-mode sql-indent sml-mode scala-mode scad-mode rust-mode rainbow-mode rainbow-delimiters python-mode markdown-mode magit lsp-javascript-typescript jade-mode haskell-mode go-mode gnugo erlang company coffee-mode clojurescript-mode cider button-lock)))
+    (ac-emacs-eclim eclim lsp-mode lsp-java racer yaml-mode web-mode vue-mode typescript tuareg tide sws-mode sql-indent sml-mode scala-mode scad-mode rust-mode rainbow-mode rainbow-delimiters python-mode markdown-mode magit lsp-javascript-typescript jade-mode haskell-mode go-mode gnugo erlang company coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -729,8 +729,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (defun face-bounded-thing-at-point (pos)
 (message "hi")
   (buffer-substring-no-properties
-   (previous-single-property-change pos 'face)
-   (next-single-property-change pos 'face)))
+   (or (previous-single-property-change pos 'face) (point-min))
+   (or (next-single-property-change pos 'face) (point-max))))
 
 (defun jcreed-thing-at-point (pos)
   (interactive "d")
@@ -801,6 +801,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		  ("^\\$\\( +[-a-z./]+ *\\)"  1 'jcreed-command-face t)
 		  ("<<<\n" . 'jcreed-shell-face)
 		  (">>>\n" . 'jcreed-shell-face)
+		  ("`.*?`" . 'jcreed-shell-face)
 		  ("\\([a-z]+\\)@[^a-z]" 1 'jcreed-person-face t)
 		  ("https?://[^[:space:]\n]+" . 'link)
 		  ("\\bD[0-9]+\\b" . 'jcreed-diff-face)
