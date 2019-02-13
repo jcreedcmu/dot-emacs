@@ -1180,6 +1180,10 @@ All matching buffers will be marked for deletion."
 (defun setup-tide-mode ()
   (interactive)
   (tide-setup)
+
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (eldoc-mode +1)
@@ -1203,8 +1207,8 @@ All matching buffers will be marked for deletion."
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
 
-;; formats the buffer before saving
-(add-hook 'before-save-hook 'tide-format-before-save)
+
+
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
