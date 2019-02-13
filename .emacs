@@ -915,8 +915,7 @@ displayed in the mode-line.")
 (setq verilog-auto-indent-on-newline nil)
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")))
+                         ("melpa-stable" . "https://stable.melpa.org/packages/")))
 (require 'package)
 (package-initialize)
 
