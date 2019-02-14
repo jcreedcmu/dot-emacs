@@ -1,6 +1,6 @@
 [user]
         name = Jason Reed
-        email = jreed@chef.io
+        email = jreed@gmail.com
 [alias]
         cim = commit -a -m
         cima = commit -a --amend
