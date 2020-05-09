@@ -86,8 +86,8 @@
  '(load-home-init-file t t)
  '(mouse-yank-at-point t)
  '(package-selected-packages
-   (quote
-    (ac-emacs-eclim eclim lsp-mode lsp-java racer yaml-mode web-mode vue-mode typescript tuareg tide sws-mode sql-indent sml-mode scala-mode scad-mode rust-mode rainbow-mode rainbow-delimiters python-mode markdown-mode magit lsp-javascript-typescript jade-mode haskell-mode go-mode gnugo erlang company coffee-mode clojurescript-mode cider button-lock)))
+	(quote
+	 (sass-mode phi-search multiple-cursors magit tide company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
