@@ -1165,6 +1165,7 @@ All matching buffers will be marked for deletion."
 		  (setq compilation-read-command nil)
 	     (define-key rust-mode-map "\C-c\C-f" 'compile)
 		  (define-key rust-mode-map "\C-c\C-d" 'rust-format-buffer)
+		  (define-key rust-mode-map "\M-;" 'company-complete)
 		  (add-hook 'rust-mode-hook #'racer-mode)
 		  (add-hook 'racer-mode-hook #'eldoc-mode)
 	     ))
