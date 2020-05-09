@@ -812,21 +812,22 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		  ("\\b[a-z]+:\\[\\(?:[^]]\\)+\\]" . 'jcreed-path2-face)
 		  ("\\?\\?\\?" . 'jcreed-bad-face)))
 
-; XXX split off into separate file
-(defun journal-hook ()
-  (when (and (stringp buffer-file-name)
-             (equal "journal.txt" (file-name-nondirectory buffer-file-name)))
-    (setq font-lock-keywords
-          '((";\\(Checking\\);" 1 'jcreed-question-face t)
-				(";\\(ChaseChecking\\);" 1 'jcreed-question-face t)
-				(";\\(Capone\\);" 1 'jcreed-answer-face t)
-				(";\\(Ccard\\);" 1 'jcreed-person-face t)
-				(";\\(.*401k\\);" 1 'jcreed-shell-face t)
-				("^\\([0-9-]+\\);;\\(\$?[0-9.]+\\)" 2 'jcreed-command-face t)
-				(";\\(PayPal\\);" 1 'jcreed-shell-face t)
-				("\\?" . 'jcreed-bad-face)))))
+(setq auto-mode-alist (cons '("/\\(journal.txt\\)$" . journal-mode) auto-mode-alist))
 
-(add-hook 'find-file-hook 'journal-hook)
+(define-derived-mode journal-mode fundamental-mode
+  (setq font-lock-defaults '(journal-mode-highlights))
+  (setq mode-name "Journal"))
+
+; XXX split off into separate file
+(setq journal-mode-highlights
+      '((";\\(Checking\\);" 1 'jcreed-question-face t)
+		  (";\\(ChaseChecking\\);" 1 'jcreed-question-face t)
+		  (";\\(Capone\\);" 1 'jcreed-answer-face t)
+		  (";\\(Ccard\\);" 1 'jcreed-person-face t)
+		  (";\\(.*401k\\);" 1 'jcreed-shell-face t)
+		  ("^\\([0-9-]+\\);;\\(\$?[0-9.,]+\\)" 2 'jcreed-command-face t)
+		  (";\\(PayPal\\);" 1 'jcreed-shell-face t)
+		  ("\\?" . 'jcreed-bad-face)))
 
 ;;; url encode and decode regions
 
