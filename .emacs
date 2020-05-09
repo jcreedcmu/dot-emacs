@@ -1194,17 +1194,20 @@ All matching buffers will be marked for deletion."
   ;; install it separately via package-install
   ;; `M-x package-install [ret] company`
   (company-mode +1)
+  (setq company-idle-delay nil)
   (define-key tide-mode-map "\C-c\C-r" 'tide-references)
-  (define-key tide-mode-map "\C-c\C-s" 'tide-rename-symbol))
+  (define-key tide-mode-map "\C-c\C-s" 'tide-rename-symbol)
+  (define-key tide-mode-map "\M-;" 'company-complete)
+  (fixup-tide-parse-error))
 
 (add-hook 'web-mode-hook
           (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
               (setup-tide-mode))))
 
-;; enable typescript-tslint checker
-;; this gives me errors for some reason??
-; (flycheck-add-mode 'typescript-tslint 'web-mode)
+;;; enable typescript-tslint checker
+;; (require 'flycheck)
+;; (flycheck-add-mode 'typescript-tslint 'web-mode)
 
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
@@ -1285,3 +1288,39 @@ This function is intended to be used as a value of `ring-bell-function'."
 ;; https://www.reddit.com/r/emacs/comments/965656/orgmode_how_to_programmatically_move_to_first/
 ;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
 (setq org-special-ctrl-a t)
+
+
+(defun compile-in-dir (dir command)
+  (interactive "DCompile in directory: \nsCommand: ")
+  (let ((default-directory dir))
+    (compile command)))
+
+(defun jcreed-compile-verilog ()
+  (interactive)
+  (compile-in-dir "/home/jcreed/proj/ben-eater" "make"))
+
+(add-hook 'verilog-mode-hook #'setup-verilog-mode)
+(defun setup-verilog-mode ()
+ (define-key verilog-mode-map "\C-c\C-f" 'jcreed-compile-verilog))
+
+; getting spurious eslint errors? run this function
+(defun fixup-tide-parse-error ()
+  (defun tide-parse-error (response checker)
+	 (-map
+     (lambda (diagnostic)
+		 (let* ((start (plist-get diagnostic :start))
+              (line (plist-get start :line))
+              (column (plist-get start :offset))
+              (level (if (string= (plist-get diagnostic :category) "suggestion") 'info 'error))
+              (text (plist-get diagnostic :text)))
+			(when (plist-get diagnostic :relatedInformation)
+           (setq text (concat text (propertize " ⮐" 'face 'font-lock-warning-face))))
+			(put-text-property 0 1 'diagnostic diagnostic text)
+			(flycheck-error-new-at line column level text
+                                :checker checker
+                                :id (plist-get diagnostic :code))))
+     (let ((diagnostic (car (tide-plist-get response :body))))
+		 (-concat (plist-get diagnostic :syntaxDiag)
+					 (plist-get diagnostic :semanticDiag)
+													 ;(plist-get diagnostic :suggestionDiag)
+					 )))))
