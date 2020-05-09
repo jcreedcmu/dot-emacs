@@ -1,5 +1,6 @@
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
+(setq unicode-fonts-block-font-mapping ())
 (defmacro ifat (loc &rest body) (if (equal location loc) (cons 'progn body) nil))
 
 (load "location.el")
