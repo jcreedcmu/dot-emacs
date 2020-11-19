@@ -1050,12 +1050,13 @@ displayed in the mode-line.")
             (define-key agda2-mode-map "\C-cc" 'jcreed-agda-copy-type)
             (define-key agda2-mode-map "\C-c\C-c" 'agda2-make-case)))
 
-
-(add-hook 'python-mode-hook
-          (function (lambda ()
-                      (setq indent-tabs-mode nil
-									 py-indent-offset 2
-                            tab-width 2))))
+(global-eldoc-mode -1)
+(defun jcreed-python-mode-hook ()
+  (setq eldoc-mode nil)
+  (setq indent-tabs-mode nil
+		  py-indent-offset 2
+        tab-width 2))
+(add-hook 'python-mode-hook #'jcreed-python-mode-hook)
 
 (setq jcreed-add-agda-keys-called nil)
 (defun jcreed-add-agda-keys ()
