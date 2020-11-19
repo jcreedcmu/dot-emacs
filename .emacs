@@ -1105,6 +1105,10 @@ displayed in the mode-line.")
                 '(lambda ()
                    (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/xelatex"))))
 
+(add-hook 'latex-mode-hook
+          '(lambda ()
+             (setq tex-command "pdflatex")))
+
 (defun jcreed-swap-agda-implicit ()
   (interactive)
   (save-excursion
