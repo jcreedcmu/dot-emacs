@@ -1190,7 +1190,7 @@ All matching buffers will be marked for deletion."
 
   ;; formats the buffer before saving
   (add-hook 'before-save-hook 'tide-format-before-save)
-
+  (eldoc-mode +1)
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   ;;  (eldoc-mode +1)
