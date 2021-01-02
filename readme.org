@@ -21,12 +21,6 @@ into sections but I haven't coalesced them sensibly yet.
 (load "location.el")
 #+end_src
 
-* Mac Things
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-      (setq mac-command-modifier 'meta))
-#+END_SRC
-
 * Custom Faces
 #+BEGIN_SRC emacs-lisp
 (defface jcreed-header-face nil "Jcreed Header Face")
@@ -61,7 +55,7 @@ into sections but I haven't coalesced them sensibly yet.
 (setq solarized-green     "#859900")
 #+END_SRC
 
-* Generic Programming Tools
+* Generic Programming Utilities
 #+begin_src emacs-lisp
 (defun compile-in-dir (dir command)
   (interactive "Compile in directory: \nsCommand: ")
@@ -72,11 +66,6 @@ into sections but I haven't coalesced them sensibly yet.
 ** Don't Blink Cursor
 #+begin_src emacs-lisp
 (blink-cursor-mode 0)
-#+END_SRC
-
-** LaTeX
-#+BEGIN_SRC emacs-lisp
-(add-to-list (quote auto-mode-alist) (quote ("\\.tex\\'" . latex-mode)))
 #+END_SRC
 
 ** Window Title
@@ -194,58 +183,6 @@ into sections but I haven't coalesced them sensibly yet.
  '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
 #+END_SRC
 
-** Customization for ~baez~
-~baez~ is my current desktop machine, running CentOS.
-
-#+BEGIN_SRC emacs-lisp
-(ifat baez
-		(setq twelf-root "~/tmp/twelf/")
-		(load (concat twelf-root "emacs/twelf-init.el"))
-		)
-
-(ifat baez
-		(custom-theme-set-faces
-		 'user
-		 '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "cbp" :family "codon"))))
-		 '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Firebrick" :slant italic))))
-		 '(font-lock-constant-face ((t (:foreground "cyan3"))))
-		 '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "firebrick"))))
-		 '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "DarkGreen"))))
-		 '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
-		 '(italic ((((supports :underline t)) (:slant italic :family "codon"))))
-		 '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
-		 '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
-		 '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
-		 '(rainbow-delimiters-depth-4-face ((t (:foreground "#d33682"))))
-		 '(rainbow-delimiters-depth-5-face ((t (:foreground "#6c71c4"))))
-		 '(rainbow-delimiters-depth-6-face ((t (:foreground "gray40"))))
-		 '(region ((t (:background "#aff"))))
-		 '(tex-verbatim ((t (:background "gray90"))))
-		 '(trailing-whitespace ((t (:background "#ffbfbf"))))
-		 '(twelf-font-decl-face ((t (:stipple nil :background "white" :foreground "green4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 96 :width normal :foundry "cbp" :family "Codon"))) t)
-		 '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant italic :weight normal :height 116 :width normal :family "cbp-codon"))) t)
-		 '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold))))))
-#+END_SRC
-
-** Customization for ~chef~
-~chef~ is a 2015 MacBook Pro which I inherited from my employment at Chef.
-
-#+BEGIN_SRC emacs-lisp
-(ifat chef (custom-theme-set-faces
-				'user
-				'(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
-				'(font-lock-comment-face ((nil (:foreground "#93a1a1"))))
-				'(font-lock-constant-face ((nil (:foreground "#dc322f"))))
-				'(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
-				'(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
-				'(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
-				'(font-lock-string-face ((nil (:foreground "#2aa198"))))
-				'(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
-				'(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
-				'(highlight ((t (:background "#fff"))))
-				'(italic ((((supports :underline t)) (:slant italic))))))
-#+END_SRC
-
 ** Ruby
 #+BEGIN_SRC emacs-lisp
 													 ; from http://ck.kennt-wayne.de/2013/may/emacs:-jump-to-matching-paren-beginning-of-block
@@ -262,41 +199,6 @@ into sections but I haven't coalesced them sensibly yet.
 	 (forward-word))))
 #+END_SRC
 
-** LaTeX
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-tcons (x) (cons x x))
-(setq jcreed-completion (mapcar 'jcreed-tcons '("lemma" "corollary" "theorem" "conjecture" "proposition" "question" "definition" "remark" "postulate" "prooftree" "easyrule")))
-(setq jcreed-proof (mapcar (lambda (x) (cons x 1)) '("lemma" "corollary" "theorem")))
-(setq jcreed-math (mapcar (lambda (x) (cons x 1)) '("prooftree")))
-
-(defun jcreed-insert-easy-template ()
-  "Inserts a copy of my easyrule template"
-  (interactive)
-  (insert "\\[\n\\erule\n{}\n{")
-  (let ((pm (point-marker)))
-	 (insert "}\n\\]")
-	 (goto-char pm)))
-
-(defun jcreed-insert-other ()
-  "Inserts a proposition/lemma/corollary/theorem template."
-  (interactive)
-  (let ((env (completing-read "Environment: " jcreed-completion '(lambda (x) t) t)))
-	 (if (equal env "easyrule") (jcreed-insert-easy-template)
-		(if (assoc env jcreed-math)
-			 (insert "\\[\n"))
-		(insert (concat "\\begin{" env "}\n"))
-		(if (assoc env jcreed-math)
-			 (insert "\\[\n\\justifies\n\\]\n\\justifies\n"))
-		(let ((pm (point-marker)))
-		  (insert (concat "\n\\end{" env "}\n"))
-		  (if (assoc env jcreed-proof)
-				(insert "\n\\begin{proof}\n\n\\cqed\n\\end{proof}\n"))
-		  (if (assoc env jcreed-math)
-				(insert "\\]\n"))
-		  (goto-char pm)))
-	 (recenter)))
-#+END_SRC
-
 ** Elisp
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-lisp-mode-hook
@@ -309,15 +211,6 @@ into sections but I haven't coalesced them sensibly yet.
 				 (define-key lisp-interaction-mode-map
 					"\C-o"
 					'lisp-complete-symbol)))
-#+END_SRC
-
-** LaTeX
-#+BEGIN_SRC emacs-lisp
-(add-hook 'latex-mode-hook
-			 '(lambda ()
-				 (define-key tex-mode-map
-					"\C-cz"
-					'jcreed-insert-other)))
 #+END_SRC
 
 ** General Keybindings
@@ -351,92 +244,6 @@ into sections but I haven't coalesced them sensibly yet.
   (ring-insert find-tag-marker-ring (point-marker))
   (haskell-mode-jump-to-def (haskell-string-drop-qualifier
 									  (haskell-ident-at-point))))
-#+END_SRC
-
-** LaTeX
-#+BEGIN_SRC emacs-lisp
-(setq tex-dvi-view-command "xdvi.bin")
-
-(setq tex-dvi-view-args '("-s" "5" "-geometry" "1024x600+0+600"))
-
-(defun jcreed-tex-bibtex-file ()
-  "Run BibTeX on the current buffer's file."
-  (interactive)
-  (if (tex-shell-running)
-		(tex-kill-job)
-	 (tex-start-shell))
-  (let* (shell-dirtrack-verbose
-			(source-file (tex-main-file))
-			(x (message (expand-file-name source-file)))
-			(tex-out-file
-			 (tex-append (file-name-nondirectory source-file) ""))
-			(file-dir (file-name-directory (expand-file-name source-file))))
-	 (tex-send-command tex-shell-cd-command file-dir)
-	 (tex-send-command tex-bibtex-command tex-out-file))
-  (tex-display-shell))
-
-(defun jcreed-tex-view ()
-  "Preview the last `.dvi' file made by running TeX under Emacs.
-This means, made using \\[tex-region], \\[tex-buffer] or \\[tex-file].
-The variable `tex-dvi-view-command' specifies the shell command for preview."
-  (interactive)
-  (let ((view-file-name-dvi (tex-append tex-print-file ".dvi"))
-		  test-name)
-	 (if (and (not (equal (current-buffer) tex-last-buffer-texed))
-				 (file-newer-than-file-p
-				  (setq test-name (tex-append (buffer-file-name) ".dvi"))
-				  view-file-name-dvi))
-		  (setq view-file-name-dvi test-name))
-	 (if (not (file-exists-p view-file-name-dvi))
-		  (error "No appropriate `.dvi' file could be found")
-		(progn
-													 ;       (debug)
-		  (apply 'start-process (append '("xdvi" "*xdvi*") (cons tex-dvi-view-command nil)
-												  tex-dvi-view-args (cons view-file-name-dvi nil)))))))
-
-(defvar jcreed-tex-main-buffer nil
-  "Set jcreed-tex-main-buffer to be something to always tex that rather than the current buffer")
-
-(defun jcreed-set-main-buffer ()
-  (interactive) (setq jcreed-tex-main-buffer (current-buffer)))
-
-(defun jcreed-clear-main-buffer ()
-  (interactive) (setq jcreed-tex-main-buffer nil))
-
-(defun jcreed-tex-file ()
-  (interactive)
-  (when jcreed-tex-main-buffer
-	 (set-buffer jcreed-tex-main-buffer))
-  (tex-file)
-  (jcreed-tex-signal))
-
-(defun jcreed-tex-signal ()
-  (interactive)
-  (save-excursion
-	 (let* ((xdvi-proc (get-process "xdvi")))
-		(when xdvi-proc
-		  (let* ((tex-proc (tex-shell-proc))
-					(buf (process-buffer tex-proc))
-					(string
-					 (concat "kill -USR1 " (number-to-string (process-id xdvi-proc)))))
-			 ;; Switch to buffer before checking for subproc output in it.
-			 (set-buffer buf)
-			 (goto-char (process-mark tex-proc))
-			 (insert string)
-			 (comint-send-input))))))
-
-(add-hook 'latex-mode-hook
-			 '(lambda ()
-				 (define-key tex-mode-map "\C-c\C-v" 'jcreed-tex-view)
-				 (define-key tex-mode-map "\C-c\C-d" 'jcreed-tex-bibtex-file)
-				 (define-key tex-mode-map "\C-c\C-f" 'jcreed-tex-file)
-				 (define-key tex-mode-map "\C-cf" 'jcreed-tex-signal)))
-
-
-(setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
-(setq interpreter-mode-alist (cons '("python" . python-mode)
-											  interpreter-mode-alist))
-
 #+END_SRC
 
 ** Esperanto
@@ -726,29 +533,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		(require 'whitespace)
-		(setq whitespace-style '(face empty tabs lines-tail trailing))
-		(setq-default indent-tabs-mode nil))
-#+END_SRC
-
 ** Indentation for C
 #+BEGIN_SRC emacs-lisp
 (setq c-basic-offset 2)
-#+END_SRC
-
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		(remove-hook 'find-file-hooks 'vc-find-file-hook) ; perf win
-		(setq vc-handled-backends nil)
-
-													 ;      (add-to-list 'load-path "/home/jcreed/.site-lisp/expand-region.el")
-													 ;      (require 'expand-region)
-													 ;      (global-set-key (kbd "C-=") 'er/expand-region)
-		)
 #+END_SRC
 
 ** General purpose utilities
@@ -827,13 +614,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		display-time-format "%A %b %e %k:%M")
 
 (display-time)
-#+END_SRC
-
-** Customization for ~baez~
-#+BEGIN_SRC emacs-lisp
-(ifat baez
-		(setq browse-url-browser-function 'browse-url-generic
-				browse-url-generic-program "google-chrome"))
 #+END_SRC
 
 ** Notes Management
@@ -963,15 +743,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (setenv "NODE_NO_READLINE" "1")
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		(setenv "PATH" (concat (getenv "PATH") ":/Users/jreed/.cargo/bin"))
-		(setq exec-path (append exec-path '("/Users/jreed/.cargo/bin")))
-		(setq rust-format-on-save t)
-		)
-#+END_SRC
-
 ** Notes management
 #+BEGIN_SRC emacs-lisp
 (define-derived-mode notes-mode fundamental-mode
@@ -1087,15 +858,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		;; XXX should change this if I ever work on code that actually cares
-		;; about tiny screens again.
-		(setq highlight-80+-columns 80))
-
-#+END_SRC
-
 ** NaNoWriMo
 #+BEGIN_SRC emacs-lisp
 (setq mode-line-position (assq-delete-all 'wc-mode mode-line-position))
@@ -1158,13 +920,6 @@ I think this is redundant with what I put in ~init.el~.
 (package-initialize)
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		(add-to-list 'auto-mode-alist '("\\.js" . js-mode))
-		(add-to-list 'auto-mode-alist '("\\.erl" . erlang-mode)))
-#+END_SRC
-
 ** Exec-path
 #+BEGIN_SRC emacs-lisp
 (setq exec-path (append exec-path '("/usr/local/bin")))
@@ -1213,12 +968,6 @@ I think this is redundant with what I put in ~init.el~.
 
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		(define-key global-map (kbd "M-`") 'other-frame))
-#+END_SRC
-
 ** Dired
 #+BEGIN_SRC emacs-lisp
 (require 'dired)
@@ -1265,12 +1014,6 @@ I think this is redundant with what I put in ~init.el~.
 (jcreed-setup-indent 2)
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		(add-hook 'before-save-hook #'gofmt-before-save))
-#+END_SRC
-
 ** General utilities
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-uncamel (b e)
@@ -1304,13 +1047,6 @@ I think this is redundant with what I put in ~init.el~.
 		(message "No non-ascii characters."))))
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		(setq twelf-root "/Applications/Twelf/")
-		(load (concat twelf-root "emacs/twelf-init.el")))
-#+END_SRC
-
 ** Unicode
 #+BEGIN_SRC emacs-lisp
 (setq default-process-coding-system '(utf-8 . utf-8))
@@ -1333,17 +1069,6 @@ I think this is redundant with what I put in ~init.el~.
 		(unicode-fonts-setup))
 #+END_SRC
 
-** Agda
-#+BEGIN_SRC emacs-lisp
-(add-hook 'agda2-mode-hook
-			 (lambda ()
-				(jcreed-add-agda-keys)
-				(define-key agda2-mode-map "\M-," 'agda2-go-back)
-				(define-key agda2-mode-map "\C-cs" 'jcreed-swap-agda-implicit)
-				(define-key agda2-mode-map "\C-cc" 'jcreed-agda-copy-type)
-				(define-key agda2-mode-map "\C-c\C-c" 'agda2-make-case)))
-#+END_SRC
-
 ** Python
 #+BEGIN_SRC emacs-lisp
 (global-eldoc-mode -1)
@@ -1353,88 +1078,6 @@ I think this is redundant with what I put in ~init.el~.
 		  py-indent-offset 2
 		  tab-width 2))
 (add-hook 'python-mode-hook #'jcreed-python-mode-hook)
-#+END_SRC
-
-** Agda
-#+BEGIN_SRC emacs-lisp
-(setq jcreed-add-agda-keys-called nil)
-(defun jcreed-add-agda-keys ()
-  (when (not jcreed-add-agda-keys-called)
-	 (require 'agda-input)
-	 (with-temp-buffer
-		(activate-input-method "Agda") ;; the input method has to be triggered for `quail-package-alist' to be non-nil
-		(let ((quail-current-package (assoc "Agda" quail-package-alist)))
-		  (quail-define-rules ((append . t))
-									 ("\\esh" ?ʃ)
-									 ("\\prov" ?⊢)
-									 ("\\lol" ?⊸)
-									 ("\\adj" ?⊣)
-									 ("\\prequiv" ["⊣⊢"]))))
-	 (setq jcreed-add-agda-keys-called t)))
-#+END_SRC
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-
-		(setq agda-path "/Users/jreed/.cabal/bin/")
-		(load-file (let ((coding-system-for-read 'utf-8))
-						 (shell-command-to-string (concat agda-path "agda-mode locate"))))
-
-		;; (setq agda2-include-dirs '("."  "/Users/jreed/.agda/HoTT-Agda/core"))
-		(setq agda2-program-name (concat agda-path "agda"))
-
-		;; This is so we're sure we're getting Primitive.agda from the version-controlled dev dir.
-													 ;      (setenv "Agda_datadir" "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0")
-
-		(add-hook 'haskell-mode-hook
-					 '(lambda ()
-						 (define-key haskell-mode-map "\M-." 'jcreed-find-haskell-tag))))
-#+END_SRC
-
-** Agda
-#+BEGIN_SRC emacs-lisp
-(ifat baez
-		(setq agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
-		(load-file (let ((coding-system-for-read 'utf-8))
-						 ;; (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
-						 (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
-						 )))
-
-(ifat chef
-		(add-hook 'notes-mode-hook
-					 (lambda ()
-						(jcreed-add-agda-keys)
-						(set-input-method "Agda")))
-		(add-hook 'latex-mode-hook
-					 '(lambda ()
-						 (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/xelatex"))))
-#+END_SRC
-
-** LaTeX
-#+BEGIN_SRC emacs-lisp
-(add-hook 'latex-mode-hook
-			 '(lambda ()
-				 (setq tex-command "pdflatex")))
-#+END_SRC
-
-** Agda
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-swap-agda-implicit ()
-  (interactive)
-  (save-excursion
-	 (if (re-search-backward "[({]" nil t)
-		  (let ((ms (match-string 0)))
-			 (cond
-			  ((equal ms "(")
-				(replace-match "{")
-				(re-search-forward ")")
-				(replace-match "}"))
-			  ((equal ms "{")
-				(replace-match "(")
-				(re-search-forward "}")
-				(replace-match ")")))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #+END_SRC
 
 ** Buffer List
@@ -1492,16 +1135,6 @@ All matching buffers will be marked for deletion."
 				 ))
 
 (add-hook 'racer-mode-hook #'eldoc-mode)
-#+END_SRC
-
-** Agda
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-agda-copy-type ()
-  (interactive)
-  (save-excursion
-													 ;    (agda2-goal-type) ;; doesn't seem synchronous enough? boo.
-	 (set-buffer "*Agda information*")
-	 (kill-ring-save (point-min) (point-max))))
 #+END_SRC
 
 ** Typescript
@@ -1586,36 +1219,6 @@ All matching buffers will be marked for deletion."
 (defvar mode-line-bell-propertized-string nil)
 #+END_SRC
 
-** Customization for ~chef~
-#+BEGIN_SRC emacs-lisp
-(ifat chef
-		;; adapted from https://github.com/zenspider/elisp/blob/master/rwd-bell.el
-		(setq mode-line-bell-propertized-string
-				(propertize
-				 (concat
-				  (propertize
-					"x"
-					'display
-					`(space :align-to (- right ,(string-width mode-line-bell-string))))
-				  mode-line-bell-string)
-				 'face '(:background "black" :foreground "red")))
-
-;;;###autoload
-		(defun mode-line-bell ()
-		  "Briefly display a highlighted message in the mode-line.
-The string displayed is the value of `mode-line-bell-string',
-with a red background; the background highlighting extends to the
-right margin.  The string is displayed for `mode-line-bell-delay'
-seconds.
-This function is intended to be used as a value of `ring-bell-function'."
-		  (message mode-line-bell-propertized-string)
-		  (sit-for mode-line-bell-delay)
-		  (message ""))
-
-;;;###autoload
-		(setq ring-bell-function 'mode-line-bell))
-#+END_SRC
-
 ** Magit
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-magit-copy-region-hunk ()
@@ -1658,11 +1261,11 @@ confused and it deletes my buffer. Instead I can execute
 ;; Don't auto-indent when demoting and promoting
 (setq org-adapt-indentation nil)
 
-;; Make C-a go to beginning of heading text, not beginning of line
+;; This would if set to t, make C-a go to beginning of heading text, not beginning of line
 ;; cf.
 ;; https://www.reddit.com/r/emacs/comments/965656/orgmode_how_to_programmatically_move_to_first/
 ;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
-(setq org-special-ctrl-a t)
+(setq org-special-ctrl-a nil)
 
 #+END_SRC
 
@@ -1709,3 +1312,400 @@ to retangle the current file.
 													 ;(plist-get diagnostic :suggestionDiag)
 					 )))))
 #+end_src
+** Python
+#+BEGIN_SRC emacs-lisp
+(setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
+(setq interpreter-mode-alist (cons '("python" . python-mode)
+											  interpreter-mode-alist))
+#+END_SRC
+
+** LaTeX
+*** Mode
+#+BEGIN_SRC emacs-lisp
+(add-to-list (quote auto-mode-alist) (quote ("\\.tex\\'" . latex-mode)))
+#+END_SRC
+*** Templates
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-tcons (x) (cons x x))
+(setq jcreed-completion (mapcar 'jcreed-tcons '("lemma" "corollary" "theorem" "conjecture" "proposition" "question" "definition" "remark" "postulate" "prooftree" "easyrule")))
+(setq jcreed-proof (mapcar (lambda (x) (cons x 1)) '("lemma" "corollary" "theorem")))
+(setq jcreed-math (mapcar (lambda (x) (cons x 1)) '("prooftree")))
+
+(defun jcreed-insert-easy-template ()
+  "Inserts a copy of my easyrule template"
+  (interactive)
+  (insert "\\[\n\\erule\n{}\n{")
+  (let ((pm (point-marker)))
+	 (insert "}\n\\]")
+	 (goto-char pm)))
+
+(defun jcreed-insert-other ()
+  "Inserts a proposition/lemma/corollary/theorem template."
+  (interactive)
+  (let ((env (completing-read "Environment: " jcreed-completion '(lambda (x) t) t)))
+	 (if (equal env "easyrule") (jcreed-insert-easy-template)
+		(if (assoc env jcreed-math)
+			 (insert "\\[\n"))
+		(insert (concat "\\begin{" env "}\n"))
+		(if (assoc env jcreed-math)
+			 (insert "\\[\n\\justifies\n\\]\n\\justifies\n"))
+		(let ((pm (point-marker)))
+		  (insert (concat "\n\\end{" env "}\n"))
+		  (if (assoc env jcreed-proof)
+				(insert "\n\\begin{proof}\n\n\\cqed\n\\end{proof}\n"))
+		  (if (assoc env jcreed-math)
+				(insert "\\]\n"))
+		  (goto-char pm)))
+	 (recenter)))
+
+(add-hook 'latex-mode-hook
+			 '(lambda ()
+				 (define-key tex-mode-map
+					"\C-cz"
+					'jcreed-insert-other)))
+#+END_SRC
+
+*** Lifecycle
+#+BEGIN_SRC emacs-lisp
+(setq tex-dvi-view-command "xdvi.bin")
+
+(setq tex-dvi-view-args '("-s" "5" "-geometry" "1024x600+0+600"))
+
+(defun jcreed-tex-bibtex-file ()
+  "Run BibTeX on the current buffer's file."
+  (interactive)
+  (if (tex-shell-running)
+		(tex-kill-job)
+	 (tex-start-shell))
+  (let* (shell-dirtrack-verbose
+			(source-file (tex-main-file))
+			(x (message (expand-file-name source-file)))
+			(tex-out-file
+			 (tex-append (file-name-nondirectory source-file) ""))
+			(file-dir (file-name-directory (expand-file-name source-file))))
+	 (tex-send-command tex-shell-cd-command file-dir)
+	 (tex-send-command tex-bibtex-command tex-out-file))
+  (tex-display-shell))
+
+(defun jcreed-tex-view ()
+  "Preview the last `.dvi' file made by running TeX under Emacs.
+This means, made using \\[tex-region], \\[tex-buffer] or \\[tex-file].
+The variable `tex-dvi-view-command' specifies the shell command for preview."
+  (interactive)
+  (let ((view-file-name-dvi (tex-append tex-print-file ".dvi"))
+		  test-name)
+	 (if (and (not (equal (current-buffer) tex-last-buffer-texed))
+				 (file-newer-than-file-p
+				  (setq test-name (tex-append (buffer-file-name) ".dvi"))
+				  view-file-name-dvi))
+		  (setq view-file-name-dvi test-name))
+	 (if (not (file-exists-p view-file-name-dvi))
+		  (error "No appropriate `.dvi' file could be found")
+		(progn
+													 ;       (debug)
+		  (apply 'start-process (append '("xdvi" "*xdvi*") (cons tex-dvi-view-command nil)
+												  tex-dvi-view-args (cons view-file-name-dvi nil)))))))
+
+(defvar jcreed-tex-main-buffer nil
+  "Set jcreed-tex-main-buffer to be something to always tex that rather than the current buffer")
+
+(defun jcreed-set-main-buffer ()
+  (interactive) (setq jcreed-tex-main-buffer (current-buffer)))
+
+(defun jcreed-clear-main-buffer ()
+  (interactive) (setq jcreed-tex-main-buffer nil))
+
+(defun jcreed-tex-file ()
+  (interactive)
+  (when jcreed-tex-main-buffer
+	 (set-buffer jcreed-tex-main-buffer))
+  (tex-file)
+  (jcreed-tex-signal))
+
+(defun jcreed-tex-signal ()
+  (interactive)
+  (save-excursion
+	 (let* ((xdvi-proc (get-process "xdvi")))
+		(when xdvi-proc
+		  (let* ((tex-proc (tex-shell-proc))
+					(buf (process-buffer tex-proc))
+					(string
+					 (concat "kill -USR1 " (number-to-string (process-id xdvi-proc)))))
+			 ;; Switch to buffer before checking for subproc output in it.
+			 (set-buffer buf)
+			 (goto-char (process-mark tex-proc))
+			 (insert string)
+			 (comint-send-input))))))
+
+(add-hook 'latex-mode-hook
+			 '(lambda ()
+				 (define-key tex-mode-map "\C-c\C-v" 'jcreed-tex-view)
+				 (define-key tex-mode-map "\C-c\C-d" 'jcreed-tex-bibtex-file)
+				 (define-key tex-mode-map "\C-c\C-f" 'jcreed-tex-file)
+				 (define-key tex-mode-map "\C-cf" 'jcreed-tex-signal)))
+#+END_SRC
+
+*** Make PDFLaTeX default
+#+BEGIN_SRC emacs-lisp
+(add-hook 'latex-mode-hook
+			 '(lambda ()
+				 (setq tex-command "pdflatex")))
+#+END_SRC
+
+** Agda
+*** Mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'agda2-mode-hook
+			 (lambda ()
+				(jcreed-add-agda-keys)
+				(define-key agda2-mode-map "\M-," 'agda2-go-back)
+				(define-key agda2-mode-map "\C-cs" 'jcreed-swap-agda-implicit)
+				(define-key agda2-mode-map "\C-cc" 'jcreed-agda-copy-type)
+				(define-key agda2-mode-map "\C-c\C-c" 'agda2-make-case)))
+#+END_SRC
+
+*** Input Method
+#+BEGIN_SRC emacs-lisp
+(setq jcreed-add-agda-keys-called nil)
+(defun jcreed-add-agda-keys ()
+  (when (not jcreed-add-agda-keys-called)
+	 (require 'agda-input)
+	 (with-temp-buffer
+		(activate-input-method "Agda") ;; the input method has to be triggered for `quail-package-alist' to be non-nil
+		(let ((quail-current-package (assoc "Agda" quail-package-alist)))
+		  (quail-define-rules ((append . t))
+									 ("\\esh" ?ʃ)
+									 ("\\prov" ?⊢)
+									 ("\\lol" ?⊸)
+									 ("\\adj" ?⊣)
+									 ("\\prequiv" ["⊣⊢"]))))
+	 (setq jcreed-add-agda-keys-called t)))
+#+END_SRC
+
+*** Plumbing
+#+BEGIN_SRC emacs-lisp
+(ifat baez
+		(setq agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
+		(load-file (let ((coding-system-for-read 'utf-8))
+						 ;; (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
+						 (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
+						 )))
+
+(ifat chef
+		(add-hook 'notes-mode-hook
+					 (lambda ()
+						(jcreed-add-agda-keys)
+						(set-input-method "Agda")))
+		(add-hook 'latex-mode-hook
+					 '(lambda ()
+						 (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/xelatex"))))
+#+END_SRC
+
+*** Swap Implicit
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-swap-agda-implicit ()
+  (interactive)
+  (save-excursion
+	 (if (re-search-backward "[({]" nil t)
+		  (let ((ms (match-string 0)))
+			 (cond
+			  ((equal ms "(")
+				(replace-match "{")
+				(re-search-forward ")")
+				(replace-match "}"))
+			  ((equal ms "{")
+				(replace-match "(")
+				(re-search-forward "}")
+				(replace-match ")")))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#+END_SRC
+
+*** Copy Type
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-agda-copy-type ()
+  (interactive)
+  (save-excursion
+													 ;    (agda2-goal-type) ;; doesn't seem synchronous enough? boo.
+	 (set-buffer "*Agda information*")
+	 (kill-ring-save (point-min) (point-max))))
+#+END_SRC
+
+* Customization for ~chef~
+~chef~ is a 2015 MacBook Pro which I inherited from my employment at Chef.
+
+** Meta Key
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+      (setq mac-command-modifier 'meta))
+#+END_SRC
+
+** Faces
+#+BEGIN_SRC emacs-lisp
+(ifat chef (custom-theme-set-faces
+				'user
+				'(default ((((class color) (min-colors 88) (background light)) (:foreground "#073642" :background "#fdf6e3"))))
+				'(font-lock-comment-face ((nil (:foreground "#93a1a1"))))
+				'(font-lock-constant-face ((nil (:foreground "#dc322f"))))
+				'(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "#dc322f"))))
+				'(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
+				'(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
+				'(font-lock-string-face ((nil (:foreground "#2aa198"))))
+				'(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
+				'(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
+				'(highlight ((t (:background "#fff"))))
+				'(italic ((((supports :underline t)) (:slant italic))))))
+#+END_SRC
+
+** Whitespace
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		(require 'whitespace)
+		(setq whitespace-style '(face empty tabs lines-tail trailing))
+		(setq-default indent-tabs-mode nil))
+#+END_SRC
+
+** VC hooks
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		(remove-hook 'find-file-hooks 'vc-find-file-hook) ; perf win
+		(setq vc-handled-backends nil)
+
+													 ;      (add-to-list 'load-path "/home/jcreed/.site-lisp/expand-region.el")
+													 ;      (require 'expand-region)
+													 ;      (global-set-key (kbd "C-=") 'er/expand-region)
+		)
+#+END_SRC
+
+** Switch Frames
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		(define-key global-map (kbd "M-`") 'other-frame))
+#+END_SRC
+
+** Columns
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		;; XXX should change this if I ever work on code that actually cares
+		;; about tiny screens again.
+		(setq highlight-80+-columns 80))
+
+#+END_SRC
+
+** Auto-modes
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		(add-to-list 'auto-mode-alist '("\\.js" . js-mode))
+		(add-to-list 'auto-mode-alist '("\\.erl" . erlang-mode)))
+#+END_SRC
+** Bell
+
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		;; adapted from https://github.com/zenspider/elisp/blob/master/rwd-bell.el
+		(setq mode-line-bell-propertized-string
+				(propertize
+				 (concat
+				  (propertize
+					"x"
+					'display
+					`(space :align-to (- right ,(string-width mode-line-bell-string))))
+				  mode-line-bell-string)
+				 'face '(:background "black" :foreground "red")))
+
+;;;###autoload
+		(defun mode-line-bell ()
+		  "Briefly display a highlighted message in the mode-line.
+The string displayed is the value of `mode-line-bell-string',
+with a red background; the background highlighting extends to the
+right margin.  The string is displayed for `mode-line-bell-delay'
+seconds.
+This function is intended to be used as a value of `ring-bell-function'."
+		  (message mode-line-bell-propertized-string)
+		  (sit-for mode-line-bell-delay)
+		  (message ""))
+
+;;;###autoload
+		(setq ring-bell-function 'mode-line-bell))
+#+END_SRC
+** Language Config
+*** Agda
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+
+		(setq agda-path "/Users/jreed/.cabal/bin/")
+		(load-file (let ((coding-system-for-read 'utf-8))
+						 (shell-command-to-string (concat agda-path "agda-mode locate"))))
+
+		;; (setq agda2-include-dirs '("."  "/Users/jreed/.agda/HoTT-Agda/core"))
+		(setq agda2-program-name (concat agda-path "agda"))
+
+		;; This is so we're sure we're getting Primitive.agda from the version-controlled dev dir.
+													 ;      (setenv "Agda_datadir" "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0")
+
+		(add-hook 'haskell-mode-hook
+					 '(lambda ()
+						 (define-key haskell-mode-map "\M-." 'jcreed-find-haskell-tag))))
+#+END_SRC
+*** Go
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		(add-hook 'before-save-hook #'gofmt-before-save))
+#+END_SRC
+
+*** Twelf
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		(setq twelf-root "/Applications/Twelf/")
+		(load (concat twelf-root "emacs/twelf-init.el")))
+#+END_SRC
+
+*** Rust
+#+BEGIN_SRC emacs-lisp
+(ifat chef
+		(setenv "PATH" (concat (getenv "PATH") ":/Users/jreed/.cargo/bin"))
+		(setq exec-path (append exec-path '("/Users/jreed/.cargo/bin")))
+		(setq rust-format-on-save t)
+		)
+#+END_SRC
+
+* Customization for ~baez~
+~baez~ is my current desktop machine, running CentOS.
+** Faces
+#+BEGIN_SRC emacs-lisp
+(ifat baez
+		(custom-theme-set-faces
+		 'user
+		 '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "cbp" :family "codon"))))
+		 '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Firebrick" :slant italic))))
+		 '(font-lock-constant-face ((t (:foreground "cyan3"))))
+		 '(font-lock-doc-face ((t (:inherit font-lock-string-face :foreground "firebrick"))))
+		 '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "DarkGreen"))))
+		 '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
+		 '(italic ((((supports :underline t)) (:slant italic :family "codon"))))
+		 '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
+		 '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
+		 '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
+		 '(rainbow-delimiters-depth-4-face ((t (:foreground "#d33682"))))
+		 '(rainbow-delimiters-depth-5-face ((t (:foreground "#6c71c4"))))
+		 '(rainbow-delimiters-depth-6-face ((t (:foreground "gray40"))))
+		 '(region ((t (:background "#aff"))))
+		 '(tex-verbatim ((t (:background "gray90"))))
+		 '(trailing-whitespace ((t (:background "#ffbfbf"))))
+		 '(twelf-font-decl-face ((t (:stipple nil :background "white" :foreground "green4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 96 :width normal :foundry "cbp" :family "Codon"))) t)
+		 '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant italic :weight normal :height 116 :width normal :family "cbp-codon"))) t)
+		 '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold))))))
+#+END_SRC
+** Chrome
+#+BEGIN_SRC emacs-lisp
+(ifat baez
+		(setq browse-url-browser-function 'browse-url-generic
+				browse-url-generic-program "google-chrome"))
+#+END_SRC
+** Twelf
+#+BEGIN_SRC emacs-lisp
+(ifat baez
+		(setq twelf-root "~/tmp/twelf/")
+		(load (concat twelf-root "emacs/twelf-init.el"))
+		)
+#+END_SRC
