@@ -469,12 +469,13 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 				 (setq sml-compile-commands-alist '(("CM.make \"sources.cm\"" . "sources.cm")))))
 #+END_SRC
 
+** Enable recase region
 #+BEGIN_SRC emacs-lisp
-
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 #+END_SRC
 
+** Customization around saving whitespace
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-save-whitespace ()
   (interactive)
@@ -488,6 +489,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (setq require-final-newline t))
 #+END_SRC
 
+** Notes Management
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-postprocess-path (path)
   (cond ((string-match "/Users/jreed/tiros-server/\\(.*\\)" path)
@@ -515,6 +517,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (define-key global-map "\M-p" 'jcreed-copy-path)
 #+END_SRC
 
+** NaNoWriMo
 #+BEGIN_SRC emacs-lisp
 (defun nano-data ()
   (set-buffer (find-file-noselect "wordcount-history"))
@@ -536,6 +539,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 	 (remove-hook 'after-save-hook 'nano-data)))
 #+END_SRC
 
+** Mousewheel
 #+BEGIN_SRC emacs-lisp
 (defun sd-mousewheel-scroll-up (event)
   "Scroll window under mouse up by two lines."
@@ -561,6 +565,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
 #+END_SRC
 
+** General utilities
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-match-paren (arg)
   "Go to the matching paren if on a paren."
@@ -572,6 +577,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (global-set-key "\M-)" 'jcreed-match-paren)
 #+END_SRC
 
+** General Interface Customization
 #+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
 (when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -591,11 +597,13 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 ;;;; experimenting with making it more common.
 #+END_SRC
 
+** Enable narrowing features
 #+BEGIN_SRC emacs-lisp
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
+** Timezones & Misc Config Graveyard
 #+BEGIN_SRC emacs-lisp
 													 ;(require 'browse-kill-ring)
 													 ;(browse-kill-ring-default-keybindings)
@@ -611,6 +619,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 													 ;(setq-default indent-tabs-mode nil)
 #+END_SRC
 
+** Paredit & Other LISP
 #+BEGIN_SRC emacs-lisp
 
 (autoload 'paredit-mode "paredit"
@@ -639,6 +648,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 				 (define-key paredit-mode-map (kbd "M-k") 'jcreed-kill-sexp-tail)))
 #+END_SRC
 
+** Comint Mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'comint-mode-hook
 			 '(lambda ()
@@ -647,21 +657,29 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 					'mouse-yank-primary)))
 #+END_SRC
 
+** Graveyard
 #+BEGIN_SRC emacs-lisp
 													 ; (setq mouse-yank-at-point t)
 #+END_SRC
 
+** Rainbow Mode
 #+BEGIN_SRC emacs-lisp
 (autoload 'rainbow-mode "rainbow-mode" "Colorizes stuff." t)
+#+END_SRC
+
+** Forth
+#+BEGIN_SRC emacs-lisp
 (autoload 'forth-mode "gforth" "Colorizes stuff." t)
 #+END_SRC
 
+** Graveyard
 #+BEGIN_SRC emacs-lisp
 													 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
 													 ;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
 													 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 #+END_SRC
 
+** LISP
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.se$" . emacs-lisp-mode))
 (add-hook 'emacs-lisp-mode-hook '(lambda () (paredit-mode)))
@@ -671,36 +689,44 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (define-key global-map (kbd "C-k") 'kill-line)
 #+END_SRC
 
+** Terminal
 #+BEGIN_SRC emacs-lisp
 (setq term-term-name "vt100")
 #+END_SRC
 
+** Rust
 #+BEGIN_SRC emacs-lisp
 (autoload 'rust-mode "rust-mode" "Start rust-mode" t)
 (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
 #+END_SRC
 
+** LISP
 #+BEGIN_SRC emacs-lisp
-
 (defun eval-and-replace (value)
   "Evaluate the sexp at point and replace it with its value"
   (interactive (list (eval-last-sexp nil)))
   (kill-sexp -1)
   (insert (format "%S" value)))
+#+END_SRC
 
+** X Clipboard
+#+BEGIN_SRC emacs-lisp
 (setq x-select-enable-primary t)
 (setq x-select-enable-clipboard t)
 #+END_SRC
 
+** Uniquify
 #+BEGIN_SRC emacs-lisp
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
 #+END_SRC
 
+** Delete trailing whitespace
 #+BEGIN_SRC emacs-lisp
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		(require 'whitespace)
@@ -708,10 +734,12 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		(setq-default indent-tabs-mode nil))
 #+END_SRC
 
+** Indentation for C
 #+BEGIN_SRC emacs-lisp
 (setq c-basic-offset 2)
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		(remove-hook 'find-file-hooks 'vc-find-file-hook) ; perf win
@@ -723,6 +751,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		)
 #+END_SRC
 
+** General purpose utilities
 #+BEGIN_SRC emacs-lisp
 
 (defun jcreed-inc (start end)
@@ -737,12 +766,14 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+END_SRC
 
+** SML
 #+BEGIN_SRC emacs-lisp
 
 (add-to-list 'load-path "/home/jcreed/.site-lisp/sml-mode-4.0")
 (autoload 'sml-mode "sml-mode" "Sml editing mode." t)
 #+END_SRC
 
+** Lua
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "/home/jcreed/.site-lisp/lua-mode")
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -751,10 +782,12 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+END_SRC
 
+** Disable some ~vc-mode~ feature I don't want
 #+BEGIN_SRC emacs-lisp
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
 #+END_SRC
 
+** Notes Management
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-qna-q ()
   (interactive)
@@ -764,9 +797,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (defun jcreed-qna-a ()
   (interactive)
   (insert "Q: \nA: "))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
 (define-key global-map "\C-c=" 'jcreed-date)
 (ifat chef
 		(define-key global-map "\C-cc" 'hs-toggle-hiding)
@@ -782,12 +813,14 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 													 ;(define-key global-map "\C-c\C-c" 'jcreed-class-to-path)
 #+END_SRC
 
+** Perl
 #+BEGIN_SRC emacs-lisp
 (add-hook 'cperl-mode-hook
 			 (lambda ()
 				(define-key cperl-mode-map "\t" 'indent-for-tab-command)))
 #+END_SRC
 
+** Display Date
 #+BEGIN_SRC emacs-lisp
 (setq display-time-day-and-date t
 		display-time-default-load-average nil
@@ -796,12 +829,14 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (display-time)
 #+END_SRC
 
+** Customization for ~baez~
 #+BEGIN_SRC emacs-lisp
 (ifat baez
 		(setq browse-url-browser-function 'browse-url-generic
 				browse-url-generic-program "google-chrome"))
 #+END_SRC
 
+** Notes Management
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-browse-repo-path (repo path)
   (cond
@@ -864,6 +899,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		"")))
 #+END_SRC
 
+** Find file other window
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-find-file-other-window (filename)
   (let ((value (find-file-noselect filename))
@@ -872,6 +908,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 									. ((inhibit-same-window . t))))))
 #+END_SRC
 
+** Notes Management
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-open-file-at-point (pos)
   (interactive "d")
@@ -902,26 +939,31 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (message (thing-at-point 'filename)))
 #+END_SRC
 
+** General Utilities
 #+BEGIN_SRC emacs-lisp
 (defun plaintext (b e)
   (interactive "r")
   (set-text-properties b e nil))
 #+END_SRC
 
+** Graveyard
 #+BEGIN_SRC emacs-lisp
 													 ; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
 #+END_SRC
 
+** General Keybindings
 #+BEGIN_SRC emacs-lisp
 (define-key global-map "\M-i" '(lambda () (interactive) (switch-to-buffer "IDEAS")))
 (define-key global-map "\C-c\M-%" 'query-replace-regexp)
 (define-key global-map "\M-r" 'revert-buffer)
 #+END_SRC
 
+** JS
 #+BEGIN_SRC emacs-lisp
 (setenv "NODE_NO_READLINE" "1")
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		(setenv "PATH" (concat (getenv "PATH") ":/Users/jreed/.cargo/bin"))
@@ -930,6 +972,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		)
 #+END_SRC
 
+** Notes management
 #+BEGIN_SRC emacs-lisp
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
@@ -987,12 +1030,11 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		  ("\\b[a-z]+//\\(?:\\w\\|[-_/.]\\)+" . 'jcreed-path-face)
 		  ("\\b[a-z]+:\\[\\(?:[^]]\\)+\\]" . 'jcreed-path2-face)
 		  ("\\?\\?\\?" . 'jcreed-bad-face)))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
 (setq auto-mode-alist (cons '("/\\(journal.txt\\)$" . journal-mode) auto-mode-alist))
 #+END_SRC
 
+** Journal management
 #+BEGIN_SRC emacs-lisp
 (define-derived-mode journal-mode fundamental-mode
   (setq font-lock-defaults '(journal-mode-highlights))
