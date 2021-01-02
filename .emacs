@@ -535,6 +535,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 ; (setq mouse-yank-at-point t)
 
 (autoload 'rainbow-mode "rainbow-mode" "Colorizes stuff." t)
+
 (autoload 'forth-mode "gforth" "Colorizes stuff." t)
 
 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
@@ -953,7 +954,6 @@ displayed in the mode-line.")
 (autoload 'coffee-mode "coffee-mode" "Coffeescript editing mode." t)
 
 ;; web-mode config
-
 (ifat baez (require 'web-mode))
 
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
@@ -1016,8 +1016,8 @@ displayed in the mode-line.")
 		(load (concat twelf-root "emacs/twelf-init.el")))
 
 (setq default-process-coding-system '(utf-8 . utf-8))
-(define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
 
+(define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
 
 (add-to-list (quote auto-mode-alist) (quote ("\\.scala\\'" . scala-mode)))
 

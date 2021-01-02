@@ -1052,6 +1052,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 		  ("\\?" . 'jcreed-bad-face)))
 #+END_SRC
 
+** Urlencode region
 #+BEGIN_SRC emacs-lisp
 ;;; url encode and decode regions
 
@@ -1070,6 +1071,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (func-region start end #'url-unhex-string))
 #+END_SRC
 
+** Tmp dirs and backups
 #+BEGIN_SRC emacs-lisp
 
 (defconst emacs-tmp-dir (format "%s/%s%s/" temporary-file-directory "emacs" (user-uid)))
@@ -1085,6 +1087,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		;; XXX should change this if I ever work on code that actually cares
@@ -1093,9 +1096,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+END_SRC
 
+** NaNoWriMo
 #+BEGIN_SRC emacs-lisp
-
-
 (setq mode-line-position (assq-delete-all 'wc-mode mode-line-position))
 (setq mode-line-position
 		(append
@@ -1108,9 +1110,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 										(count-words-region (point-min) (point-max))))))
 			 nil))))
 
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
 (define-minor-mode wc-mode
   "Toggle word-count mode.
 With no argument, this command toggles the mode.
@@ -1122,6 +1121,7 @@ displayed in the mode-line.")
 
 #+END_SRC
 
+** Some sort of recoloring
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-recolor-fast ()
   (interactive)
@@ -1148,7 +1148,9 @@ displayed in the mode-line.")
 													 ;(global-set-key (kbd "M-r") 'jcreed-recolor)
 #+END_SRC
 
+** Packaging
 
+I think this is redundant with what I put in ~init.el~.
 #+BEGIN_SRC emacs-lisp
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 								 ("melpa" . "https://melpa.org/packages/")))
@@ -1156,17 +1158,19 @@ displayed in the mode-line.")
 (package-initialize)
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		(add-to-list 'auto-mode-alist '("\\.js" . js-mode))
 		(add-to-list 'auto-mode-alist '("\\.erl" . erlang-mode)))
 #+END_SRC
 
+** Exec-path
 #+BEGIN_SRC emacs-lisp
-
 (setq exec-path (append exec-path '("/usr/local/bin")))
 #+END_SRC
 
+** Rainbow mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook
 			 (lambda ()
@@ -1180,12 +1184,14 @@ displayed in the mode-line.")
 				))
 #+END_SRC
 
+** Notes management
 #+BEGIN_SRC emacs-lisp
 (setq paragraph-start "[A-Z]+:\\|\f\\|[ \t]*$")
 (setq paragraph-separate "\\$\\|[a-z]+//\\|https?:\\|[A-Z]+:$\\|: \\|<<<$\\|>>>$\\|[ \t\f]*$")
 (setq sentence-end-double-space nil)
 #+END_SRC
 
+** General keybindings
 #+BEGIN_SRC emacs-lisp
 (define-key global-map "\M-q" 'jcreed-fill-paragraph)
 (defun jcreed-fill-paragraph ()
@@ -1194,6 +1200,7 @@ displayed in the mode-line.")
 	 (fill-paragraph)))
 #+END_SRC
 
+** Buffer list mode
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-sort-buffers-by-file ()
   (interactive)
@@ -1206,19 +1213,26 @@ displayed in the mode-line.")
 
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		(define-key global-map (kbd "M-`") 'other-frame))
-
-(require 'dired)
-(global-set-key (kbd "C-x C-j") #'dired-jump)
-
-(autoload 'coffee-mode "coffee-mode" "Coffeescript editing mode." t)
-
-;; web-mode config
 #+END_SRC
 
+** Dired
 #+BEGIN_SRC emacs-lisp
+(require 'dired)
+(global-set-key (kbd "C-x C-j") #'dired-jump)
+#+END_SRC
+
+** Coffeescript
+#+BEGIN_SRC emacs-lisp
+(autoload 'coffee-mode "coffee-mode" "Coffeescript editing mode." t)
+#+END_SRC
+
+** Web-mode
+#+BEGIN_SRC emacs-lisp
+;; web-mode config
 (ifat baez (require 'web-mode))
 
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
@@ -1237,6 +1251,7 @@ displayed in the mode-line.")
 
 #+END_SRC
 
+** Indentation
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-setup-indent (n)
   ;; web development
@@ -1248,11 +1263,15 @@ displayed in the mode-line.")
   (setq js-indent-level n))
 
 (jcreed-setup-indent 2)
+#+END_SRC
 
+** Customization for ~chef~
+#+BEGIN_SRC emacs-lisp
 (ifat chef
 		(add-hook 'before-save-hook #'gofmt-before-save))
 #+END_SRC
 
+** General utilities
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-uncamel (b e)
   (interactive "r")
@@ -1266,6 +1285,7 @@ displayed in the mode-line.")
 (global-set-key [(control shift tab)] (lambda () (interactive) (other-window -1)))
 #+END_SRC
 
+** General utilities
 #+BEGIN_SRC emacs-lisp
 (defun find-first-non-ascii-char ()
   "Find the first non-ascii character from point onwards."
@@ -1284,25 +1304,36 @@ displayed in the mode-line.")
 		(message "No non-ascii characters."))))
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		(setq twelf-root "/Applications/Twelf/")
 		(load (concat twelf-root "emacs/twelf-init.el")))
+#+END_SRC
 
+** Unicode
+#+BEGIN_SRC emacs-lisp
 (setq default-process-coding-system '(utf-8 . utf-8))
+#+END_SRC
+
+** General Keybindings
+#+BEGIN_SRC emacs-lisp
 (define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
+#+END_SRC
 
-
+** Scala
+#+BEGIN_SRC emacs-lisp
 (add-to-list (quote auto-mode-alist) (quote ("\\.scala\\'" . scala-mode)))
 #+END_SRC
 
+** Unicode
 #+BEGIN_SRC emacs-lisp
 (ifat baez
 		(require 'unicode-fonts)
 		(unicode-fonts-setup))
-
 #+END_SRC
 
+** Agda
 #+BEGIN_SRC emacs-lisp
 (add-hook 'agda2-mode-hook
 			 (lambda ()
@@ -1313,6 +1344,7 @@ displayed in the mode-line.")
 				(define-key agda2-mode-map "\C-c\C-c" 'agda2-make-case)))
 #+END_SRC
 
+** Python
 #+BEGIN_SRC emacs-lisp
 (global-eldoc-mode -1)
 (defun jcreed-python-mode-hook ()
@@ -1323,6 +1355,7 @@ displayed in the mode-line.")
 (add-hook 'python-mode-hook #'jcreed-python-mode-hook)
 #+END_SRC
 
+** Agda
 #+BEGIN_SRC emacs-lisp
 (setq jcreed-add-agda-keys-called nil)
 (defun jcreed-add-agda-keys ()
@@ -1339,7 +1372,7 @@ displayed in the mode-line.")
 									 ("\\prequiv" ["⊣⊢"]))))
 	 (setq jcreed-add-agda-keys-called t)))
 #+END_SRC
-
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 
@@ -1358,6 +1391,7 @@ displayed in the mode-line.")
 						 (define-key haskell-mode-map "\M-." 'jcreed-find-haskell-tag))))
 #+END_SRC
 
+** Agda
 #+BEGIN_SRC emacs-lisp
 (ifat baez
 		(setq agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
@@ -1365,9 +1399,7 @@ displayed in the mode-line.")
 						 ;; (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
 						 (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
 						 )))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
 (ifat chef
 		(add-hook 'notes-mode-hook
 					 (lambda ()
@@ -1378,12 +1410,14 @@ displayed in the mode-line.")
 						 (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/xelatex"))))
 #+END_SRC
 
+** LaTeX
 #+BEGIN_SRC emacs-lisp
 (add-hook 'latex-mode-hook
 			 '(lambda ()
 				 (setq tex-command "pdflatex")))
 #+END_SRC
 
+** Agda
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-swap-agda-implicit ()
   (interactive)
@@ -1403,6 +1437,7 @@ displayed in the mode-line.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #+END_SRC
 
+** Buffer List
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-kill-prefix (prefix)
   "Use when in the *Buffer List* buffer menu.
@@ -1439,6 +1474,7 @@ All matching buffers will be marked for deletion."
 
 #+END_SRC
 
+** Rust
 #+BEGIN_SRC emacs-lisp
 (add-hook 'rust-mode-hook
 			 '(lambda ()
@@ -1458,6 +1494,7 @@ All matching buffers will be marked for deletion."
 (add-hook 'racer-mode-hook #'eldoc-mode)
 #+END_SRC
 
+** Agda
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-agda-copy-type ()
   (interactive)
@@ -1467,6 +1504,7 @@ All matching buffers will be marked for deletion."
 	 (kill-ring-save (point-min) (point-max))))
 #+END_SRC
 
+** Typescript
 #+BEGIN_SRC emacs-lisp
 (defun setup-tide-mode ()
   (interactive)
@@ -1524,14 +1562,17 @@ All matching buffers will be marked for deletion."
 													  (display-buffer (tide-insert-references references)))))))
 #+END_SRC
 
+** Cursor color
 #+BEGIN_SRC emacs-lisp
 (set-cursor-color "#700")
 #+END_SRC
 
+** Magit
 #+BEGIN_SRC emacs-lisp
 (define-key global-map "\C-cm" 'magit-status)
 #+END_SRC
 
+** Bell
 #+BEGIN_SRC emacs-lisp
 (defcustom mode-line-bell-string "" ; "♪"
   "Message displayed in mode-line by `mode-line-bell' function."
@@ -1545,6 +1586,7 @@ All matching buffers will be marked for deletion."
 (defvar mode-line-bell-propertized-string nil)
 #+END_SRC
 
+** Customization for ~chef~
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		;; adapted from https://github.com/zenspider/elisp/blob/master/rwd-bell.el
@@ -1574,6 +1616,7 @@ This function is intended to be used as a value of `ring-bell-function'."
 		(setq ring-bell-function 'mode-line-bell))
 #+END_SRC
 
+** Magit
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-magit-copy-region-hunk ()
   (interactive)
