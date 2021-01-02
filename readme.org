@@ -30,7 +30,7 @@ confused and it deletes my buffer. Instead I can execute
 to retangle the current file.
 
 * Configuration
-
+** Preliminaries
 #+begin_src emacs-lisp
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
@@ -40,13 +40,14 @@ to retangle the current file.
 (load "location.el")
 #+end_src
 
-
-
-
-#+begin_src emacs-lisp
+** Mac Things
+#+BEGIN_SRC emacs-lisp
 (ifat chef
       (setq mac-command-modifier 'meta))
+#+END_SRC
 
+** Custom Faces
+#+BEGIN_SRC emacs-lisp
 (defface jcreed-header-face nil "Jcreed Header Face")
 (defface jcreed-minor-header-face nil "Jcreed Minor Header Face")
 (defface jcreed-question-face nil "Jcreed Question Face")
@@ -77,7 +78,10 @@ to retangle the current file.
 (setq solarized-blue      "#268bd2")
 (setq solarized-cyan      "#2aa198")
 (setq solarized-green     "#859900")
+#+END_SRC
 
+** Misc
+#+begin_src emacs-lisp
 (blink-cursor-mode 0)
 
 (add-to-list (quote auto-mode-alist) (quote ("\\.tex\\'" . latex-mode)))
