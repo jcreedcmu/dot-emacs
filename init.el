@@ -20,9 +20,10 @@
 (require 'ob-tangle)
 
 (defun reload-config ()
-  "Reload the literate config from ~/.config/emacs/readme.org."
+  "Reload the literate config config."
   (interactive)
-  (org-babel-load-file "~/.config/emacs/emacs-config.org"))
+  (let ((vc-follow-symlinks t))
+      (org-babel-load-file "~/.config/emacs/emacs-config.org")))
 
 (setq max-lisp-eval-depth 2000)
 

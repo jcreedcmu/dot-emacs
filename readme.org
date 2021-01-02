@@ -11,6 +11,24 @@ attempting to imitate its cleanliness.
 *Current status*: I have just dumped the entirety of my existing config
 into a code block.
 
+* Meta-Tools
+
+I tried executing
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(save-excursion (org-babel-tangle-file "~/.config/emacs/emacs-config.org" "~/.config/emacs/emacs-config.el"))
+#+END_SRC
+
+but seemingly since ~~/.config/emacs/emacs-config.org~ is a symlink to
+~/home/jcreed/dot-emacs/readme.org~ this makes ~org-mode~ very
+confused and it deletes my buffer. Instead I can execute
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(org-babel-tangle-file "/home/jcreed/dot-emacs/readme.org" "~/.config/emacs/emacs-config.el")
+#+END_SRC
+
+to retangle the current file.
+
 * Configuration
 
 #+begin_src emacs-lisp
@@ -20,7 +38,12 @@ into a code block.
 (defmacro ifat (loc &rest body) (if (equal location loc) (cons 'progn body) nil))
 
 (load "location.el")
+#+end_src
 
+
+
+
+#+begin_src emacs-lisp
 (ifat chef
       (setq mac-command-modifier 'meta))
 
