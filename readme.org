@@ -19,7 +19,7 @@ I tried executing
 (save-excursion (org-babel-tangle-file "~/.config/emacs/emacs-config.org" "~/.config/emacs/emacs-config.el"))
 #+END_SRC
 
-but seemingly since ~\~/.config/emacs/emacs-config.org~ is a symlink to
+but seemingly since =~/.config/emacs/emacs-config.org= is a symlink to
 ~/home/jcreed/dot-emacs/readme.org~ this makes ~org-mode~ very
 confused and it deletes my buffer. Instead I can execute
 
