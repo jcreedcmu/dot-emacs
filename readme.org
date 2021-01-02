@@ -9,7 +9,7 @@ was inspired by [[https://github.com/patrickt/emacs][patrickt's org-mode literat
 attempting to imitate its cleanliness.
 
 *Current status*: I have just dumped the entirety of my existing config
-into a code block.
+into sections but I haven't coalesced them sensibly yet.
 
 * Preliminaries
 #+begin_src emacs-lisp

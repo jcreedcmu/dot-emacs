@@ -17,13 +17,30 @@
   (package-install 'use-package))
 
 (require 'org-install)
-(require 'ob-tangle)
+
+(defvar init-dir
+  (if load-file-name
+       (file-name-directory (file-truename load-file-name))
+    default-directory))
+
+(defun tangle-config ()
+  "Convert orgfile to elisp with a perl script because org-tangle
+   is very slow. (>2000ms)"
+  (interactive)
+  (let ((source-file "~/.config/emacs/emacs-config.org")
+		  (target-file "~/.config/emacs/emacs-config.el"))
+	 (message (format "Running in directory %s..." init-dir))
+	 (shell-command (format "%s <%s >%s"
+				(expand-file-name "tangle.pl" init-dir)
+				source-file
+				target-file))
+	 (message (format "Wrote file %s" target-file))
+	 target-file))
 
 (defun reload-config ()
-  "Reload the literate config config."
+  "Reload configuration"
   (interactive)
-  (let ((vc-follow-symlinks t))
-      (org-babel-load-file "~/.config/emacs/emacs-config.org")))
+  (load-file (tangle-config)))
 
 (setq max-lisp-eval-depth 2000)
 
