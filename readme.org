@@ -11,32 +11,7 @@ attempting to imitate its cleanliness.
 *Current status*: I have just dumped the entirety of my existing config
 into a code block.
 
-* Things to manage Org Mode itself
-
-I tried executing
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(save-excursion (org-babel-tangle-file "~/.config/emacs/emacs-config.org" "~/.config/emacs/emacs-config.el"))
-#+END_SRC
-
-but seemingly since =~/.config/emacs/emacs-config.org= is a symlink to
-~/home/jcreed/dot-emacs/readme.org~ this makes ~org-mode~ very
-confused and it deletes my buffer. Instead I can execute
-
-#+BEGIN_SRC emacs-lisp
-;; Don't indent source code blocks additionally
-(setq org-edit-src-content-indentation 0)
-;; Convenience for retangling
-(defun jcreed-retangle ()
-  (interactive)
-  (org-babel-tangle-file "/home/jcreed/dot-emacs/readme.org" "~/.config/emacs/emacs-config.el"))
-(define-key global-map "\C-x\C-r" 'jcreed-retangle)
-#+END_SRC
-
-to retangle the current file.
-
-* Configuration
-** Preliminaries
+* Preliminaries
 #+begin_src emacs-lisp
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
@@ -46,13 +21,13 @@ to retangle the current file.
 (load "location.el")
 #+end_src
 
-** Mac Things
+* Mac Things
 #+BEGIN_SRC emacs-lisp
 (ifat chef
       (setq mac-command-modifier 'meta))
 #+END_SRC
 
-** Custom Faces
+* Custom Faces
 #+BEGIN_SRC emacs-lisp
 (defface jcreed-header-face nil "Jcreed Header Face")
 (defface jcreed-minor-header-face nil "Jcreed Minor Header Face")
@@ -86,14 +61,14 @@ to retangle the current file.
 (setq solarized-green     "#859900")
 #+END_SRC
 
-** Generic Programming Tools
+* Generic Programming Tools
 #+begin_src emacs-lisp
 (defun compile-in-dir (dir command)
   (interactive "Compile in directory: \nsCommand: ")
   (let ((default-directory dir))
 	 (compile command)))
 #+end_src
-** Misc
+* Misc
 #+begin_src emacs-lisp
 (blink-cursor-mode 0)
 #+END_SRC
@@ -1107,10 +1082,6 @@ displayed in the mode-line.")
 													 ;(global-set-key (kbd "M-r") 'jcreed-recolor)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(setq verilog-auto-newline nil)
-(setq verilog-auto-indent-on-newline nil)
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
@@ -1547,10 +1518,48 @@ This function is intended to be used as a value of `ring-bell-function'."
 												 (region-beginning) (region-end))))
 								  (kill-new (replace-regexp-in-string "^[ \\+\\-]" "" text))))))
 
+#+end_src
+
+* Tool Configuration
+** Magit
+** Org
+*** Retangling
+I tried executing
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(save-excursion (org-babel-tangle-file "~/.config/emacs/emacs-config.org" "~/.config/emacs/emacs-config.el"))
+#+END_SRC
+
+but seemingly since =~/.config/emacs/emacs-config.org= is a symlink to
+~/home/jcreed/dot-emacs/readme.org~ this makes ~org-mode~ very
+confused and it deletes my buffer. Instead I can execute
+
+#+BEGIN_SRC emacs-lisp
+;; Don't indent source code blocks additionally
+(setq org-edit-src-content-indentation 0)
+;; Convenience for retangling
+(defun jcreed-retangle ()
+  (interactive)
+  (org-babel-tangle-file "/home/jcreed/dot-emacs/readme.org" "~/.config/emacs/emacs-config.el"))
+(define-key global-map "\C-x\C-r" 'jcreed-retangle)
+#+END_SRC
+*** Other
+#+BEGIN_SRC emacs-lisp
+
+;; Don't auto-indent when demoting and promoting
+(setq org-adapt-indentation nil)
+
+;; Make C-a go to beginning of heading text, not beginning of line
+;; cf.
 ;; https://www.reddit.com/r/emacs/comments/965656/orgmode_how_to_programmatically_move_to_first/
 ;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
 (setq org-special-ctrl-a t)
-#+end_src
+
+#+END_SRC
+
+to retangle the current file.
+
+* Language Configuration
 ** Verilog
 #+begin_src emacs-lisp
 
@@ -1561,7 +1570,11 @@ This function is intended to be used as a value of `ring-bell-function'."
 (add-hook 'verilog-mode-hook #'setup-verilog-mode)
 (defun setup-verilog-mode ()
  (define-key verilog-mode-map "\C-c\C-f" 'jcreed-compile-verilog))
-#+end_src
+
+(setq verilog-auto-newline nil)
+(setq verilog-auto-indent-on-newline nil)
+#+END_SRC
+
 ** Typescript
 #+begin_src emacs-lisp
 

@@ -1,11 +1,3 @@
-;; Don't indent source code blocks additionally
-(setq org-edit-src-content-indentation 0)
-;; Convenience for retangling
-(defun jcreed-retangle ()
-  (interactive)
-  (org-babel-tangle-file "/home/jcreed/dot-emacs/readme.org" "~/.config/emacs/emacs-config.el"))
-(define-key global-map "\C-x\C-r" 'jcreed-retangle)
-
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
 (setq unicode-fonts-block-font-mapping ())
@@ -73,7 +65,6 @@
 	 (pop-to-buffer (Buffer-menu-buffer t) t nil)
 	 (select-window w)
 	 ))
-
 
 (autoload 'python-mode "python-mode" "Python editing mode." t)
 (autoload 'ruby-mode "ruby-mode" "Ruby editing mode." t)
@@ -201,7 +192,7 @@
 				'(highlight ((t (:background "#fff"))))
 				'(italic ((((supports :underline t)) (:slant italic))))))
 
-													 ; from http://ck.kennt-wayne.de/2013/may/emacs:-jump-to-matching-paren-beginning-of-block
+; from http://ck.kennt-wayne.de/2013/may/emacs:-jump-to-matching-paren-beginning-of-block
 (defun goto-matching-ruby-block ()
   (interactive)
   (cond
@@ -369,7 +360,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (setq interpreter-mode-alist (cons '("python" . python-mode)
 											  interpreter-mode-alist))
 
-
 (setq file-coding-system-alist
 		(cons '(".*\\.eo" . iso-8859-3) file-coding-system-alist))
 
@@ -387,7 +377,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 			 '(lambda ()
 				 (setq sml-compile-command "CM.make \"sources.cm\"")
 				 (setq sml-compile-commands-alist '(("CM.make \"sources.cm\"" . "sources.cm")))))
-
 
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -499,7 +488,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 
-													 ;(require 'browse-kill-ring)
+;(require 'browse-kill-ring)
 													 ;(browse-kill-ring-default-keybindings)
 
 (set-time-zone-rule "EST")
@@ -511,7 +500,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (setq line-move-visual nil)
 
 													 ;(setq-default indent-tabs-mode nil)
-
 
 (autoload 'paredit-mode "paredit"
   "Turn on pseudo-structural editing of Lisp code."
@@ -544,14 +532,14 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 					[mouse-2]
 					'mouse-yank-primary)))
 
-													 ; (setq mouse-yank-at-point t)
+; (setq mouse-yank-at-point t)
 
 (autoload 'rainbow-mode "rainbow-mode" "Colorizes stuff." t)
 (autoload 'forth-mode "gforth" "Colorizes stuff." t)
 
-													 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-													 ;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
-													 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
+;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 
 (add-to-list 'auto-mode-alist '("\\.se$" . emacs-lisp-mode))
 (add-hook 'emacs-lisp-mode-hook '(lambda () (paredit-mode)))
@@ -565,7 +553,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (autoload 'rust-mode "rust-mode" "Start rust-mode" t)
 (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
 
-
 (defun eval-and-replace (value)
   "Evaluate the sexp at point and replace it with its value"
   (interactive (list (eval-last-sexp nil)))
@@ -577,6 +564,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
+
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (ifat chef
@@ -595,7 +583,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 													 ;      (global-set-key (kbd "C-=") 'er/expand-region)
 		)
 
-
 (defun jcreed-inc (start end)
   (interactive "r")
   (let ((n (string-to-number (buffer-substring start end))))
@@ -606,8 +593,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (interactive)
   (insert (format-time-string "=== %Y.%m.%d\n\n")))
 
-
-
 (add-to-list 'load-path "/home/jcreed/.site-lisp/sml-mode-4.0")
 (autoload 'sml-mode "sml-mode" "Sml editing mode." t)
 
@@ -615,7 +600,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-
 
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
 
@@ -754,7 +738,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (interactive "r")
   (set-text-properties b e nil))
 
-													 ; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
+; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
 
 (define-key global-map "\M-i" '(lambda () (interactive) (switch-to-buffer "IDEAS")))
 (define-key global-map "\C-c\M-%" 'query-replace-regexp)
@@ -858,7 +842,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (interactive "r")
   (func-region start end #'url-unhex-string))
 
-
 (defconst emacs-tmp-dir (format "%s/%s%s/" temporary-file-directory "emacs" (user-uid)))
 
 ;;; make backup files in a single place, not polluting various directories
@@ -870,14 +853,10 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (setq auto-save-list-file-prefix
 		emacs-tmp-dir)
 
-
 (ifat chef
 		;; XXX should change this if I ever work on code that actually cares
 		;; about tiny screens again.
 		(setq highlight-80+-columns 80))
-
-
-
 
 (setq mode-line-position (assq-delete-all 'wc-mode mode-line-position))
 (setq mode-line-position
@@ -891,7 +870,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 										(count-words-region (point-min) (point-max))))))
 			 nil))))
 
-
 (define-minor-mode wc-mode
   "Toggle word-count mode.
 With no argument, this command toggles the mode.
@@ -900,7 +878,6 @@ A null prefix argument turns it off.
 
 When enabled, the total number of characters, words, and lines is
 displayed in the mode-line.")
-
 
 (defun jcreed-recolor-fast ()
   (interactive)
@@ -926,9 +903,6 @@ displayed in the mode-line.")
 
 													 ;(global-set-key (kbd "M-r") 'jcreed-recolor)
 
-(setq verilog-auto-newline nil)
-(setq verilog-auto-indent-on-newline nil)
-
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 								 ("melpa" . "https://melpa.org/packages/")))
 (require 'package)
@@ -937,7 +911,6 @@ displayed in the mode-line.")
 (ifat chef
 		(add-to-list 'auto-mode-alist '("\\.js" . js-mode))
 		(add-to-list 'auto-mode-alist '("\\.erl" . erlang-mode)))
-
 
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
@@ -971,7 +944,6 @@ displayed in the mode-line.")
 													 ;            (jcreed-sort-buffers-by-file)
 				(define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)))
 
-
 (ifat chef
 		(define-key global-map (kbd "M-`") 'other-frame))
 
@@ -997,7 +969,6 @@ displayed in the mode-line.")
 		'(("jsx" . "\\.js[x]?\\'")
 		  ("jsx" . "\\.ts[x]?\\'")))
 ;;;;;;;;;;;
-
 
 (defun jcreed-setup-indent (n)
   ;; web development
@@ -1053,7 +1024,6 @@ displayed in the mode-line.")
 (ifat baez
 		(require 'unicode-fonts)
 		(unicode-fonts-setup))
-
 
 (add-hook 'agda2-mode-hook
 			 (lambda ()
@@ -1171,7 +1141,6 @@ All matching buffers will be marked for deletion."
 				(define-key Buffer-menu-mode-map "\C-k" 'jcreed-kill-prefix)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (add-hook 'rust-mode-hook
 			 '(lambda ()
@@ -1303,6 +1272,19 @@ This function is intended to be used as a value of `ring-bell-function'."
 												 (region-beginning) (region-end))))
 								  (kill-new (replace-regexp-in-string "^[ \\+\\-]" "" text))))))
 
+;; Don't indent source code blocks additionally
+(setq org-edit-src-content-indentation 0)
+;; Convenience for retangling
+(defun jcreed-retangle ()
+  (interactive)
+  (org-babel-tangle-file "/home/jcreed/dot-emacs/readme.org" "~/.config/emacs/emacs-config.el"))
+(define-key global-map "\C-x\C-r" 'jcreed-retangle)
+
+;; Don't auto-indent when demoting and promoting
+(setq org-adapt-indentation nil)
+
+;; Make C-a go to beginning of heading text, not beginning of line
+;; cf.
 ;; https://www.reddit.com/r/emacs/comments/965656/orgmode_how_to_programmatically_move_to_first/
 ;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
 (setq org-special-ctrl-a t)
@@ -1314,6 +1296,9 @@ This function is intended to be used as a value of `ring-bell-function'."
 (add-hook 'verilog-mode-hook #'setup-verilog-mode)
 (defun setup-verilog-mode ()
  (define-key verilog-mode-map "\C-c\C-f" 'jcreed-compile-verilog))
+
+(setq verilog-auto-newline nil)
+(setq verilog-auto-indent-on-newline nil)
 
 ; getting spurious eslint errors? run this function
 (defun fixup-tide-parse-error ()
