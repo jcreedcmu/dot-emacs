@@ -69,14 +69,17 @@ into a code block.
 	 (compile command)))
 #+end_src
 * Misc
+** Don't Blink Cursor
 #+begin_src emacs-lisp
 (blink-cursor-mode 0)
 #+END_SRC
 
+** LaTeX
 #+BEGIN_SRC emacs-lisp
 (add-to-list (quote auto-mode-alist) (quote ("\\.tex\\'" . latex-mode)))
 #+END_SRC
 
+** Window Title
 #+BEGIN_SRC emacs-lisp
 (setq frame-title-format  '("Emacs [%b]"))
 
@@ -85,6 +88,7 @@ into a code block.
   (setq frame-title-format (concat "Emacs [%b] --- " x )))
 #+END_SRC
 
+** Open buffer in other window
 #+BEGIN_SRC emacs-lisp
 (defun Buffer-menu-other-window ()
   "Select this line's buffer in other window, leaving buffer menu visible?"
@@ -100,12 +104,14 @@ into a code block.
 
 #+END_SRC
 
+** Autoload some modes
 #+BEGIN_SRC emacs-lisp
 (autoload 'python-mode "python-mode" "Python editing mode." t)
 (autoload 'ruby-mode "ruby-mode" "Ruby editing mode." t)
 (autoload 'clojure-mode "clojure-mode" "Clojure editing mode." t)
 #+END_SRC
 
+** Custom variables and faces
 #+BEGIN_SRC emacs-lisp
 ;;;***
 
@@ -188,6 +194,9 @@ into a code block.
  '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
 #+END_SRC
 
+** Customization for ~baez~
+~baez~ is my current desktop machine, running CentOS.
+
 #+BEGIN_SRC emacs-lisp
 (ifat baez
 		(setq twelf-root "~/tmp/twelf/")
@@ -218,6 +227,9 @@ into a code block.
 		 '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold))))))
 #+END_SRC
 
+** Customization for ~chef~
+~chef~ is a 2015 MacBook Pro which I inherited from my employment at Chef.
+
 #+BEGIN_SRC emacs-lisp
 (ifat chef (custom-theme-set-faces
 				'user
@@ -234,6 +246,7 @@ into a code block.
 				'(italic ((((supports :underline t)) (:slant italic))))))
 #+END_SRC
 
+** Ruby
 #+BEGIN_SRC emacs-lisp
 													 ; from http://ck.kennt-wayne.de/2013/may/emacs:-jump-to-matching-paren-beginning-of-block
 (defun goto-matching-ruby-block ()
@@ -249,6 +262,7 @@ into a code block.
 	 (forward-word))))
 #+END_SRC
 
+** LaTeX
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-tcons (x) (cons x x))
 (setq jcreed-completion (mapcar 'jcreed-tcons '("lemma" "corollary" "theorem" "conjecture" "proposition" "question" "definition" "remark" "postulate" "prooftree" "easyrule")))
@@ -283,6 +297,7 @@ into a code block.
 	 (recenter)))
 #+END_SRC
 
+** Elisp
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-lisp-mode-hook
 			 '(lambda ()
@@ -296,6 +311,7 @@ into a code block.
 					'lisp-complete-symbol)))
 #+END_SRC
 
+** LaTeX
 #+BEGIN_SRC emacs-lisp
 (add-hook 'latex-mode-hook
 			 '(lambda ()
@@ -304,6 +320,7 @@ into a code block.
 					'jcreed-insert-other)))
 #+END_SRC
 
+** General Keybindings
 #+BEGIN_SRC emacs-lisp
 (define-key global-map "\M-=" 'backward-up-list)
 
@@ -317,6 +334,7 @@ into a code block.
 (defun jcreed-deactivate-mark () (interactive) (deactivate-mark))
 #+END_SRC
 
+** Find Tag
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-find-tag (b e)
   (interactive "r")
@@ -326,6 +344,7 @@ into a code block.
 	 (find-tag (find-tag-default))))
 #+END_SRC
 
+** Haskell
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-find-haskell-tag ()
   (interactive)
@@ -334,6 +353,7 @@ into a code block.
 									  (haskell-ident-at-point))))
 #+END_SRC
 
+** LaTeX
 #+BEGIN_SRC emacs-lisp
 (setq tex-dvi-view-command "xdvi.bin")
 
@@ -419,11 +439,13 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+END_SRC
 
+** Esperanto
 #+BEGIN_SRC emacs-lisp
 (setq file-coding-system-alist
 		(cons '(".*\\.eo" . iso-8859-3) file-coding-system-alist))
 #+END_SRC
 
+** Explain face at point
 #+BEGIN_SRC emacs-lisp
 (defun what-face (pos)
   (interactive "d")
@@ -432,12 +454,14 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 	 (if face (message "Face: %s" face) (message "No face at %d" pos))))
 #+END_SRC
 
+** General Keybindings
 #+BEGIN_SRC emacs-lisp
 (define-key global-map "\C-z" 'call-last-kbd-macro)
 (define-key global-map "\M-g" 'goto-line) ; how do people live without this?
 (define-key global-map [(control tab)] 'other-window)
 #+END_SRC
 
+** SML
 #+BEGIN_SRC emacs-lisp
 (add-hook 'sml-mode-hook
 			 '(lambda ()
