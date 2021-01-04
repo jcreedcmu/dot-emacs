@@ -5,6 +5,11 @@
 ;;
 ;;; Code:
 
+;; This seems to be required on some of my machines to get package-refresh-contents
+;; to not yield "bad request".
+;; (taken from https://debbugs.gnu.org/cgi/bugreport.cgi?bug=34341)
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
 (require 'package)
 (setq package-enable-at-startup nil)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
