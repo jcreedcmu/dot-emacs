@@ -1,3 +1,5 @@
+;; This is actually deprecated now, readme.org should have everything
+
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
 (setq unicode-fonts-block-font-mapping ())
@@ -392,17 +394,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (setq require-final-newline t))
 
+;; XXX should fix this to work
 (defun jcreed-postprocess-path (path)
-  (cond ((string-match "/Users/jreed/tiros-server/\\(.*\\)" path)
-			(concat "tiros//" (match-string 1 path)))
-		  ((string-match "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/\\(.*\\)" path)
-			(concat "agdalib//" (match-string 1 path)))
-		  ((string-match "/Users/jreed/.cabal/sandboxes/agda-build/agda/\\(.*\\)" path)
-			(concat "agda//" (match-string 1 path)))
-		  ((string-match "/Users/jreed/semmle/\\(.*\\)" path)
-			(concat "sem:[" (match-string 1 path) "]"))
-		  (t
-			path)))
+  path)
 
 (defun jcreed-copy-path (inhibit-postprocess)
   "copy buffer's full path to kill ring, but with some
@@ -681,8 +675,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (defun jcreed-open-repo-path (repo path)
   (message (concat path " - " repo))
   (cond
-	((equal repo "tiros")
-	 (jcreed-find-file-other-window (concat "/Users/jreed/tiros-server/" path)))
 	((equal repo "occ")
 	 (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
 	((equal repo "agda")
@@ -691,8 +683,6 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 	 (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/" path)))
 	((equal repo "home")
 	 (jcreed-find-file-other-window (concat "/Users/jreed/" path)))
-	((equal repo "sem")
-	 (jcreed-find-file-other-window (concat "/Users/jreed/semmle/" path)))
 	))
 
 (defun task-at-point ()

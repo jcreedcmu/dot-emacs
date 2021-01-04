@@ -14,7 +14,7 @@ into sections but I haven't coalesced them sensibly yet.
 * How to use
 
 Make a file in =~/.site-lisp/location.el= containing just a bare
-#+BEGIN_SRC 
+#+BEGIN_SRC
 (setq location 'hostname)
 #+END_SRC
 for ~hostname~ being the name of this machine.
@@ -317,14 +317,10 @@ ln -s $HERE/i3.config ~/.config/i3/config
 ** Notes Management
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-postprocess-path (path)
-  (cond ((string-match "/Users/jreed/tiros-server/\\(.*\\)" path)
-			(concat "tiros//" (match-string 1 path)))
-		  ((string-match "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/\\(.*\\)" path)
+  (cond ((string-match "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/\\(.*\\)" path)
 			(concat "agdalib//" (match-string 1 path)))
 		  ((string-match "/Users/jreed/.cabal/sandboxes/agda-build/agda/\\(.*\\)" path)
 			(concat "agda//" (match-string 1 path)))
-		  ((string-match "/Users/jreed/semmle/\\(.*\\)" path)
-			(concat "sem:[" (match-string 1 path) "]"))
 		  (t
 			path)))
 
@@ -676,18 +672,12 @@ ln -s $HERE/i3.config ~/.config/i3/config
 (defun jcreed-open-repo-path (repo path)
   (message (concat path " - " repo))
   (cond
-	((equal repo "tiros")
-	 (jcreed-find-file-other-window (concat "/Users/jreed/tiros-server/" path)))
-	((equal repo "occ")
-	 (jcreed-find-file-other-window (concat "/Users/jreed/occ/" path)))
 	((equal repo "agda")
 	 (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/sandboxes/agda-build/agda/" path)))
 	((equal repo "agdalib")
 	 (jcreed-find-file-other-window (concat "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/" path)))
 	((equal repo "home")
 	 (jcreed-find-file-other-window (concat "/Users/jreed/" path)))
-	((equal repo "sem")
-	 (jcreed-find-file-other-window (concat "/Users/jreed/semmle/" path)))
 	))
 
 (defun task-at-point ()
