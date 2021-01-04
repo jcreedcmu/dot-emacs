@@ -741,7 +741,6 @@ ln -s $HERE/i3.config ~/.config/i3/config
 
 ** General Keybindings
 #+BEGIN_SRC emacs-lisp
-(define-key global-map "\M-i" '(lambda () (interactive) (switch-to-buffer "IDEAS")))
 (define-key global-map "\C-c\M-%" 'query-replace-regexp)
 (define-key global-map "\M-r" 'revert-buffer)
 #+END_SRC
@@ -1222,6 +1221,13 @@ All matching buffers will be marked for deletion."
 (defvar mode-line-bell-propertized-string nil)
 #+END_SRC
 
+* Notes Management
+A convenient keybinding to open my notes file.
+#+BEGIN_SRC emacs-lisp
+(defvar jcreed-ideas-file-name (expand-file-name "~/self/IDEAS"))
+(defun jcreed-open-ideas-file () (interactive) (switch-to-buffer (find-file-noselect jcreed-ideas-file-name)))
+(define-key global-map "\M-i" #'jcreed-open-ideas-file)
+#+END_SRC
 * Tool Configuration
 ** Magit
 #+BEGIN_SRC emacs-lisp
