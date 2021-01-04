@@ -1236,6 +1236,11 @@ All matching buffers will be marked for deletion."
 
 (define-key global-map "\C-cm" 'magit-status)
 #+END_SRC
+** Vc
+Always follow symlinks.
+#+BEGIN_SRC emacs-lisp
+(setq vc-follow-symlinks t)
+#+END_SRC
 ** Org
 *** Retangling
 I tried executing
