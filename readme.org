@@ -1722,3 +1722,9 @@ This function is intended to be used as a value of `ring-bell-function'."
 		(load (concat twelf-root "emacs/twelf-init.el"))
 		)
 #+END_SRC
+
+* Generic local post-init config
+If we have a file =~/.site-lisp/local.el=, execute it.
+#+BEGIN_SRC emacs-lisp
+(load "~/.site-lisp/local-post.el" t)
+#+END_SRC
