@@ -1208,11 +1208,6 @@ All matching buffers will be marked for deletion."
 (set-cursor-color "#700")
 #+END_SRC
 
-** Magit
-#+BEGIN_SRC emacs-lisp
-(define-key global-map "\C-cm" 'magit-status)
-#+END_SRC
-
 ** Bell
 #+BEGIN_SRC emacs-lisp
 (defcustom mode-line-bell-string "" ; "♪"
@@ -1227,6 +1222,7 @@ All matching buffers will be marked for deletion."
 (defvar mode-line-bell-propertized-string nil)
 #+END_SRC
 
+* Tool Configuration
 ** Magit
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-magit-copy-region-hunk ()
@@ -1238,10 +1234,8 @@ All matching buffers will be marked for deletion."
 												 (region-beginning) (region-end))))
 								  (kill-new (replace-regexp-in-string "^[ \\+\\-]" "" text))))))
 
-#+end_src
-
-* Tool Configuration
-** Magit
+(define-key global-map "\C-cm" 'magit-status)
+#+END_SRC
 ** Org
 *** Retangling
 I tried executing
