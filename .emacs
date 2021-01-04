@@ -1,3 +1,5 @@
+;; This is actually deprecated now, readme.org should have everything
+
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
 (setq unicode-fonts-block-font-mapping ())
