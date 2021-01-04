@@ -11,6 +11,24 @@ attempting to imitate its cleanliness.
 *Current status*: I have just dumped the entirety of my existing config
 into sections but I haven't coalesced them sensibly yet.
 
+* How to use
+
+Make a file in =~/.site-lisp/location.el= containing just a bare
+#+BEGIN_SRC 
+(setq location 'hostname)
+#+END_SRC
+for ~hostname~ being the name of this machine.
+
+Make the symlinks
+#+BEGIN_SRC shell
+HERE=/abspath/to/containing/dir
+ln -s $HERE/init.el ~/.emacs
+mkdir -p ~/.config/emacs
+ln -s $HERE/readme.org ~/.config/emacs/emacs-config.org
+mkdir -p ~/.config/i3
+ln -s $HERE/i3.config ~/.config/i3/config
+#+END_SRC
+
 * Preliminaries
 #+begin_src emacs-lisp
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
