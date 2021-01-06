@@ -1248,6 +1248,25 @@ Always follow symlinks.
 (setq vc-follow-symlinks t)
 #+END_SRC
 ** Org Mode
+*** Other
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+
+;; Don't auto-indent when demoting and promoting
+(setq org-adapt-indentation nil)
+
+;; This would if set to t, make C-a go to beginning of heading text, not beginning of line
+;; cf.
+;; https://www.reddit.com/r/emacs/comments/965656/orgmode_how_to_programmatically_move_to_first/
+;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
+(setq org-special-ctrl-a nil)
+
+;; I'd rather have control-tab defer to the global map, where it's
+;; bound to other-window
+(define-key org-mode-map [(control tab)] nil)
+#+END_SRC
+
+to retangle the current file.
 *** Retangling
 I tried executing
 
@@ -1268,25 +1287,6 @@ confused and it deletes my buffer. Instead I can execute
   (org-babel-tangle-file "/home/jcreed/dot-emacs/readme.org" "~/.config/emacs/emacs-config.el"))
 (define-key global-map "\C-x\C-r" 'jcreed-retangle)
 #+END_SRC
-*** Other
-#+BEGIN_SRC emacs-lisp
-
-;; Don't auto-indent when demoting and promoting
-(setq org-adapt-indentation nil)
-
-;; This would if set to t, make C-a go to beginning of heading text, not beginning of line
-;; cf.
-;; https://www.reddit.com/r/emacs/comments/965656/orgmode_how_to_programmatically_move_to_first/
-;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
-(setq org-special-ctrl-a nil)
-
-;; I'd rather have control-tab defer to the global map, where it's
-;; bound to other-window
-(define-key org-mode-map [(control tab)] nil)
-#+END_SRC
-
-to retangle the current file.
-
 * Language Configuration
 ** Verilog
 #+begin_src emacs-lisp
