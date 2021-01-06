@@ -1247,7 +1247,7 @@ Always follow symlinks.
 #+BEGIN_SRC emacs-lisp
 (setq vc-follow-symlinks t)
 #+END_SRC
-** Org
+** Org Mode
 *** Retangling
 I tried executing
 
@@ -1280,6 +1280,9 @@ confused and it deletes my buffer. Instead I can execute
 ;; https://emacs.stackexchange.com/questions/17502/how-to-navigate-most-efficiently-to-the-start-or-end-of-the-main-text-of-an-org
 (setq org-special-ctrl-a nil)
 
+;; I'd rather have control-tab defer to the global map, where it's
+;; bound to other-window
+(define-key org-mode-map [(control tab)] nil)
 #+END_SRC
 
 to retangle the current file.
