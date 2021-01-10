@@ -928,8 +928,12 @@ I think this is redundant with what I put in ~init.el~.
 #+END_SRC
 
 ** Exec-path
+This is mainly useful to make sure that whatever nvm has set as the
+current `node` executable is accessible from inside emacs.
 #+BEGIN_SRC emacs-lisp
-(setq exec-path (append exec-path '("/usr/local/bin")))
+(require 'exec-path-from-shell)
+(exec-path-from-shell-initialize)
+; (setq exec-path (append exec-path '("/usr/local/bin")))
 #+END_SRC
 
 ** Rainbow mode
@@ -1680,7 +1684,7 @@ This function is intended to be used as a value of `ring-bell-function'."
 #+BEGIN_SRC emacs-lisp
 (ifat chef
 		(setenv "PATH" (concat (getenv "PATH") ":/Users/jreed/.cargo/bin"))
-		(setq exec-path (append exec-path '("/Users/jreed/.cargo/bin")))
+		; (setq exec-path (append exec-path '("/Users/jreed/.cargo/bin")))
 		(setq rust-format-on-save t)
 		)
 #+END_SRC
