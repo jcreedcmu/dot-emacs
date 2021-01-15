@@ -315,6 +315,18 @@ ln -s $HERE/i3.config ~/.config/i3/config
 #+END_SRC
 
 ** Notes Management
+
+Here are some functions I use to get the current path of a buffer I'm
+visiting, subject to some postprocessing. Right now I just redefine
+=jcreed-postprocess-path= in a local =.el= if I need to, but it would
+be nicer to define some proper data that describe the required
+transformations.
+
+A typical use of =jcreed-postprocess-path= is just to "compress" a
+path from a known directory into a repo path like
+=repo:[some/path/within/that/repo]=. (Or, well, it appears here that I was
+using an old style repo path like =repo//some/path/within/that/repo=)
+
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-postprocess-path (path)
   (cond ((string-match "/Users/jreed/.cabal/share/x86_64-osx-ghc-7.10.3/Agda-2.6.0/lib/\\(.*\\)" path)
@@ -324,16 +336,26 @@ ln -s $HERE/i3.config ~/.config/i3/config
 		  (t
 			path)))
 
-(defun jcreed-copy-path (inhibit-postprocess)
+(defun jcreed-copy-path (prefix-arg)
   "copy buffer's full path to kill ring, but with some
-	 postprocessing that works well with
-	 jcreed-open-file-at-point"
-  (interactive "P")
+    postprocessing that works well with
+    jcreed-open-file-at-point"
+  (interactive "p")
   (when buffer-file-name
-	 (let ((path (file-truename buffer-file-name)))
-		(if (not inhibit-postprocess)
-			 (setq path (jcreed-postprocess-path path)))
-		(kill-new path))))
+    (let* ((path (file-truename buffer-file-name))
+           (ppath (jcreed-postprocess-path path))
+           (lpath (jcreed-postprocess-path (format "%s:%d" path (line-number-at-pos))))
+           (idpath (concat lpath " " (thing-at-point 'symbol))))
+      (cond
+       ((eq prefix-arg 0) (kill-new path))
+       ((eq prefix-arg 1) (kill-new ppath))
+       ((eq prefix-arg 4) (kill-new lpath))
+       ((eq prefix-arg 16) (kill-new idpath))
+       ((eq prefix-arg 9)
+        (with-current-buffer (find-buffer-visiting jcreed-ideas-file-name)
+          (insert (concat idpath "\n"))
+          (cl-dolist (window (get-buffer-window-list nil nil t))
+            (set-window-point window (point)))))))))
 
 (define-key global-map "\M-p" 'jcreed-copy-path)
 #+END_SRC
