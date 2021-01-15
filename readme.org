@@ -709,13 +709,26 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 		"")))
 #+END_SRC
 
-** Find file other window
+** COMMENT Find file other window
 #+BEGIN_SRC emacs-lisp
-(defun jcreed-find-file-other-window (filename)
-  (let ((value (find-file-noselect filename))
-		  (pop-up-windows t))
-	 (pop-to-buffer value '(display-buffer-use-some-window
-									. ((inhibit-same-window . t))))))
+(defun jcreed-parse-line-num (filespec)
+	 (if (string-match "\\(.*\\):\\([0-9]+\\)" filespec)
+		  (cons (match-string 1 filespec)
+				  (string-to-number (match-string 2 filespec)))
+		(list filespec)))
+
+(defun jcreed-find-file-other-window (filespec)
+	 (let* ((fileinfo (jcreed-parse-line-num filespec))
+			  (filename (car fileinfo))
+			  (linenum (cdr fileinfo))
+			  (value (find-file-noselect filename))
+			  (pop-up-windows t))
+		(pop-to-buffer value '(display-buffer-use-some-window
+									  . ((inhibit-same-window . t))))
+		(when linenum
+		  (goto-char (point-min))
+		  (forward-line (1- linenum)))))
+
 #+END_SRC
 
 ** Notes Management
