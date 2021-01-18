@@ -33,8 +33,12 @@ ln -s $HERE/i3.config ~/.config/i3/config
 You may want to override these in =~/.site-lisp/local-post=, see below in
 [[*Generic local post-init config][the section on local post-init]].
 #+BEGIN_SRC emacs-lisp
-(defvar jcreed-ideas-file-name (expand-file-name "~/self/IDEAS"))
-(defvar jcreed-emacs-config-file-name (expand-file-name "~/dot-emacs/readme.org"))
+(defvar jcreed-ideas-file-name
+  (expand-file-name "~/self/IDEAS")
+  "Location of notes file.")
+(defvar jcreed-emacs-config-file-name
+  (expand-file-name "~/dot-emacs/readme.org")
+  "Location of emacs configuration file.")
 #+END_SRC
 
 * Preliminaries
@@ -107,6 +111,18 @@ You may want to override these in =~/.site-lisp/local-post=, see below in
 
 * General Interface Customization
 ** Custom variables and faces
+I used to use the usual =custom-blah-blah= mechanism for managing
+configuration, but now that I manage my config inside literate org, it
+seems more trouble that it's worth for now. I should dismantle this
+eventually.
+
+At least turn off auto-writing customization, because it's just going
+to mess up my =init.el=:
+#+BEGIN_SRC emacs-lisp
+(setq custom-file null-device)
+#+END_SRC
+
+And here's the variables that I did have set:
 #+BEGIN_SRC emacs-lisp
 ;;;***
 
