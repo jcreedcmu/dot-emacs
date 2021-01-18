@@ -73,51 +73,31 @@ ln -s $HERE/i3.config ~/.config/i3/config
 (setq solarized-green     "#859900")
 #+END_SRC
 
-* Generic Programming Utilities
+* General Programming Customization
+** Indentation
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-setup-indent (n)
+  ;; web development
+  (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
+  (setq web-mode-css-indent-offset n)    ; web-mode, css in html file
+  (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
+  (setq css-indent-offset n)
+  (setq sml-indent-level n)
+  (setq js-indent-level n)
+  (setq c-basic-offset n))
+
+(jcreed-setup-indent 2)
+#+END_SRC
+
+** Compilation
 #+begin_src emacs-lisp
 (defun compile-in-dir (dir command)
   (interactive "Compile in directory: \nsCommand: ")
   (let ((default-directory dir))
 	 (compile command)))
 #+end_src
-* Misc
-** Don't Blink Cursor
-#+begin_src emacs-lisp
-(blink-cursor-mode 0)
-#+END_SRC
 
-** Window Title
-#+BEGIN_SRC emacs-lisp
-(setq frame-title-format  '("Emacs [%b]"))
-
-(defun jcreed-set-frame-title (x)
-  (interactive "s")
-  (setq frame-title-format (concat "Emacs [%b] --- " x )))
-#+END_SRC
-
-** Open buffer in other window
-#+BEGIN_SRC emacs-lisp
-(defun Buffer-menu-other-window ()
-  "Select this line's buffer in other window, leaving buffer menu visible?"
-  (interactive)
-
-  (let* ((w (selected-window))
-			(pop-up-windows nil)
-			same-window-buffer-names
-			same-window-regexps)
-	 (pop-to-buffer (Buffer-menu-buffer t) t nil)
-	 (select-window w)
-	 ))
-
-#+END_SRC
-
-** Autoload some modes
-#+BEGIN_SRC emacs-lisp
-(autoload 'python-mode "python-mode" "Python editing mode." t)
-(autoload 'ruby-mode "ruby-mode" "Ruby editing mode." t)
-(autoload 'clojure-mode "clojure-mode" "Clojure editing mode." t)
-#+END_SRC
-
+* General Interface Customization
 ** Custom variables and faces
 #+BEGIN_SRC emacs-lisp
 ;;;***
@@ -200,35 +180,95 @@ ln -s $HERE/i3.config ~/.config/i3/config
  '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 116 :width normal :foundry "cbp" :family "codon"))) t)
  '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
 #+END_SRC
-
-** Ruby
+** Cursor
+Make the cursor a dark red.
 #+BEGIN_SRC emacs-lisp
-													 ; from http://ck.kennt-wayne.de/2013/may/emacs:-jump-to-matching-paren-beginning-of-block
-(defun goto-matching-ruby-block ()
-  (interactive)
-  (cond
-	;; are we at an end keyword?
-	((equal (current-word) "end")
-	 (ruby-beginning-of-block)) ; not quite right for do not at beginning of line
-
-	;; or are we at a keyword itself?
-	((string-match (current-word) "\\(else\\|for\\|while\\|until\\|if\\|class\\|module\\|case\\|unless\\|def\\|begin\\|do\\)")
-	 (ruby-end-of-block)
-	 (forward-word))))
+(set-cursor-color "#700")
 #+END_SRC
 
-** Elisp
-#+BEGIN_SRC emacs-lisp
-(add-hook 'emacs-lisp-mode-hook
-			 '(lambda ()
-				 (define-key emacs-lisp-mode-map "\C-o" 'lisp-complete-symbol)
-				 ))
+Don't blink the cursor.
+#+begin_src emacs-lisp
+(blink-cursor-mode 0)
+#+END_SRC
 
-(add-hook 'lisp-interaction-mode-hook
-			 '(lambda ()
-				 (define-key lisp-interaction-mode-map
-					"\C-o"
-					'lisp-complete-symbol)))
+** Bell
+#+BEGIN_SRC emacs-lisp
+(defcustom mode-line-bell-string "" ; "♪"
+  "Message displayed in mode-line by `mode-line-bell' function."
+  :group 'user)
+(defcustom mode-line-bell-delay 0.1
+  "Number of seconds `mode-line-bell' displays its message."
+  :group 'user)
+
+;; internal variables
+(defvar mode-line-bell-cached-string nil)
+(defvar mode-line-bell-propertized-string nil)
+
+(setq visible-bell t)
+(defun my-bell-function ()
+  (unless (memq this-command
+					 '(isearch-abort abort-recursive-edit exit-minibuffer
+										  keyboard-quit mwheel-scroll down up next-line previous-line
+										  backward-char forward-char))
+	 (ding)))
+
+;; (setq ring-bell-function 'my-bell-function)
+
+;;;; I seem to have had a very conservative visual bell in the past,
+;;;; experimenting with making it more common.
+
+#+END_SRC
+** Window Title
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format  '("Emacs [%b]"))
+
+;; Maybe this is dead code now? I might have used it somewhere once.
+(defun jcreed-set-frame-title (x)
+  (interactive "s")
+  (setq frame-title-format (concat "Emacs [%b] --- " x )))
+#+END_SRC
+
+** Rainbow mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-init-hook
+			 (lambda ()
+				(setq rainbow-delimiters-max-face-count 4)
+													 ;(require 'button-lock)
+													 ;(global-button-lock-mode 1)
+				;; (button-lock-register-global-button
+				;;  "https?://[^[:space:]\n]+"
+				;;  'browse-url-at-mouse
+				;;  :face 'link :face-policy 'prepend)
+				))
+#+END_SRC
+** Menubar, toolbar, scrollbars
+#+BEGIN_SRC emacs-lisp
+(menu-bar-mode -1)
+(when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(when (and (boundp 'tool-bar-mode) (functionp 'tool-bar-mode)) (tool-bar-mode -1))
+#+END_SRC
+* Misc
+** Open buffer in other window
+#+BEGIN_SRC emacs-lisp
+(defun Buffer-menu-other-window ()
+  "Select this line's buffer in other window, leaving buffer menu visible?"
+  (interactive)
+
+  (let* ((w (selected-window))
+			(pop-up-windows nil)
+			same-window-buffer-names
+			same-window-regexps)
+	 (pop-to-buffer (Buffer-menu-buffer t) t nil)
+	 (select-window w)
+	 ))
+
+#+END_SRC
+
+** Autoload some modes
+#+BEGIN_SRC emacs-lisp
+(autoload 'python-mode "python-mode" "Python editing mode." t)
+(autoload 'ruby-mode "ruby-mode" "Ruby editing mode." t)
+(autoload 'clojure-mode "clojure-mode" "Clojure editing mode." t)
 #+END_SRC
 
 ** General Keybindings
@@ -255,21 +295,6 @@ ln -s $HERE/i3.config ~/.config/i3/config
 	 (find-tag (find-tag-default))))
 #+END_SRC
 
-** Haskell
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-find-haskell-tag ()
-  (interactive)
-  (ring-insert find-tag-marker-ring (point-marker))
-  (haskell-mode-jump-to-def (haskell-string-drop-qualifier
-									  (haskell-ident-at-point))))
-#+END_SRC
-
-** Esperanto
-#+BEGIN_SRC emacs-lisp
-(setq file-coding-system-alist
-		(cons '(".*\\.eo" . iso-8859-3) file-coding-system-alist))
-#+END_SRC
-
 ** Explain face at point
 #+BEGIN_SRC emacs-lisp
 (defun what-face (pos)
@@ -284,14 +309,6 @@ ln -s $HERE/i3.config ~/.config/i3/config
 (define-key global-map "\C-z" 'call-last-kbd-macro)
 (define-key global-map "\M-g" 'goto-line) ; how do people live without this?
 (define-key global-map [(control tab)] 'other-window)
-#+END_SRC
-
-** SML
-#+BEGIN_SRC emacs-lisp
-(add-hook 'sml-mode-hook
-			 '(lambda ()
-				 (setq sml-compile-command "CM.make \"sources.cm\"")
-				 (setq sml-compile-commands-alist '(("CM.make \"sources.cm\"" . "sources.cm")))))
 #+END_SRC
 
 ** Enable recase region
@@ -420,26 +437,6 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 (global-set-key "\M-)" 'jcreed-match-paren)
 #+END_SRC
 
-** General Interface Customization
-#+BEGIN_SRC emacs-lisp
-(menu-bar-mode -1)
-(when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (and (boundp 'tool-bar-mode) (functionp 'tool-bar-mode)) (tool-bar-mode -1))
-
-(setq visible-bell t)
-(defun my-bell-function ()
-  (unless (memq this-command
-					 '(isearch-abort abort-recursive-edit exit-minibuffer
-										  keyboard-quit mwheel-scroll down up next-line previous-line
-										  backward-char forward-char))
-	 (ding)))
-
-													 ; (setq ring-bell-function 'my-bell-function)
-
-;;;; I seem to have had a very conservative visual bell in the past,
-;;;; experimenting with making it more common.
-#+END_SRC
-
 ** Enable narrowing features
 #+BEGIN_SRC emacs-lisp
 (put 'narrow-to-page 'disabled nil)
@@ -462,35 +459,6 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 													 ;(setq-default indent-tabs-mode nil)
 #+END_SRC
 
-** Paredit & Other LISP
-#+BEGIN_SRC emacs-lisp
-
-(autoload 'paredit-mode "paredit"
-  "Turn on pseudo-structural editing of Lisp code."
-  t)
-
-(defun paredit () (interactive) (enable-paredit-mode))
-
-(defun jcreed-kill-sexp-tail ()
-  (interactive)
-  (let ((begin (point))
-		  (end 0))
-	 (save-excursion
-		(paredit-forward-up)
-		(backward-char)
-		(setq end (point)))
-	 (kill-region begin end)))
-
-(add-hook 'paredit-mode-hook
-			 '(lambda ()
-				 (define-key paredit-mode-map (kbd "M-)") 'jcreed-match-paren)
-				 (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
-				 (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
-				 (define-key paredit-mode-map (kbd "M-r") 'revert-buffer)
-				 (define-key paredit-mode-map (kbd "M-R") 'paredit-raise-sexp)
-				 (define-key paredit-mode-map (kbd "M-k") 'jcreed-kill-sexp-tail)))
-#+END_SRC
-
 ** Comint Mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'comint-mode-hook
@@ -510,11 +478,6 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 (autoload 'rainbow-mode "rainbow-mode" "Colorizes stuff." t)
 #+END_SRC
 
-** Forth
-#+BEGIN_SRC emacs-lisp
-(autoload 'forth-mode "gforth" "Colorizes stuff." t)
-#+END_SRC
-
 ** Graveyard
 #+BEGIN_SRC emacs-lisp
 													 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
@@ -522,34 +485,9 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 													 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 #+END_SRC
 
-** LISP
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.se$" . emacs-lisp-mode))
-(add-hook 'emacs-lisp-mode-hook '(lambda () (paredit-mode)))
-(add-hook 'clojure-mode-hook '(lambda () (paredit-mode)))
-(define-key global-map "\C-x;" 'comment-region)
-(define-key global-map (kbd "C-S-k") 'kill-sexp)
-(define-key global-map (kbd "C-k") 'kill-line)
-#+END_SRC
-
 ** Terminal
 #+BEGIN_SRC emacs-lisp
 (setq term-term-name "vt100")
-#+END_SRC
-
-** Rust
-#+BEGIN_SRC emacs-lisp
-(autoload 'rust-mode "rust-mode" "Start rust-mode" t)
-(add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
-#+END_SRC
-
-** LISP
-#+BEGIN_SRC emacs-lisp
-(defun eval-and-replace (value)
-  "Evaluate the sexp at point and replace it with its value"
-  (interactive (list (eval-last-sexp nil)))
-  (kill-sexp -1)
-  (insert (format "%S" value)))
 #+END_SRC
 
 ** X Clipboard
@@ -569,11 +507,6 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
-** Indentation for C
-#+BEGIN_SRC emacs-lisp
-(setq c-basic-offset 2)
-#+END_SRC
-
 ** General purpose utilities
 #+BEGIN_SRC emacs-lisp
 
@@ -586,22 +519,6 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 (defun jcreed-date ()
   (interactive)
   (insert (format-time-string "=== %Y.%m.%d\n\n")))
-
-#+END_SRC
-
-** SML
-#+BEGIN_SRC emacs-lisp
-
-(add-to-list 'load-path "/home/jcreed/.site-lisp/sml-mode-4.0")
-(autoload 'sml-mode "sml-mode" "Sml editing mode." t)
-#+END_SRC
-
-** Lua
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "/home/jcreed/.site-lisp/lua-mode")
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 #+END_SRC
 
@@ -634,13 +551,6 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 (define-key global-map "\M-," 'pop-tag-mark)
 													 ;(define-key global-map "\C-cg" 'tbgs)
 													 ;(define-key global-map "\C-c\C-c" 'jcreed-class-to-path)
-#+END_SRC
-
-** Perl
-#+BEGIN_SRC emacs-lisp
-(add-hook 'cperl-mode-hook
-			 (lambda ()
-				(define-key cperl-mode-map "\t" 'indent-for-tab-command)))
 #+END_SRC
 
 ** Display Date
@@ -778,11 +688,6 @@ using an old style repo path like =repo//some/path/within/that/repo=)
 #+BEGIN_SRC emacs-lisp
 (define-key global-map "\C-c\M-%" 'query-replace-regexp)
 (define-key global-map "\M-r" 'revert-buffer)
-#+END_SRC
-
-** JS
-#+BEGIN_SRC emacs-lisp
-(setenv "NODE_NO_READLINE" "1")
 #+END_SRC
 
 ** Notes management
@@ -971,20 +876,6 @@ current `node` executable is accessible from inside emacs.
 ; (setq exec-path (append exec-path '("/usr/local/bin")))
 #+END_SRC
 
-** Rainbow mode
-#+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook
-			 (lambda ()
-				(setq rainbow-delimiters-max-face-count 4)
-													 ;(require 'button-lock)
-													 ;(global-button-lock-mode 1)
-				;; (button-lock-register-global-button
-				;;  "https?://[^[:space:]\n]+"
-				;;  'browse-url-at-mouse
-				;;  :face 'link :face-policy 'prepend)
-				))
-#+END_SRC
-
 ** Notes management
 #+BEGIN_SRC emacs-lisp
 (setq paragraph-start "[A-Z]+:\\|\f\\|[ \t]*$")
@@ -1001,65 +892,6 @@ current `node` executable is accessible from inside emacs.
 	 (fill-paragraph)))
 #+END_SRC
 
-** Buffer list mode
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-sort-buffers-by-file ()
-  (interactive)
-  (Buffer-menu-sort 6))
-
-(add-hook 'Buffer-menu-mode-hook
-			 (lambda ()
-													 ;            (jcreed-sort-buffers-by-file)
-				(define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)))
-
-#+END_SRC
-
-** Dired
-#+BEGIN_SRC emacs-lisp
-(require 'dired)
-(global-set-key (kbd "C-x C-j") #'dired-jump)
-#+END_SRC
-
-** Coffeescript
-#+BEGIN_SRC emacs-lisp
-(autoload 'coffee-mode "coffee-mode" "Coffeescript editing mode." t)
-#+END_SRC
-
-** Web-mode
-#+BEGIN_SRC emacs-lisp
-;; web-mode config
-(ifat baez (require 'web-mode))
-
-(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "jsx")
-		(let ((web-mode-enable-part-face nil))
-		  ad-do-it)
-	 ad-do-it))
-
-(setq web-mode-content-types-alist
-		'(("jsx" . "\\.js[x]?\\'")
-		  ("jsx" . "\\.ts[x]?\\'")))
-;;;;;;;;;;;
-
-#+END_SRC
-
-** Indentation
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-setup-indent (n)
-  ;; web development
-  (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
-  (setq web-mode-css-indent-offset n)    ; web-mode, css in html file
-  (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
-  (setq css-indent-offset n)
-  (setq sml-indent-level n)
-  (setq js-indent-level n))
-
-(jcreed-setup-indent 2)
-#+END_SRC
-
 ** General utilities
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-uncamel (b e)
@@ -1074,7 +906,6 @@ current `node` executable is accessible from inside emacs.
 (global-set-key [(control shift tab)] (lambda () (interactive) (other-window -1)))
 #+END_SRC
 
-** General utilities
 #+BEGIN_SRC emacs-lisp
 (defun find-first-non-ascii-char ()
   "Find the first non-ascii character from point onwards."
@@ -1093,40 +924,32 @@ current `node` executable is accessible from inside emacs.
 		(message "No non-ascii characters."))))
 #+END_SRC
 
-** Unicode
-#+BEGIN_SRC emacs-lisp
-(setq default-process-coding-system '(utf-8 . utf-8))
-#+END_SRC
-
 ** General Keybindings
 #+BEGIN_SRC emacs-lisp
 (define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
 #+END_SRC
 
-** Scala
+* Notes Management
+A convenient keybinding to open my notes file.
 #+BEGIN_SRC emacs-lisp
-(add-to-list (quote auto-mode-alist) (quote ("\\.scala\\'" . scala-mode)))
+(defvar jcreed-ideas-file-name (expand-file-name "~/self/IDEAS"))
+(defun jcreed-open-ideas-file () (interactive) (switch-to-buffer (find-file-noselect jcreed-ideas-file-name)))
+(define-key global-map "\M-i" #'jcreed-open-ideas-file)
+#+END_SRC
+* Tool Configuration
+** Buffer list
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-sort-buffers-by-file ()
+  (interactive)
+  (Buffer-menu-sort 6))
+
+(add-hook 'Buffer-menu-mode-hook
+			 (lambda ()
+													 ;            (jcreed-sort-buffers-by-file)
+				(define-key Buffer-menu-mode-map (kbd "M-f") 'jcreed-sort-buffers-by-file)))
+
 #+END_SRC
 
-** Unicode
-#+BEGIN_SRC emacs-lisp
-(ifat baez
-		(require 'unicode-fonts)
-		(unicode-fonts-setup))
-#+END_SRC
-
-** Python
-#+BEGIN_SRC emacs-lisp
-(global-eldoc-mode -1)
-(defun jcreed-python-mode-hook ()
-  (setq eldoc-mode nil)
-  (setq indent-tabs-mode nil
-		  py-indent-offset 2
-		  tab-width 2))
-(add-hook 'python-mode-hook #'jcreed-python-mode-hook)
-#+END_SRC
-
-** Buffer List
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-kill-prefix (prefix)
   "Use when in the *Buffer List* buffer menu.
@@ -1162,112 +985,11 @@ All matching buffers will be marked for deletion."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #+END_SRC
-
-** Rust
+** Dired
 #+BEGIN_SRC emacs-lisp
-(add-hook 'rust-mode-hook
-			 '(lambda ()
-				 (company-mode)
-				 (racer-mode)
-				 (define-key rust-mode-map (kbd "C-x ]") #'company-indent-or-complete-common)
-				 (setq company-tooltip-align-annotations t)
-				 (setq compile-command "~/.cargo/bin/cargo build")
-				 (setq compilation-read-command nil)
-				 (define-key rust-mode-map "\C-c\C-f" 'compile)
-				 (define-key rust-mode-map "\C-c\C-d" 'rust-format-buffer)
-				 (define-key rust-mode-map "\M-;" 'company-complete)
-				 (add-hook 'rust-mode-hook #'racer-mode)
-				 (add-hook 'racer-mode-hook #'eldoc-mode)
-				 ))
-
-(add-hook 'racer-mode-hook #'eldoc-mode)
+(require 'dired)
+(global-set-key (kbd "C-x C-j") #'dired-jump)
 #+END_SRC
-
-** Typescript
-#+BEGIN_SRC emacs-lisp
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-
-  ;; formats the buffer before saving
-  (add-hook 'before-save-hook 'tide-format-before-save)
-  (eldoc-mode +1)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  ;;  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1)
-  (setq company-idle-delay nil)
-  (define-key tide-mode-map "\C-c\C-r" 'tide-references)
-  (define-key tide-mode-map "\C-c\C-s" 'tide-rename-symbol)
-  (define-key tide-mode-map "\M-;" 'company-complete)
-  (fixup-tide-parse-error))
-
-(add-hook 'web-mode-hook
-			 (lambda ()
-				(when (string-equal "tsx" (file-name-extension buffer-file-name))
-				  (setup-tide-mode))))
-
-;;; enable typescript-tslint checker
-;; (require 'flycheck)
-;; (flycheck-add-mode 'typescript-tslint 'web-mode)
-
-;; aligns annotation to the right hand side
-(setq company-tooltip-align-annotations t)
-
-
-
-
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-(defun tide-references ()
-  "List all references to the symbol at point."
-  (interactive)
-  (let ((response (tide-command:references)))
-	 (tide-on-response-success response
-										(let ((references (tide-plist-get response :body :refs)))
-										  (-if-let (usage (tide-find-single-usage references))
-													  (progn
-														 (message "This is the only usage.")
-														 (tide-jump-to-filespan usage nil nil))
-													  ;; In tide's actual code, this is
-													  ;;    (tide-jump-to-filespan usage nil t)
-													  ;; but I prefer it to do
-													  ;;    (ring-insert find-tag-marker-ring (point-marker)))
-													  ;; when there's only one reference so I can M-, my way back
-													  (display-buffer (tide-insert-references references)))))))
-#+END_SRC
-
-** Cursor color
-#+BEGIN_SRC emacs-lisp
-(set-cursor-color "#700")
-#+END_SRC
-
-** Bell
-#+BEGIN_SRC emacs-lisp
-(defcustom mode-line-bell-string "" ; "♪"
-  "Message displayed in mode-line by `mode-line-bell' function."
-  :group 'user)
-(defcustom mode-line-bell-delay 0.1
-  "Number of seconds `mode-line-bell' displays its message."
-  :group 'user)
-
-;; internal variables
-(defvar mode-line-bell-cached-string nil)
-(defvar mode-line-bell-propertized-string nil)
-#+END_SRC
-
-* Notes Management
-A convenient keybinding to open my notes file.
-#+BEGIN_SRC emacs-lisp
-(defvar jcreed-ideas-file-name (expand-file-name "~/self/IDEAS"))
-(defun jcreed-open-ideas-file () (interactive) (switch-to-buffer (find-file-noselect jcreed-ideas-file-name)))
-(define-key global-map "\M-i" #'jcreed-open-ideas-file)
-#+END_SRC
-* Tool Configuration
 ** Magit
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-magit-copy-region-hunk ()
@@ -1326,7 +1048,53 @@ confused and it deletes my buffer. Instead I can execute
   (org-babel-tangle-file "/home/jcreed/dot-emacs/readme.org" "~/.config/emacs/emacs-config.el"))
 (define-key global-map "\C-x\C-r" 'jcreed-retangle)
 #+END_SRC
-* Language Configuration
+* Internationalization & Encodings
+** Esperanto
+#+BEGIN_SRC emacs-lisp
+(setq file-coding-system-alist
+		(cons '(".*\\.eo" . iso-8859-3) file-coding-system-alist))
+#+END_SRC
+
+** Unicode
+#+BEGIN_SRC emacs-lisp
+(setq default-process-coding-system '(utf-8 . utf-8))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(ifat baez
+		(require 'unicode-fonts)
+		(unicode-fonts-setup))
+#+END_SRC
+* Programming Language Configuration
+** Paredit & Other LISP
+#+BEGIN_SRC emacs-lisp
+
+(autoload 'paredit-mode "paredit"
+  "Turn on pseudo-structural editing of Lisp code."
+  t)
+
+(defun paredit () (interactive) (enable-paredit-mode))
+
+(defun jcreed-kill-sexp-tail ()
+  (interactive)
+  (let ((begin (point))
+		  (end 0))
+	 (save-excursion
+		(paredit-forward-up)
+		(backward-char)
+		(setq end (point)))
+	 (kill-region begin end)))
+
+(add-hook 'paredit-mode-hook
+			 '(lambda ()
+				 (define-key paredit-mode-map (kbd "M-)") 'jcreed-match-paren)
+				 (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
+				 (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
+				 (define-key paredit-mode-map (kbd "M-r") 'revert-buffer)
+				 (define-key paredit-mode-map (kbd "M-R") 'paredit-raise-sexp)
+				 (define-key paredit-mode-map (kbd "M-k") 'jcreed-kill-sexp-tail)))
+#+END_SRC
+
 ** Verilog
 #+begin_src emacs-lisp
 
@@ -1584,6 +1352,228 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 													 ;    (agda2-goal-type) ;; doesn't seem synchronous enough? boo.
 	 (set-buffer "*Agda information*")
 	 (kill-ring-save (point-min) (point-max))))
+#+END_SRC
+
+** Rust
+#+BEGIN_SRC emacs-lisp
+(autoload 'rust-mode "rust-mode" "Start rust-mode" t)
+(add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
+#+END_SRC
+
+** Ruby
+#+BEGIN_SRC emacs-lisp
+													 ; from http://ck.kennt-wayne.de/2013/may/emacs:-jump-to-matching-paren-beginning-of-block
+(defun goto-matching-ruby-block ()
+  (interactive)
+  (cond
+	;; are we at an end keyword?
+	((equal (current-word) "end")
+	 (ruby-beginning-of-block)) ; not quite right for do not at beginning of line
+
+	;; or are we at a keyword itself?
+	((string-match (current-word) "\\(else\\|for\\|while\\|until\\|if\\|class\\|module\\|case\\|unless\\|def\\|begin\\|do\\)")
+	 (ruby-end-of-block)
+	 (forward-word))))
+#+END_SRC
+
+** Elisp
+#+BEGIN_SRC emacs-lisp
+(add-hook 'emacs-lisp-mode-hook
+			 '(lambda ()
+				 (define-key emacs-lisp-mode-map "\C-o" 'lisp-complete-symbol)
+				 ))
+
+(add-hook 'lisp-interaction-mode-hook
+			 '(lambda ()
+				 (define-key lisp-interaction-mode-map
+					"\C-o"
+					'lisp-complete-symbol)))
+#+END_SRC
+
+** Haskell
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-find-haskell-tag ()
+  (interactive)
+  (ring-insert find-tag-marker-ring (point-marker))
+  (haskell-mode-jump-to-def (haskell-string-drop-qualifier
+									  (haskell-ident-at-point))))
+#+END_SRC
+** SML
+#+BEGIN_SRC emacs-lisp
+(add-hook 'sml-mode-hook
+			 '(lambda ()
+				 (setq sml-compile-command "CM.make \"sources.cm\"")
+				 (setq sml-compile-commands-alist '(("CM.make \"sources.cm\"" . "sources.cm")))))
+#+END_SRC
+** Forth
+#+BEGIN_SRC emacs-lisp
+(autoload 'forth-mode "gforth" "Colorizes stuff." t)
+#+END_SRC
+
+** LISP
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.se$" . emacs-lisp-mode))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (paredit-mode)))
+(add-hook 'clojure-mode-hook '(lambda () (paredit-mode)))
+(define-key global-map "\C-x;" 'comment-region)
+(define-key global-map (kbd "C-S-k") 'kill-sexp)
+(define-key global-map (kbd "C-k") 'kill-line)
+#+END_SRC
+
+** LISP
+#+BEGIN_SRC emacs-lisp
+(defun eval-and-replace (value)
+  "Evaluate the sexp at point and replace it with its value"
+  (interactive (list (eval-last-sexp nil)))
+  (kill-sexp -1)
+  (insert (format "%S" value)))
+#+END_SRC
+
+** SML
+#+BEGIN_SRC emacs-lisp
+
+(add-to-list 'load-path "/home/jcreed/.site-lisp/sml-mode-4.0")
+(autoload 'sml-mode "sml-mode" "Sml editing mode." t)
+#+END_SRC
+
+** Lua
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "/home/jcreed/.site-lisp/lua-mode")
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+
+#+END_SRC
+
+** Perl
+#+BEGIN_SRC emacs-lisp
+(add-hook 'cperl-mode-hook
+			 (lambda ()
+				(define-key cperl-mode-map "\t" 'indent-for-tab-command)))
+#+END_SRC
+
+** JS
+#+BEGIN_SRC emacs-lisp
+(setenv "NODE_NO_READLINE" "1")
+#+END_SRC
+
+** Python
+#+BEGIN_SRC emacs-lisp
+(global-eldoc-mode -1)
+(defun jcreed-python-mode-hook ()
+  (setq eldoc-mode nil)
+  (setq indent-tabs-mode nil
+		  py-indent-offset 2
+		  tab-width 2))
+(add-hook 'python-mode-hook #'jcreed-python-mode-hook)
+#+END_SRC
+** Rust
+#+BEGIN_SRC emacs-lisp
+(add-hook 'rust-mode-hook
+			 '(lambda ()
+				 (company-mode)
+				 (racer-mode)
+				 (define-key rust-mode-map (kbd "C-x ]") #'company-indent-or-complete-common)
+				 (setq company-tooltip-align-annotations t)
+				 (setq compile-command "~/.cargo/bin/cargo build")
+				 (setq compilation-read-command nil)
+				 (define-key rust-mode-map "\C-c\C-f" 'compile)
+				 (define-key rust-mode-map "\C-c\C-d" 'rust-format-buffer)
+				 (define-key rust-mode-map "\M-;" 'company-complete)
+				 (add-hook 'rust-mode-hook #'racer-mode)
+				 (add-hook 'racer-mode-hook #'eldoc-mode)
+				 ))
+
+(add-hook 'racer-mode-hook #'eldoc-mode)
+#+END_SRC
+
+** Typescript
+#+BEGIN_SRC emacs-lisp
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+  (eldoc-mode +1)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  ;;  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1)
+  (setq company-idle-delay nil)
+  (define-key tide-mode-map "\C-c\C-r" 'tide-references)
+  (define-key tide-mode-map "\C-c\C-s" 'tide-rename-symbol)
+  (define-key tide-mode-map "\M-;" 'company-complete)
+  (fixup-tide-parse-error))
+
+(add-hook 'web-mode-hook
+			 (lambda ()
+				(when (string-equal "tsx" (file-name-extension buffer-file-name))
+				  (setup-tide-mode))))
+
+;;; enable typescript-tslint checker
+;; (require 'flycheck)
+;; (flycheck-add-mode 'typescript-tslint 'web-mode)
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+
+
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+(defun tide-references ()
+  "List all references to the symbol at point."
+  (interactive)
+  (let ((response (tide-command:references)))
+	 (tide-on-response-success response
+										(let ((references (tide-plist-get response :body :refs)))
+										  (-if-let (usage (tide-find-single-usage references))
+													  (progn
+														 (message "This is the only usage.")
+														 (tide-jump-to-filespan usage nil nil))
+													  ;; In tide's actual code, this is
+													  ;;    (tide-jump-to-filespan usage nil t)
+													  ;; but I prefer it to do
+													  ;;    (ring-insert find-tag-marker-ring (point-marker)))
+													  ;; when there's only one reference so I can M-, my way back
+													  (display-buffer (tide-insert-references references)))))))
+#+END_SRC
+
+** Scala
+#+BEGIN_SRC emacs-lisp
+(add-to-list (quote auto-mode-alist) (quote ("\\.scala\\'" . scala-mode)))
+#+END_SRC
+
+** Coffeescript
+#+BEGIN_SRC emacs-lisp
+(autoload 'coffee-mode "coffee-mode" "Coffeescript editing mode." t)
+#+END_SRC
+
+** Web-mode
+#+BEGIN_SRC emacs-lisp
+;; web-mode config
+(ifat baez (require 'web-mode))
+
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+		(let ((web-mode-enable-part-face nil))
+		  ad-do-it)
+	 ad-do-it))
+
+(setq web-mode-content-types-alist
+		'(("jsx" . "\\.js[x]?\\'")
+		  ("jsx" . "\\.ts[x]?\\'")))
+;;;;;;;;;;;
+
 #+END_SRC
 
 * Customization for ~chef~
