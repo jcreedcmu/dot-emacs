@@ -12,7 +12,7 @@ attempting to imitate its cleanliness.
 but the work of coalescing them and organizing them better is ongoing.
 
 * How to use
-
+** Basic use
 Make a file in =~/.site-lisp/location.el= containing just a bare
 #+BEGIN_SRC
 (setq location 'hostname)
@@ -27,6 +27,14 @@ mkdir -p ~/.config/emacs
 ln -s $HERE/readme.org ~/.config/emacs/emacs-config.org
 mkdir -p ~/.config/i3
 ln -s $HERE/i3.config ~/.config/i3/config
+#+END_SRC
+
+** Configuration variables
+You may want to override these in =~/.site-lisp/local-post=, see below in
+[[*Generic local post-init config][the section on local post-init]].
+#+BEGIN_SRC emacs-lisp
+(defvar jcreed-ideas-file-name (expand-file-name "~/self/IDEAS"))
+(defvar jcreed-emacs-config-file-name (expand-file-name "~/dot-emacs/readme.org"))
 #+END_SRC
 
 * Preliminaries
@@ -490,7 +498,7 @@ Don't blink the cursor.
 (display-time)
 #+END_SRC
 
-** COMMENT Find file other window
+** Find file other window
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-parse-line-num (filespec)
 	 (if (string-match "\\(.*\\):\\([0-9]+\\)" filespec)
@@ -760,12 +768,20 @@ current `node` executable is accessible from inside emacs.
 		  ("\\?\\?\\?" . 'jcreed-bad-face)))
 
 (setq auto-mode-alist (cons '("/\\(journal.txt\\)$" . journal-mode) auto-mode-alist))
-#+END_SRC** Open Notes
+#+END_SRC
+** Open Notes
 A convenient keybinding to open my notes file.
 #+BEGIN_SRC emacs-lisp
-(defvar jcreed-ideas-file-name (expand-file-name "~/self/IDEAS"))
-(defun jcreed-open-ideas-file () (interactive) (switch-to-buffer (find-file-noselect jcreed-ideas-file-name)))
-(define-key global-map "\M-i" #'jcreed-open-ideas-file)
+(defun jcreed-open-ideas-file (prefix-arg)
+  "Open notes file, or if prefix arg is given, open emacs config"
+  (interactive "p")
+  (cond
+	((> prefix-arg 1)
+	 (switch-to-buffer (find-file-noselect jcreed-emacs-config-file-name)))
+	(t
+	 (switch-to-buffer (find-file-noselect jcreed-ideas-file-name)))))
+
+(define-key global-map (kbd "M-i") #'jcreed-open-ideas-file)
 #+END_SRC
 
 ** Path Post-Processing
