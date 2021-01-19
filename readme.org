@@ -734,7 +734,7 @@ current `node` executable is accessible from inside emacs.
   (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
   (setq mode-name "Notes"))
 
-(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\)$" . notes-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\|RECIPE\\)$" . notes-mode) auto-mode-alist))
 
 (defun notes-reload-data ()
   (interactive)
