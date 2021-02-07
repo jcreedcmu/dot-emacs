@@ -8,8 +8,9 @@ messy --- one might say archaeologically layered --- ~.emacs~ file. I
 was inspired by [[https://github.com/patrickt/emacs][patrickt's org-mode literate configuration]] and am
 attempting to imitate its cleanliness.
 
-*Current status*: I have just divided my config into some sections,
-but the work of coalescing them and organizing them better is ongoing.
+*Current status*: At least there is no longer a giant top-level
+section named "Misc", but there remain opportunities for better
+organization.
 
 * How to use
 ** Basic use
@@ -42,6 +43,7 @@ You may want to override these in =~/.site-lisp/local-post=, see below in
 #+END_SRC
 
 * Preliminaries
+** Load path prelude
 #+begin_src emacs-lisp
 (setq load-path (cons (expand-file-name "~/.site-lisp/") load-path))
 
@@ -50,6 +52,15 @@ You may want to override these in =~/.site-lisp/local-post=, see below in
 
 (load "location.el")
 #+end_src
+** Packaging
+
+I think this is redundant with what I put in ~init.el~.
+#+BEGIN_SRC emacs-lisp
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+								 ("melpa" . "https://melpa.org/packages/")))
+(require 'package)
+(package-initialize)
+#+END_SRC
 
 * Custom Faces
 #+BEGIN_SRC emacs-lisp
@@ -109,7 +120,103 @@ You may want to override these in =~/.site-lisp/local-post=, see below in
 	 (compile command)))
 #+end_src
 
+** Autoload some modes
+#+BEGIN_SRC emacs-lisp
+(autoload 'python-mode "python-mode" "Python editing mode." t)
+(autoload 'ruby-mode "ruby-mode" "Ruby editing mode." t)
+(autoload 'clojure-mode "clojure-mode" "Clojure editing mode." t)
+#+END_SRC
+
+** Exec-path
+This is mainly useful to make sure that whatever nvm has set as the
+current `node` executable is accessible from inside emacs.
+#+BEGIN_SRC emacs-lisp
+(require 'exec-path-from-shell)
+(exec-path-from-shell-initialize)
+; (setq exec-path (append exec-path '("/usr/local/bin")))
+#+END_SRC
+* Custom modes
+** Jounral mode
+#+BEGIN_SRC emacs-lisp
+(define-derived-mode journal-mode fundamental-mode
+  (setq font-lock-defaults '(journal-mode-highlights))
+  (setq mode-name "Journal"))
+
+													 ; XXX split off into separate file
+(setq journal-mode-highlights
+		'((";\\(Checking\\);" 1 'jcreed-question-face t)
+		  (";\\(ChaseChecking\\);" 1 'jcreed-question-face t)
+		  (";\\(Capone\\);" 1 'jcreed-answer-face t)
+		  (";\\(Ccard\\);" 1 'jcreed-person-face t)
+		  (";\\(.*401k\\);" 1 'jcreed-shell-face t)
+		  ("^\\([0-9-]+\\);;\\(\$?[0-9.,]+\\)" 2 'jcreed-command-face t)
+		  (";\\(PayPal\\);" 1 'jcreed-shell-face t)
+		  ("\\?" . 'jcreed-bad-face)))
+#+END_SRC
+** NaNoWriMo mode
+#+BEGIN_SRC emacs-lisp
+(defun nano-data ()
+  (set-buffer (find-file-noselect "wordcount-history"))
+  (goto-char (point-max))
+  (let* ((tm (current-time))
+			(str1 (int-to-string (car tm)))
+			(str2 (int-to-string (cadr tm)))
+			(shellcmd (concat "wc -w 2005-*.tex | tail -1 | perl -lane 'print ((" str1 " * 65536 +  " str2 ") . \" $F[0]\" )' ")))
+	 (insert (shell-command-to-string shellcmd)))
+  (basic-save-buffer))
+
+(define-minor-mode nanowri-mode
+  "just an after-save-hook hack for now"
+  nil
+  " NaNoWriMo"
+  nil
+  (if nanowri-mode
+		(add-hook 'after-save-hook 'nano-data nil t)
+	 (remove-hook 'after-save-hook 'nano-data)))
+#+END_SRC
+
+** Wordcount mode
+#+BEGIN_SRC emacs-lisp
+(setq mode-line-position (assq-delete-all 'wc-mode mode-line-position))
+(setq mode-line-position
+		(append
+		 mode-line-position
+		 '((wc-mode
+			 (6 (:eval (if (use-region-p)
+								(format " [ %d words ]"
+										  (count-words-region (point) (mark)))
+							 (format " [ %d words ]"
+										(count-words-region (point-min) (point-max))))))
+			 nil))))
+
+(define-minor-mode wc-mode
+  "Toggle word-count mode.
+With no argument, this command toggles the mode.
+A non-null prefix argument turns the mode on.
+A null prefix argument turns it off.
+
+When enabled, the total number of characters, words, and lines is
+displayed in the mode-line.")
+
+#+END_SRC
+
 * General Interface Customization
+** Global Keybindings
+#+BEGIN_SRC emacs-lisp
+(define-key global-map "\M-=" 'backward-up-list)
+(define-key global-map "\M-," 'pop-tag-mark)
+(define-key global-map "\M-." 'jcreed-find-tag)
+(define-key global-map "\C-cp" 'push-tag-mark)
+(define-key global-map "\M-\C-g" 'jcreed-deactivate-mark)
+(define-key global-map "\C-z" 'call-last-kbd-macro)
+(define-key global-map "\M-g" 'goto-line) ; how do people live without this?
+(define-key global-map [(control tab)] 'other-window)
+(define-key global-map "\C-c\M-%" 'query-replace-regexp)
+(define-key global-map "\M-r" 'revert-buffer)
+(define-key global-map "\M-q" 'jcreed-fill-paragraph)
+(define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
+(define-key global-map "\M-)" 'jcreed-match-paren)
+#+END_SRC
 ** Custom variables and faces
 I used to use the usual =custom-blah-blah= mechanism for managing
 configuration, but now that I manage my config inside literate org, it
@@ -204,6 +311,21 @@ And here's the variables that I did have set:
  '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 116 :width normal :foundry "cbp" :family "codon"))) t)
  '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
 #+END_SRC
+** Tmp dirs and backups
+#+BEGIN_SRC emacs-lisp
+
+(defconst emacs-tmp-dir (format "%s/%s%s/" temporary-file-directory "emacs" (user-uid)))
+
+;;; make backup files in a single place, not polluting various directories
+
+(setq backup-directory-alist
+		`((".*" . ,emacs-tmp-dir)))
+(setq auto-save-file-name-transforms
+		`((".*" ,emacs-tmp-dir t)))
+(setq auto-save-list-file-prefix
+		emacs-tmp-dir)
+
+#+END_SRC
 ** Cursor
 Make the cursor a dark red.
 #+BEGIN_SRC emacs-lisp
@@ -271,76 +393,41 @@ Don't blink the cursor.
 (when (boundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (and (boundp 'tool-bar-mode) (functionp 'tool-bar-mode)) (tool-bar-mode -1))
 #+END_SRC
-* Misc
-** Open buffer in other window
-#+BEGIN_SRC emacs-lisp
-(defun Buffer-menu-other-window ()
-  "Select this line's buffer in other window, leaving buffer menu visible?"
-  (interactive)
-
-  (let* ((w (selected-window))
-			(pop-up-windows nil)
-			same-window-buffer-names
-			same-window-regexps)
-	 (pop-to-buffer (Buffer-menu-buffer t) t nil)
-	 (select-window w)
-	 ))
-
-#+END_SRC
-
-** Autoload some modes
-#+BEGIN_SRC emacs-lisp
-(autoload 'python-mode "python-mode" "Python editing mode." t)
-(autoload 'ruby-mode "ruby-mode" "Ruby editing mode." t)
-(autoload 'clojure-mode "clojure-mode" "Clojure editing mode." t)
-#+END_SRC
-
-** General Keybindings
-#+BEGIN_SRC emacs-lisp
-(define-key global-map "\M-=" 'backward-up-list)
-
-(define-key global-map "\M-," 'pop-tag-mark)
-(define-key global-map "\M-." 'jcreed-find-tag)
-(defun push-tag-mark () (interactive)
-		 (ring-insert find-tag-marker-ring (point-marker)))
-(define-key global-map "\C-cp" 'push-tag-mark)
-(define-key global-map "\M-\C-g" 'jcreed-deactivate-mark)
-
-(defun jcreed-deactivate-mark () (interactive) (deactivate-mark))
-#+END_SRC
-
-** Find Tag
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-find-tag (b e)
-  (interactive "r")
-  (if mark-active (progn
-													 ;		    (deactivate-mark)
-						  (find-tag (buffer-substring-no-properties b e)))
-	 (find-tag (find-tag-default))))
-#+END_SRC
-
-** Explain face at point
-#+BEGIN_SRC emacs-lisp
-(defun what-face (pos)
-  (interactive "d")
-  (let ((face (or (get-char-property (point) 'read-face-name)
-						(get-char-property (point) 'face))))
-	 (if face (message "Face: %s" face) (message "No face at %d" pos))))
-#+END_SRC
-
-** General Keybindings
-#+BEGIN_SRC emacs-lisp
-(define-key global-map "\C-z" 'call-last-kbd-macro)
-(define-key global-map "\M-g" 'goto-line) ; how do people live without this?
-(define-key global-map [(control tab)] 'other-window)
-#+END_SRC
-
 ** Enable recase region
 #+BEGIN_SRC emacs-lisp
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 #+END_SRC
+** Enable narrowing features
+#+BEGIN_SRC emacs-lisp
+(put 'narrow-to-page 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+#+END_SRC
+** X Clipboard
+#+BEGIN_SRC emacs-lisp
+(setq x-select-enable-primary t)
+(setq x-select-enable-clipboard t)
+#+END_SRC
+** Timezones & Misc Config Graveyard
+#+BEGIN_SRC emacs-lisp
+													 ;(require 'browse-kill-ring)
+													 ;(browse-kill-ring-default-keybindings)
 
+(set-time-zone-rule "EST")
+
+													 ; (load "/home/jcreed/.site-lisp/paraphrase-mode.el")
+													 ; (add-to-list 'auto-mode-alist '("\\.pp$" . latex-paraphrase-mode))
+
+
+(setq line-move-visual nil)
+
+													 ;(setq-default indent-tabs-mode nil)
+#+END_SRC
+** Uniquify
+#+BEGIN_SRC emacs-lisp
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
+#+END_SRC
 ** Customization around saving whitespace
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-save-whitespace ()
@@ -354,29 +441,6 @@ Don't blink the cursor.
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (setq require-final-newline t))
 #+END_SRC
-
-** NaNoWriMo
-#+BEGIN_SRC emacs-lisp
-(defun nano-data ()
-  (set-buffer (find-file-noselect "wordcount-history"))
-  (goto-char (point-max))
-  (let* ((tm (current-time))
-			(str1 (int-to-string (car tm)))
-			(str2 (int-to-string (cadr tm)))
-			(shellcmd (concat "wc -w 2005-*.tex | tail -1 | perl -lane 'print ((" str1 " * 65536 +  " str2 ") . \" $F[0]\" )' ")))
-	 (insert (shell-command-to-string shellcmd)))
-  (basic-save-buffer))
-
-(define-minor-mode nanowri-mode
-  "just an after-save-hook hack for now"
-  nil
-  " NaNoWriMo"
-  nil
-  (if nanowri-mode
-		(add-hook 'after-save-hook 'nano-data nil t)
-	 (remove-hook 'after-save-hook 'nano-data)))
-#+END_SRC
-
 ** Mousewheel
 #+BEGIN_SRC emacs-lisp
 (defun sd-mousewheel-scroll-up (event)
@@ -402,109 +466,10 @@ Don't blink the cursor.
 (global-set-key (kbd "<mouse-5>") 'sd-mousewheel-scroll-up)
 (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
 #+END_SRC
-
-** General utilities
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-match-paren (arg)
-  "Go to the matching paren if on a paren."
-  (interactive "p")
-  (cond ((looking-at "\\s\(") (forward-list 1))
-		  ((looking-back "\\s\)" (1- (point-marker))) (backward-list 1))
-		  ((eq major-mode 'ruby-mode) (goto-matching-ruby-block))))
-
-(global-set-key "\M-)" 'jcreed-match-paren)
-#+END_SRC
-
-** Enable narrowing features
-#+BEGIN_SRC emacs-lisp
-(put 'narrow-to-page 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
-#+END_SRC
-
-** Timezones & Misc Config Graveyard
-#+BEGIN_SRC emacs-lisp
-													 ;(require 'browse-kill-ring)
-													 ;(browse-kill-ring-default-keybindings)
-
-(set-time-zone-rule "EST")
-
-													 ; (load "/home/jcreed/.site-lisp/paraphrase-mode.el")
-													 ; (add-to-list 'auto-mode-alist '("\\.pp$" . latex-paraphrase-mode))
-
-
-(setq line-move-visual nil)
-
-													 ;(setq-default indent-tabs-mode nil)
-#+END_SRC
-
-** Comint Mode
-#+BEGIN_SRC emacs-lisp
-(add-hook 'comint-mode-hook
-			 '(lambda ()
-				 (define-key comint-mode-map
-					[mouse-2]
-					'mouse-yank-primary)))
-#+END_SRC
-
-** Graveyard
-#+BEGIN_SRC emacs-lisp
-													 ; (setq mouse-yank-at-point t)
-#+END_SRC
-
-** Rainbow Mode
-#+BEGIN_SRC emacs-lisp
-(autoload 'rainbow-mode "rainbow-mode" "Colorizes stuff." t)
-#+END_SRC
-
-** Graveyard
-#+BEGIN_SRC emacs-lisp
-													 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-													 ;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
-													 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
-#+END_SRC
-
-** Terminal
-#+BEGIN_SRC emacs-lisp
-(setq term-term-name "vt100")
-#+END_SRC
-
-** X Clipboard
-#+BEGIN_SRC emacs-lisp
-(setq x-select-enable-primary t)
-(setq x-select-enable-clipboard t)
-#+END_SRC
-
-** Uniquify
-#+BEGIN_SRC emacs-lisp
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward)
-#+END_SRC
-
 ** Delete trailing whitespace
 #+BEGIN_SRC emacs-lisp
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
-
-** General purpose utilities
-#+BEGIN_SRC emacs-lisp
-
-(defun jcreed-inc (start end)
-  (interactive "r")
-  (let ((n (string-to-number (buffer-substring start end))))
-	 (delete-region start end)
-	 (insert (number-to-string (+ n 1)))))
-
-(defun jcreed-date ()
-  (interactive)
-  (insert (format-time-string "=== %Y.%m.%d\n\n")))
-
-#+END_SRC
-
-** Disable some ~vc-mode~ feature I don't want
-#+BEGIN_SRC emacs-lisp
-(remove-hook 'find-file-hooks 'vc-find-file-hook)
-#+END_SRC
-
 ** Display Date
 #+BEGIN_SRC emacs-lisp
 (setq display-time-day-and-date t
@@ -514,64 +479,39 @@ Don't blink the cursor.
 (display-time)
 #+END_SRC
 
-** Find file other window
+* Useful functions
+** Camel-casing
 #+BEGIN_SRC emacs-lisp
-(defun jcreed-parse-line-num (filespec)
-	 (if (string-match "\\(.*\\):\\([0-9]+\\)" filespec)
-		  (cons (match-string 1 filespec)
-				  (string-to-number (match-string 2 filespec)))
-		(list filespec)))
-
-(defun jcreed-find-file-other-window (filespec)
-	 (let* ((fileinfo (jcreed-parse-line-num filespec))
-			  (filename (car fileinfo))
-			  (linenum (cdr fileinfo))
-			  (value (find-file-noselect filename))
-			  (pop-up-windows t))
-		(pop-to-buffer value '(display-buffer-use-some-window
-									  . ((inhibit-same-window . t))))
-		(when linenum
-		  (goto-char (point-min))
-		  (forward-line (1- linenum)))))
-
-#+END_SRC
-
-** General Utilities
-#+BEGIN_SRC emacs-lisp
-(defun plaintext (b e)
+(defun jcreed-uncamel (b e)
   (interactive "r")
-  (set-text-properties b e nil))
+  (replace-regexp "\\([A-Z]\\)" " \\1" nil b e)
+  ;; This is not correct; should be a larger region because of the
+  ;; spaces inserted
+  (downcase-region b e)
+  (goto-char b)
+  (delete-char 1))
+
+(global-set-key [(control shift tab)] (lambda () (interactive) (other-window -1)))
 #+END_SRC
 
-** Graveyard
+** Find non-ASCII characters
 #+BEGIN_SRC emacs-lisp
-													 ; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
+(defun find-first-non-ascii-char ()
+  "Find the first non-ascii character from point onwards."
+  (interactive)
+  (let (point)
+	 (save-excursion
+		(setq point
+				(catch 'non-ascii
+				  (while (not (eobp))
+					 (or (eq (char-charset (following-char))
+								'ascii)
+						  (throw 'non-ascii (point)))
+					 (forward-char 1)))))
+	 (if point
+		  (goto-char point)
+		(message "No non-ascii characters."))))
 #+END_SRC
-
-** General Keybindings
-#+BEGIN_SRC emacs-lisp
-(define-key global-map "\C-c\M-%" 'query-replace-regexp)
-(define-key global-map "\M-r" 'revert-buffer)
-#+END_SRC
-
-** Journal management
-#+BEGIN_SRC emacs-lisp
-(define-derived-mode journal-mode fundamental-mode
-  (setq font-lock-defaults '(journal-mode-highlights))
-  (setq mode-name "Journal"))
-
-													 ; XXX split off into separate file
-(setq journal-mode-highlights
-		'((";\\(Checking\\);" 1 'jcreed-question-face t)
-		  (";\\(ChaseChecking\\);" 1 'jcreed-question-face t)
-		  (";\\(Capone\\);" 1 'jcreed-answer-face t)
-		  (";\\(Ccard\\);" 1 'jcreed-person-face t)
-		  (";\\(.*401k\\);" 1 'jcreed-shell-face t)
-		  ("^\\([0-9-]+\\);;\\(\$?[0-9.,]+\\)" 2 'jcreed-command-face t)
-		  (";\\(PayPal\\);" 1 'jcreed-shell-face t)
-		  ("\\?" . 'jcreed-bad-face)))
-#+END_SRC
-
 ** Urlencode region
 #+BEGIN_SRC emacs-lisp
 ;;; url encode and decode regions
@@ -590,45 +530,108 @@ Don't blink the cursor.
   (interactive "r")
   (func-region start end #'url-unhex-string))
 #+END_SRC
-
-** Tmp dirs and backups
+** Make region plaintext
 #+BEGIN_SRC emacs-lisp
+(defun plaintext (b e)
+  (interactive "r")
+  (set-text-properties b e nil))
+#+END_SRC
+** Open buffer in other window
+#+BEGIN_SRC emacs-lisp
+(defun buffer-menu-other-window ()
+  "Select this line's buffer in other window, leaving buffer menu visible?"
+  (interactive)
 
-(defconst emacs-tmp-dir (format "%s/%s%s/" temporary-file-directory "emacs" (user-uid)))
-
-;;; make backup files in a single place, not polluting various directories
-
-(setq backup-directory-alist
-		`((".*" . ,emacs-tmp-dir)))
-(setq auto-save-file-name-transforms
-		`((".*" ,emacs-tmp-dir t)))
-(setq auto-save-list-file-prefix
-		emacs-tmp-dir)
+  (let* ((w (selected-window))
+			(pop-up-windows nil)
+			same-window-buffer-names
+			same-window-regexps)
+	 (pop-to-buffer (Buffer-menu-buffer t) t nil)
+	 (select-window w)
+	 ))
 
 #+END_SRC
 
-** NaNoWriMo
+** Find Tag
 #+BEGIN_SRC emacs-lisp
-(setq mode-line-position (assq-delete-all 'wc-mode mode-line-position))
-(setq mode-line-position
-		(append
-		 mode-line-position
-		 '((wc-mode
-			 (6 (:eval (if (use-region-p)
-								(format " [ %d words ]"
-										  (count-words-region (point) (mark)))
-							 (format " [ %d words ]"
-										(count-words-region (point-min) (point-max))))))
-			 nil))))
+(defun jcreed-find-tag (b e)
+  (interactive "r")
+  (if mark-active (progn
+													 ;		    (deactivate-mark)
+						  (find-tag (buffer-substring-no-properties b e)))
+	 (find-tag (find-tag-default))))
+#+END_SRC
+** Explain face at point
+#+BEGIN_SRC emacs-lisp
+(defun what-face (pos)
+  (interactive "d")
+  (let ((face (or (get-char-property (point) 'read-face-name)
+						(get-char-property (point) 'face))))
+	 (if face (message "Face: %s" face) (message "No face at %d" pos))))
+#+END_SRC
+** Mark manipulation
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-deactivate-mark () (interactive) (deactivate-mark))
+(defun push-tag-mark () (interactive)
+		 (ring-insert find-tag-marker-ring (point-marker)))
+#+END_SRC
+** Fill paragraph
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-fill-paragraph ()
+  (interactive)
+  (let ((case-fold-search nil))
+	 (fill-paragraph)))
+#+END_SRC
 
-(define-minor-mode wc-mode
-  "Toggle word-count mode.
-With no argument, this command toggles the mode.
-A non-null prefix argument turns the mode on.
-A null prefix argument turns it off.
+** Match paren
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-match-paren (arg)
+  "Go to the matching paren if on a paren."
+  (interactive "p")
+  (cond ((looking-at "\\s\(") (forward-list 1))
+		  ((looking-back "\\s\)" (1- (point-marker))) (backward-list 1))
+		  ((eq major-mode 'ruby-mode) (goto-matching-ruby-block))))
+#+END_SRC
 
-When enabled, the total number of characters, words, and lines is
-displayed in the mode-line.")
+** Increment the selected number
+
+I find this useful for keyboard macros.
+
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-inc (start end)
+  (interactive "r")
+  (let ((n (string-to-number (buffer-substring start end))))
+	 (delete-region start end)
+	 (insert (number-to-string (+ n 1)))))
+#+END_SRC
+
+** Insert date
+#+BEGIN_SRC emacs-lisp
+(defun jcreed-date ()
+  (interactive)
+  (insert (format-time-string "=== %Y.%m.%d\n\n")))
+#+END_SRC
+
+** Find file other window
+#+BEGIN_SRC emacs-lisp
+;; XXX does this belong with notes-mode?
+(defun jcreed-parse-line-num (filespec)
+	 (if (string-match "\\(.*\\):\\([0-9]+\\)" filespec)
+		  (cons (match-string 1 filespec)
+				  (string-to-number (match-string 2 filespec)))
+		(list filespec)))
+
+(defun jcreed-find-file-other-window (filespec)
+	 (let* ((fileinfo (jcreed-parse-line-num filespec))
+			  (filename (car fileinfo))
+			  (linenum (cdr fileinfo))
+			  (value (find-file-noselect filename))
+			  (pop-up-windows t))
+		(pop-to-buffer value '(display-buffer-use-some-window
+									  . ((inhibit-same-window . t))))
+		(when linenum
+		  (goto-char (point-min))
+		  (forward-line (1- linenum)))))
 
 #+END_SRC
 
@@ -657,71 +660,6 @@ displayed in the mode-line.")
   (font-lock-fontify-buffer))
 
 													 ;(global-set-key (kbd "M-r") 'jcreed-recolor)
-#+END_SRC
-
-** Packaging
-
-I think this is redundant with what I put in ~init.el~.
-#+BEGIN_SRC emacs-lisp
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-								 ("melpa" . "https://melpa.org/packages/")))
-(require 'package)
-(package-initialize)
-#+END_SRC
-
-** Exec-path
-This is mainly useful to make sure that whatever nvm has set as the
-current `node` executable is accessible from inside emacs.
-#+BEGIN_SRC emacs-lisp
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
-; (setq exec-path (append exec-path '("/usr/local/bin")))
-#+END_SRC
-
-** General keybindings
-#+BEGIN_SRC emacs-lisp
-(define-key global-map "\M-q" 'jcreed-fill-paragraph)
-(defun jcreed-fill-paragraph ()
-  (interactive)
-  (let ((case-fold-search nil))
-	 (fill-paragraph)))
-#+END_SRC
-
-** General utilities
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-uncamel (b e)
-  (interactive "r")
-  (replace-regexp "\\([A-Z]\\)" " \\1" nil b e)
-  ;; This is not correct; should be a larger region because of the
-  ;; spaces inserted
-  (downcase-region b e)
-  (goto-char b)
-  (delete-char 1))
-
-(global-set-key [(control shift tab)] (lambda () (interactive) (other-window -1)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun find-first-non-ascii-char ()
-  "Find the first non-ascii character from point onwards."
-  (interactive)
-  (let (point)
-	 (save-excursion
-		(setq point
-				(catch 'non-ascii
-				  (while (not (eobp))
-					 (or (eq (char-charset (following-char))
-								'ascii)
-						  (throw 'non-ascii (point)))
-					 (forward-char 1)))))
-	 (if point
-		  (goto-char point)
-		(message "No non-ascii characters."))))
-#+END_SRC
-
-** General Keybindings
-#+BEGIN_SRC emacs-lisp
-(define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
 #+END_SRC
 
 * Notes Management
@@ -976,6 +914,26 @@ Useful for delimiting =fill-paragraph=.
 #+END_SRC
 
 * Tool Configuration
+** Disable some ~vc-mode~ feature I don't want
+#+BEGIN_SRC emacs-lisp
+(remove-hook 'find-file-hooks 'vc-find-file-hook)
+#+END_SRC
+** Terminal
+#+BEGIN_SRC emacs-lisp
+(setq term-term-name "vt100")
+#+END_SRC
+** Rainbow Mode
+#+BEGIN_SRC emacs-lisp
+(autoload 'rainbow-mode "rainbow-mode" "Colorizes stuff." t)
+#+END_SRC
+** Comint Mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'comint-mode-hook
+			 '(lambda ()
+				 (define-key comint-mode-map
+					[mouse-2]
+					'mouse-yank-primary)))
+#+END_SRC
 ** Buffer list
 #+BEGIN_SRC emacs-lisp
 (defun jcreed-sort-buffers-by-file ()
@@ -1794,6 +1752,27 @@ This function is intended to be used as a value of `ring-bell-function'."
 		)
 #+END_SRC
 
+* Graveyard
+
+Sections that I seem to have commented out and haven't sorted out the
+original purpose of yet.
+
+
+#+BEGIN_SRC emacs-lisp
+													 ; (setq mouse-yank-at-point t)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+													 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
+													 ;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+													 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+													 ; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
+#+END_SRC
 * Generic local post-init config
 If we have a file =~/.site-lisp/local.el=, execute it.
 #+BEGIN_SRC emacs-lisp
