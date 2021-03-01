@@ -64,7 +64,9 @@
   "Open notes file, or if prefix arg is given, open emacs config"
   (interactive "p")
   (cond
-	((> prefix-arg 1)
+	((eq prefix-arg 16)
+	 (switch-to-buffer (find-file-noselect jcreed-local-post-file-name)))
+	((eq prefix-arg 4)
 	 (switch-to-buffer (find-file-noselect jcreed-emacs-config-file-name)))
 	(t
 	 (switch-to-buffer (find-file-noselect jcreed-ideas-file-name)))))

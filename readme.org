@@ -40,6 +40,9 @@ You may want to override these in =~/.site-lisp/local-post=, see below in
 (defvar jcreed-emacs-config-file-name
   (expand-file-name "~/dot-emacs/readme.org")
   "Location of emacs configuration file.")
+(defvar jcreed-local-post-file-name
+  (expand-file-name "~/.site-lisp/local-post.el")
+  "Location of post-init configuration file.")
 #+END_SRC
 
 * Preliminaries
@@ -1532,5 +1535,5 @@ Load my note-taking major mode.
 * Generic local post-init config
 If we have a file =~/.site-lisp/local.el=, execute it.
 #+BEGIN_SRC emacs-lisp
-(load "~/.site-lisp/local-post.el" t)
+(load jcreed-local-post-file-name t)
 #+END_SRC
