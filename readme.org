@@ -203,19 +203,19 @@ displayed in the mode-line.")
 * General Interface Customization
 ** Global Keybindings
 #+BEGIN_SRC emacs-lisp
-(define-key global-map "\M-=" 'backward-up-list)
-(define-key global-map "\M-," 'pop-tag-mark)
-(define-key global-map "\M-." 'jcreed-find-tag)
-(define-key global-map "\C-cp" 'push-tag-mark)
-(define-key global-map "\M-\C-g" 'jcreed-deactivate-mark)
-(define-key global-map "\C-z" 'call-last-kbd-macro)
-(define-key global-map "\M-g" 'goto-line) ; how do people live without this?
-(define-key global-map [(control tab)] 'other-window)
-(define-key global-map "\C-c\M-%" 'query-replace-regexp)
-(define-key global-map "\M-r" 'revert-buffer)
-(define-key global-map "\M-q" 'jcreed-fill-paragraph)
+(define-key global-map (kbd "M-=") 'backward-up-list)
+(define-key global-map (kbd "M-,") 'pop-tag-mark)
+(define-key global-map (kbd "M-.") 'jcreed-find-tag)
+(define-key global-map (kbd "C-c p") 'push-tag-mark)
+(define-key global-map (kbd "M-C-g") 'jcreed-deactivate-mark)
+(define-key global-map (kbd "C-z") 'call-last-kbd-macro)
+(define-key global-map (kbd "M-g") 'goto-line) ; how do people live without this?
+(define-key global-map (kbd "<C-tab>") 'other-window)
+(define-key global-map (kbd "C-c M-%") 'query-replace-regexp)
+(define-key global-map (kbd "M-r") 'revert-buffer)
+(define-key global-map (kbd "M-q") 'jcreed-fill-paragraph)
 (define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
-(define-key global-map "\M-)" 'jcreed-match-paren)
+(define-key global-map (kbd "M-)") 'jcreed-match-paren)
 #+END_SRC
 ** Custom variables and faces
 I used to use the usual =custom-blah-blah= mechanism for managing
