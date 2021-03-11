@@ -92,6 +92,11 @@
 		  (t
 			path)))
 
+(defun jcreed-yank-postprocessed ()
+  (interactive)
+  (insert (jcreed-postprocess-path (current-kill 0))))
+(define-key global-map (kbd "C-S-y") #'jcreed-yank-postprocessed)
+
 (defun jcreed-copy-path (prefix-arg)
   "copy buffer's full path to kill ring, but with some
     postprocessing that works well with
