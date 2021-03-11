@@ -219,6 +219,10 @@ displayed in the mode-line.")
 (define-key global-map (kbd "M-q") 'jcreed-fill-paragraph)
 (define-key global-map (kbd "RET") 'electric-newline-and-maybe-indent)
 (define-key global-map (kbd "M-)") 'jcreed-match-paren)
+(define-key global-map (kbd "<C-up>") 'enlarge-window)
+(define-key global-map (kbd "<C-down>") 'shrink-window)
+(define-key global-map (kbd "<C-left>") 'shrink-window-horizontally)
+(define-key global-map (kbd "<C-right>") 'enlarge-window-horizontally)
 #+END_SRC
 ** Custom variables and faces
 I used to use the usual =custom-blah-blah= mechanism for managing
