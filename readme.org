@@ -65,26 +65,6 @@ I think this is redundant with what I put in ~init.el~.
 (package-initialize)
 #+END_SRC
 
-* Custom Faces
-#+BEGIN_SRC emacs-lisp
-(setq solarized-base03    "#002b36")
-(setq solarized-base02    "#073642")
-(setq solarized-base01    "#586e75")
-(setq solarized-base00    "#657b83")
-(setq solarized-base0     "#839496")
-(setq solarized-base1     "#93a1a1")
-(setq solarized-base2     "#eee8d5")
-(setq solarized-base3     "#fdf6e3")
-(setq solarized-yellow    "#b58900")
-(setq solarized-orange    "#cb6b16")
-(setq solarized-red       "#dc322f")
-(setq solarized-magenta   "#d33682")
-(setq solarized-violet    "#6c71c4")
-(setq solarized-blue      "#268bd2")
-(setq solarized-cyan      "#2aa198")
-(setq solarized-green     "#859900")
-#+END_SRC
-
 * General Programming Customization
 ** Indentation
 #+BEGIN_SRC emacs-lisp
@@ -1477,27 +1457,6 @@ the hostname ~shufa~, actually.
 		)
 #+END_SRC
 
-* Graveyard
-
-Sections that I seem to have commented out and haven't sorted out the
-original purpose of yet.
-
-
-#+BEGIN_SRC emacs-lisp
-													 ; (setq mouse-yank-at-point t)
-#+END_SRC
-
-
-#+BEGIN_SRC emacs-lisp
-													 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-													 ;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
-													 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
-#+END_SRC
-
-
-#+BEGIN_SRC emacs-lisp
-													 ; (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
-#+END_SRC
 * Notes Mode
 Load my note-taking major mode.
 #+BEGIN_SRC emacs-lisp
