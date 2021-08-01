@@ -80,6 +80,7 @@ I think this is redundant with what I put in ~init.el~.
 (defface jcreed-path-face nil "Jcreed Path Face")
 (defface jcreed-path2-face nil "Jcreed Path2 Face")
 (defface jcreed-paper-face nil "Jcreed Paper Face")
+(defface jcreed-meta-face nil "Jcreed Meta Face")
 
 (setq solarized-base03    "#002b36")
 (setq solarized-base02    "#073642")
@@ -317,6 +318,8 @@ And here's the variables that I did have set:
  '(twelf-font-decl-face ((t (:inherit nil :stipple nil :background "white" :foreground "blue" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "cbp" :family "Codon"))) t)
  '(twelf-font-fvar-face ((t (:stipple nil :background "white" :foreground "Blue1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 116 :width normal :foundry "cbp" :family "codon"))) t)
  '(xx-font-lock-constructor-face ((t (:foreground "purple3" :weight bold)))))
+
+(set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#373")
 #+END_SRC
 ** Tmp dirs and backups
 #+BEGIN_SRC emacs-lisp
