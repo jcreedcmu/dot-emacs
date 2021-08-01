@@ -31,7 +31,7 @@
 (set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#337733")
 
 (define-derived-mode notes-mode fundamental-mode
-  (setq font-lock-defaults '(notes-mode-highlights))
+  (setq font-lock-defaults '(notes-mode-highlights t))
   (setq-local notes-data nil)
   (notes-reload-data)
   (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
@@ -273,6 +273,13 @@
 	 (with-current-buffer $buf
 		(when (eq major-mode 'notes-mode)
 		  (font-lock-refresh-defaults)))))
+
+(defun jcreed-uuid ()
+  (replace-regexp-in-string "\n$" ""  (shell-command-to-string "python -c 'import uuid; print(uuid.uuid4())'")))
+
+(defun jcreed-insert-meta ()
+  (interactive)
+  (insert (format "META: %s\n" `(:id ,(jcreed-uuid)))))
 
 ;; Defining paragraphs
 ;; Useful for delimiting =fill-paragraph=.
