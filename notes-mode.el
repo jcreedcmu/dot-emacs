@@ -15,6 +15,8 @@
 (defface jcreed-paper-face nil "Jcreed Paper Face")
 (defface jcreed-meta-face nil "Jcreed Meta Face")
 
+(set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#373")
+
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
   (setq-local notes-data nil)
