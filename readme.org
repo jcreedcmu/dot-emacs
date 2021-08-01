@@ -245,7 +245,7 @@ And here's the variables that I did have set:
  '(mouse-yank-at-point t)
  '(package-selected-packages
 	(quote
-	 (tide gnu-elpa-keyring-update sass-mode phi-search multiple-cursors magit company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode rainbow-delimiters python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
+	 (tide gnu-elpa-keyring-update sass-mode phi-search multiple-cursors magit company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -259,6 +259,8 @@ And here's the variables that I did have set:
  '(typescript-indent-level 2)
  '(web-mode-enable-auto-quoting nil)
  '(web-mode-extra-keywords (quote (("javascript" "type" "declare" "global")))))
+
+(set-face-attribute 'jcreed-answer-face nil  :foreground "#268bd2")
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -353,7 +355,6 @@ Don't blink the cursor.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook
 			 (lambda ()
-				(setq rainbow-delimiters-max-face-count 4)
 													 ;(require 'button-lock)
 													 ;(global-button-lock-mode 1)
 				;; (button-lock-register-global-button
@@ -1449,12 +1450,6 @@ This function is intended to be used as a value of `ring-bell-function'."
 		 '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "DarkGreen"))))
 		 '(fuzz-font-lock-annot-face ((((background light)) (:foreground "gray40" :weight bold))))
 		 '(italic ((((supports :underline t)) (:slant italic :family "codon"))))
-		 '(rainbow-delimiters-depth-1-face ((t (:foreground "black"))))
-		 '(rainbow-delimiters-depth-2-face ((t (:foreground "RoyalBlue3"))))
-		 '(rainbow-delimiters-depth-3-face ((t (:foreground "#2aa198"))))
-		 '(rainbow-delimiters-depth-4-face ((t (:foreground "#d33682"))))
-		 '(rainbow-delimiters-depth-5-face ((t (:foreground "#6c71c4"))))
-		 '(rainbow-delimiters-depth-6-face ((t (:foreground "gray40"))))
 		 '(region ((t (:background "#aff"))))
 		 '(tex-verbatim ((t (:background "gray90"))))
 		 '(trailing-whitespace ((t (:background "#ffbfbf"))))
