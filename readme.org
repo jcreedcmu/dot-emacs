@@ -1432,7 +1432,9 @@ This function is intended to be used as a value of `ring-bell-function'."
 #+END_SRC
 
 * Customization for ~baez~
-~baez~ is my current desktop machine, running CentOS.
+~baez~ was my desktop machine at one point. I seem to have brought
+along the configuration for it to my current Debian machine, which has
+the hostname ~shufa~, actually.
 ** Faces
 #+BEGIN_SRC emacs-lisp
 ;; Have become fond of iosevka lately
