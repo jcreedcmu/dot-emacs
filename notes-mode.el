@@ -71,6 +71,7 @@
 		  ("^Q:" . 'jcreed-question-face)
 		  ("^TODO:" . 'jcreed-question-face)
 		  ("^DONE:" . 'jcreed-answer-face)
+		  ("^META:.*\n?" . 'jcreed-meta-face)
 		  ("^A:" . 'jcreed-answer-face)
 		  ("^\\$ .*" . 'jcreed-shell-face)
 		  ("^\\$\\( +[-a-z./]+ *\\)"  1 'jcreed-command-face t)
@@ -258,7 +259,6 @@
 			 (t (jcreed-browse-thing-at-point)))))
 
 (defun face-bounded-thing-at-point (pos)
-  (message "hi")
   (buffer-substring-no-properties
 	(or (previous-single-property-change pos 'face) (point-min))
 	(or (next-single-property-change pos 'face) (point-max))))
@@ -266,6 +266,13 @@
 (defun jcreed-thing-at-point (pos)
   (interactive "d")
   (message (thing-at-point 'filename)))
+
+(defun jcreed-recolor-notes ()
+  (interactive)
+  (dolist ($buf (buffer-list (current-buffer)))
+	 (with-current-buffer $buf
+		(when (eq major-mode 'notes-mode)
+		  (font-lock-refresh-defaults)))))
 
 ;; Defining paragraphs
 ;; Useful for delimiting =fill-paragraph=.

@@ -586,15 +586,19 @@ I find this useful for keyboard macros.
 
 #+END_SRC
 
-** Some sort of recoloring
+** Twelf recoloring
+
+I think I probably eventually want to remove this since I don't know
+what it's really for.
+
 #+BEGIN_SRC emacs-lisp
-(defun jcreed-recolor-fast ()
+(defun jcreed-twelf-recolor-fast ()
   (interactive)
   (kill-all-local-variables)
   (global-font-lock-mode-enable-in-buffers)
   (run-hooks 'find-file-hook))
 
-(defun jcreed-recolor ()
+(defun jcreed-twelf-recolor ()
   (interactive)
 
   (global-font-lock-mode-cmhh)
