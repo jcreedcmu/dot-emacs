@@ -15,7 +15,20 @@
 (defface jcreed-paper-face nil "Jcreed Paper Face")
 (defface jcreed-meta-face nil "Jcreed Meta Face")
 
-(set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#373")
+(set-face-attribute 'jcreed-answer-face nil  :foreground "#268bd2")
+(set-face-attribute 'jcreed-bad-face nil  :foreground "yellow" :background "#dc322f")
+(set-face-attribute 'jcreed-command-face nil  :foreground "gray20" :weight 'bold)
+(set-face-attribute 'jcreed-header-face nil  :background "#586e75" :foreground "#fdf6e3")
+(set-face-attribute 'jcreed-minor-header-face nil  :background "#8ac" :foreground "#fdf6e3")
+(set-face-attribute 'jcreed-paper-face nil  :background "#77cc77" :foreground "black")
+(set-face-attribute 'jcreed-paste-face nil  :foreground "#268bd2" :weight 'bold)
+(set-face-attribute 'jcreed-path-face nil  :foreground "#d33682" :weight 'bold)
+(set-face-attribute 'jcreed-path2-face nil  :foreground "#d33682" :weight 'bold)
+(set-face-attribute 'jcreed-person-face nil  :foreground "#6c71c4" :weight 'bold)
+(set-face-attribute 'jcreed-question-face nil  :foreground "#dc322f")
+(set-face-attribute 'jcreed-shell-face nil  :foreground "#586e75" :background "#eee8d5")
+(set-face-attribute 'jcreed-task-face nil  :foreground "#2aa198" :weight 'bold)
+(set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#337733")
 
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
