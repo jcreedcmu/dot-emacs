@@ -1,5 +1,20 @@
 ;; Notes mode
 
+(defface jcreed-header-face nil "Jcreed Header Face")
+(defface jcreed-minor-header-face nil "Jcreed Minor Header Face")
+(defface jcreed-question-face nil "Jcreed Question Face")
+(defface jcreed-answer-face nil "Jcreed Answer Face")
+(defface jcreed-bad-face nil "Jcreed Bad Face")
+(defface jcreed-shell-face nil "Jcreed Shell Face")
+(defface jcreed-command-face nil "Jcreed Command Face")
+(defface jcreed-person-face nil "Jcreed Person Face")
+(defface jcreed-task-face nil "Jcreed Task Face")
+(defface jcreed-paste-face nil "Jcreed Paste Face")
+(defface jcreed-path-face nil "Jcreed Path Face")
+(defface jcreed-path2-face nil "Jcreed Path2 Face")
+(defface jcreed-paper-face nil "Jcreed Paper Face")
+(defface jcreed-meta-face nil "Jcreed Meta Face")
+
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights))
   (setq-local notes-data nil)
