@@ -62,7 +62,6 @@ I think this is redundant with what I put in ~init.el~.
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 								 ("melpa" . "https://melpa.org/packages/")))
 (require 'package)
-(package-initialize)
 #+END_SRC
 
 * General Programming Customization
