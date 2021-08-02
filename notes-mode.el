@@ -66,7 +66,7 @@
 		'((jcreed-find-paper-name . 'jcreed-paper-face)
 		  ("^=== .*\n" . 'jcreed-header-face)
 		  ("^---\n" . 'jcreed-minor-header-face)
-		  ("#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
+		  ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("^Q:" . 'jcreed-question-face)
 		  ("^TODO:" . 'jcreed-question-face)
 		  ("^DONE:" . 'jcreed-answer-face)
