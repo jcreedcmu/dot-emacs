@@ -30,12 +30,32 @@
 (set-face-attribute 'jcreed-task-face nil  :foreground "#2aa198" :weight 'bold)
 (set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#337733")
 
+(defvar notes-show-metadata nil
+  "Non-nil means show entry metadata")
+
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights t))
+  (setq font-lock-extra-managed-props '(invisible))
+  (setq buffer-invisibility-spec '((jcreed-meta) t))
   (setq-local notes-data nil)
   (notes-reload-data)
   (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
+  (define-key notes-mode-map (kbd "C-c TAB") 'notes-toggle-metadata)
   (setq mode-name "Notes"))
+
+(defun notes-toggle-metadata ()
+  "Toggle the visibility of entry metadata"
+  (interactive)
+  (if notes-show-metadata
+      (progn (org-remove-from-invisibility-spec '(jcreed-meta))
+	     (setq notes-show-metadata nil))
+    (progn (add-to-invisibility-spec '(jcreed-meta))
+	   (setq notes-show-metadata t)))
+  (font-lock-refresh-defaults))
+
+(defun  ()
+  (interactive)
+  (message "hi"))
 
 (setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\|RECIPE\\)$" . notes-mode) auto-mode-alist))
 
@@ -64,14 +84,21 @@
 
 (setq notes-mode-highlights
 		'((jcreed-find-paper-name . 'jcreed-paper-face)
-		  ("^=== .*\n" . 'jcreed-header-face)
+		  ("\\(^=== .*\\)\\(META: .*\\)\\(\n\\)"
+			(1 'jcreed-header-face)
+			(2 '(face jcreed-meta-face invisible jcreed-meta))
+			(3 'jcreed-header-face))
+		  ("^\\(=== .*\n\\)" . (1 'jcreed-header-face))
+		  ("\\(^---.*\\)\\(META: .*\\)\\(\n\\)"
+			(1 'jcreed-minor-header-face)
+			(2 '(face jcreed-meta-face invisible jcreed-meta))
+			(3 'jcreed-minor-header-face))
 		  ("^---\n" . 'jcreed-minor-header-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("^Q:" . 'jcreed-question-face)
 		  ("^TODO:" . 'jcreed-question-face)
 		  ("^DONE:" . 'jcreed-answer-face)
-		  ("^META:.*\n?" . 'jcreed-meta-face)
 		  ("^A:" . 'jcreed-answer-face)
 		  ("^\\$ .*" . 'jcreed-shell-face)
 		  ("^\\$\\( +[-a-z./]+ *\\)"  1 'jcreed-command-face t)
