@@ -37,6 +37,7 @@
   (setq font-lock-defaults '(notes-mode-highlights t))
   (setq font-lock-extra-managed-props '(invisible))
   (setq buffer-invisibility-spec '((jcreed-meta) t))
+  (setq notes-show-metadata nil)
   (setq-local notes-data nil)
   (notes-reload-data)
   (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
@@ -47,10 +48,10 @@
   "Toggle the visibility of entry metadata"
   (interactive)
   (if notes-show-metadata
-      (progn (org-remove-from-invisibility-spec '(jcreed-meta))
-	     (setq notes-show-metadata nil))
-    (progn (add-to-invisibility-spec '(jcreed-meta))
-	   (setq notes-show-metadata t)))
+		(progn (add-to-invisibility-spec '(jcreed-meta))
+				 (setq notes-show-metadata nil))
+	 (progn (org-remove-from-invisibility-spec '(jcreed-meta))
+			  (setq notes-show-metadata t)))
   (font-lock-refresh-defaults))
 
 (defun  ()
