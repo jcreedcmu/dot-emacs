@@ -42,6 +42,9 @@
   (notes-reload-data)
   (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
   (define-key notes-mode-map (kbd "C-c TAB") 'notes-toggle-metadata)
+  (define-key notes-mode-map (kbd "C-c =") 'jcreed-insert-date)
+  (define-key notes-mode-map (kbd "C-c -") 'jcreed-insert-minor-separator)
+  (define-key notes-mode-map (kbd "C-c C-m") 'jcreed-insert-meta)
   (setq mode-name "Notes"))
 
 (defun notes-toggle-metadata ()
@@ -53,10 +56,6 @@
 	 (progn (org-remove-from-invisibility-spec '(jcreed-meta))
 			  (setq notes-show-metadata t)))
   (font-lock-refresh-defaults))
-
-(defun  ()
-  (interactive)
-  (message "hi"))
 
 (setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\|RECIPE\\)$" . notes-mode) auto-mode-alist))
 
@@ -195,7 +194,6 @@
 ;; Define keybindings for notes mode.
 ;; XXX These are =global-map= but should be =notes-mode-map=.
 
-(define-key global-map "\C-c=" 'jcreed-date)
 (ifat chef
 		(define-key global-map "\C-cc" 'hs-toggle-hiding)
 		(define-key global-map "\C-cH" 'hs-hide-all)
@@ -305,9 +303,17 @@
 (defun jcreed-uuid ()
   (replace-regexp-in-string "\n$" ""  (shell-command-to-string "python -c 'import uuid; print(uuid.uuid4())'")))
 
+(defun jcreed-insert-date ()
+  (interactive)
+  (insert (concat (format-time-string "=== %Y.%m.%d") (format " META: %s\n\n" `(:id ,(jcreed-uuid))))))
+
+(defun jcreed-insert-minor-separator ()
+  (interactive)
+  (insert (concat (format-time-string "---") (format " META: %s\n\n" `(:id ,(jcreed-uuid))))))
+
 (defun jcreed-insert-meta ()
   (interactive)
-  (insert (format "META: %s\n" `(:id ,(jcreed-uuid)))))
+  (insert (format " META: %s" `(:id ,(jcreed-uuid)))))
 
 ;; Defining paragraphs
 ;; Useful for delimiting =fill-paragraph=.

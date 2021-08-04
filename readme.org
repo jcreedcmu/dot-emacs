@@ -555,13 +555,6 @@ I find this useful for keyboard macros.
 	 (insert (number-to-string (+ n 1)))))
 #+END_SRC
 
-** Insert date
-#+BEGIN_SRC emacs-lisp
-(defun jcreed-date ()
-  (interactive)
-  (insert (format-time-string "=== %Y.%m.%d\n\n")))
-#+END_SRC
-
 ** Find file other window
 #+BEGIN_SRC emacs-lisp
 ;; XXX does this belong with notes-mode?
