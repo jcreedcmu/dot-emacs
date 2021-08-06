@@ -39,14 +39,20 @@
   (setq font-lock-defaults '(notes-mode-highlights t))
   (setq font-lock-extra-managed-props '(invisible))
   (setq buffer-invisibility-spec '((jcreed-meta) t))
+  (make-local-variable 'notes-show-metadata)
   (setq notes-show-metadata nil)
   (setq-local notes-data nil)
   (notes-reload-data)
-  (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
+  (define-key notes-mode-map (kbd "C-c C-r") 'notes-reload-data)
   (define-key notes-mode-map (kbd "C-c ;") 'notes-toggle-metadata)
   (define-key notes-mode-map (kbd "C-c =") 'jcreed-insert-date)
   (define-key notes-mode-map (kbd "C-c -") 'jcreed-insert-minor-separator)
   (define-key notes-mode-map (kbd "C-c C-m") 'jcreed-insert-meta)
+  (define-key notes-mode-map (kbd "M-.") 'jcreed-browse-thing-at-point)
+  (define-key notes-mode-map (kbd "C-c q") '(lambda () (interactive) (jcreed-qna-q)))
+  (define-key notes-mode-map (kbd "C-c a") '(lambda () (interactive) (jcreed-qna-a)))
+  (define-key notes-mode-map (kbd "C-c /") 'jcreed-browse-thing-at-point)
+  (define-key notes-mode-map (kbd "C-c C-f") 'jcreed-open-file-at-point)
   (setq mode-name "Notes"))
 
 (defun notes-toggle-metadata ()
@@ -108,6 +114,7 @@
 			(5 '(face jcreed-link-face invisible jcreed-meta)))
 		  ("^---\n" . 'jcreed-shell-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
+		  ("^@\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("^Q:" . 'jcreed-question-face)
 		  ("^TODO:" . 'jcreed-question-face)
@@ -212,14 +219,6 @@
 		(define-key global-map "\C-cH" 'hs-hide-all)
 		(define-key global-map "\C-cS" 'hs-show-all))
 
-(define-key global-map "\C-cq" '(lambda () (interactive) (jcreed-qna-q)))
-(define-key global-map "\C-ca" '(lambda () (interactive) (jcreed-qna-a)))
-(define-key global-map "\C-c/" 'jcreed-browse-thing-at-point)
-(define-key global-map "\C-c\C-f" 'jcreed-open-file-at-point)
-
-;; XXX this is not really notes related, should be elsewhere?
-(define-key global-map "\M-," 'pop-tag-mark)
-
 ;;(define-key global-map "\C-cg" 'tbgs)
 ;;(define-key global-map "\C-c\C-c" 'jcreed-class-to-path)
 
@@ -240,10 +239,24 @@
 	 (browse-url (concat "http://github.com/" path)))
 	))
 
-(defun jcreed-browse-target (target)
+(defun jcreed-browse-uuid (uuid)
   (goto-char (point-min))
-  (search-forward target)
+  (search-forward (concat ":id " uuid))
   (beginning-of-line))
+
+(defvar jcreed-browse-target-file-alist nil)
+
+(defun jcreed-browse-target (target)
+  (xref-push-marker-stack)
+  (cond
+	((string-match "\\(.*?\\)/\\(.*\\)" target)
+	 (let* ((fileid (match-string 1 target))
+			 (uuid (match-string 2 target))
+			 (file (assoc fileid jcreed-browse-target-file-alist)))
+		(cond
+		 (file (switch-to-buffer (find-file-noselect (cdr file)))))
+		(jcreed-browse-uuid uuid)))
+	(t (jcreed-browse-uuid target))))
 
 (defun jcreed-browse-thing-at-point (pos)
   (interactive "d")
@@ -273,7 +286,6 @@
 									(str (buffer-substring-no-properties b e)))
 							 (when  (string-match regexp str)
 								(match-string 1 str))))))
-				 (xref-push-marker-stack)
 				 (jcreed-browse-target target)))
 
 			 (t (browse-url-at-point)))))
