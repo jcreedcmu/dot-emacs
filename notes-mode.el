@@ -14,6 +14,7 @@
 (defface jcreed-path2-face nil "Jcreed Path2 Face")
 (defface jcreed-paper-face nil "Jcreed Paper Face")
 (defface jcreed-meta-face nil "Jcreed Meta Face")
+(defface jcreed-link-face nil "Jcreed Link Face")
 
 (set-face-attribute 'jcreed-answer-face nil  :foreground "#268bd2")
 (set-face-attribute 'jcreed-bad-face nil  :foreground "yellow" :background "#dc322f")
@@ -29,6 +30,7 @@
 (set-face-attribute 'jcreed-shell-face nil  :foreground "#586e75" :background "#eee8d5")
 (set-face-attribute 'jcreed-task-face nil  :foreground "#2aa198" :weight 'bold)
 (set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#337733")
+(set-face-attribute 'jcreed-link-face nil  :foreground "#26d" :background nil :weight 'bold)
 
 (defvar notes-show-metadata nil
   "Non-nil means show entry metadata")
@@ -41,7 +43,7 @@
   (setq-local notes-data nil)
   (notes-reload-data)
   (define-key notes-mode-map "\C-c\C-r" 'notes-reload-data)
-  (define-key notes-mode-map (kbd "C-c TAB") 'notes-toggle-metadata)
+  (define-key notes-mode-map (kbd "C-c ;") 'notes-toggle-metadata)
   (define-key notes-mode-map (kbd "C-c =") 'jcreed-insert-date)
   (define-key notes-mode-map (kbd "C-c -") 'jcreed-insert-minor-separator)
   (define-key notes-mode-map (kbd "C-c C-m") 'jcreed-insert-meta)
@@ -80,7 +82,12 @@
 		  (when good
 			 (set-match-data data)
 			 (throw 'jcreed-find-paper-name-ret t))))))
-
+ ;; ("\\(\\[\\[\\)\\(.*?\\)\\(\\]\\[\\)\\(.*?\\)\\(\\]\\]\\)"
+ ;; 			(1 '(face jcreed-link-face invisible jcreed-meta))
+ ;; 			(2 '(face jcreed-link-face invisible jcreed-meta))
+ ;; 			(3 '(face jcreed-link-face invisible jcreed-meta))
+ ;; 			(4 '(face jcreed-link-face))
+ ;; 			(5 '(face jcreed-link-face invisible jcreed-meta)))
 
 (setq notes-mode-highlights
 		'((jcreed-find-paper-name . 'jcreed-paper-face)
@@ -93,7 +100,13 @@
 			(1 'jcreed-minor-header-face)
 			(2 '(face jcreed-meta-face invisible jcreed-meta))
 			(3 'jcreed-minor-header-face))
-		  ("^---\n" . 'jcreed-minor-header-face)
+		  ("\\(link:\\[\\)\\(.*?\\)\\(\\]\\[\\)\\(.*?\\)\\(\\]\\)"
+			(1 '(face jcreed-link-face invisible jcreed-meta))
+			(2 '(face jcreed-link-face invisible jcreed-meta))
+			(3 '(face jcreed-link-face invisible jcreed-meta))
+			(4 '(face jcreed-link-face))
+			(5 '(face jcreed-link-face invisible jcreed-meta)))
+		  ("^---\n" . 'jcreed-shell-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("^Q:" . 'jcreed-question-face)
@@ -227,6 +240,11 @@
 	 (browse-url (concat "http://github.com/" path)))
 	))
 
+(defun jcreed-browse-target (target)
+  (goto-char (point-min))
+  (search-forward target)
+  (beginning-of-line))
+
 (defun jcreed-browse-thing-at-point (pos)
   (interactive "d")
   (let ((face (or (get-char-property (point) 'read-face-name)
@@ -247,6 +265,17 @@
 					(let ((repo (match-string 1 thing))
 							(path (match-string 2 thing)))
 					  (jcreed-browse-repo-path repo path)))))
+			 ((equal face 'jcreed-link-face)
+			  (let ((target (save-excursion
+						  (let* ((regexp "link:\\[\\(.*?\\)\\]\\[\\(.*?\\)\\]")
+									(b (re-search-backward "link:"))
+									(e (re-search-forward regexp))
+									(str (buffer-substring-no-properties b e)))
+							 (when  (string-match regexp str)
+								(match-string 1 str))))))
+				 (xref-push-marker-stack)
+				 (jcreed-browse-target target)))
+
 			 (t (browse-url-at-point)))))
 
 (defun jcreed-open-repo-path (repo path)
