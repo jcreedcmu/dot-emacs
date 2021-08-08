@@ -44,6 +44,7 @@
   (setq-local notes-data nil)
   (notes-reload-data)
   (define-key notes-mode-map (kbd "C-c C-r") 'notes-reload-data)
+  (define-key notes-mode-map (kbd "C-c C-l") 'jcreed-make-link)
   (define-key notes-mode-map (kbd "C-c ;") 'notes-toggle-metadata)
   (define-key notes-mode-map (kbd "C-c =") 'jcreed-insert-date)
   (define-key notes-mode-map (kbd "C-c -") 'jcreed-insert-minor-separator)
@@ -54,6 +55,8 @@
   (define-key notes-mode-map (kbd "C-c /") 'jcreed-browse-thing-at-point)
   (define-key notes-mode-map (kbd "C-c C-f") 'jcreed-open-file-at-point)
   (setq mode-name "Notes"))
+
+(define-key global-map (kbd "M-p") 'jcreed-copy-path)
 
 (defun notes-toggle-metadata ()
   "Toggle the visibility of entry metadata"
@@ -195,8 +198,6 @@
           (insert (concat idpath "\n"))
           (cl-dolist (window (get-buffer-window-list nil nil t))
             (set-window-point window (point)))))))))
-
-(define-key global-map "\M-p" 'jcreed-copy-path)
 
 ;; Questions and Answers
 
@@ -355,6 +356,35 @@
 (defun jcreed-insert-meta ()
   (interactive)
   (insert (format " META: %s" `(:id ,(jcreed-uuid)))))
+
+;; https://www.reddit.com/r/emacs/comments/3ryby6/elisp_equivalente_of_refindall/cwsgbqq/
+(defun string-find-all (regexp str &optional start-pos)
+  (cl-loop for match-pos = (string-match regexp str start-pos)
+           while match-pos
+           collect (match-string 1 str)
+           do (setf start-pos (1+ match-pos))))
+
+(defun jcreed-attrs-of-text (txt)
+ (mapcan (lambda (x)
+			  (when (string-match "@\\([a-z]+\\): \\(.*\\)" x)
+				 (list (intern (concat ":" (match-string 1 x))) (match-string 2 x))))
+			(string-find-all "^\\(@[a-z]+: .*\\)$" txt)))
+
+(defun jcreed-make-link ()
+  (interactive)
+  (save-excursion
+	 (let* ((b (re-search-backward "---\\|===" nil t))
+			  (e (or (search-forward "\n\n" nil t) (buffer-end 1)))
+			  (txt (buffer-substring-no-properties b e))
+			  (attrs (jcreed-attrs-of-text txt)))
+		(setq foobar attrs)
+		(when (string-match "META: \\(.*\\)\n" txt)
+		  (let* ((meta (read (match-string 1 txt)))
+					(id (plist-get meta :id))
+					(filename (car (rassoc buffer-file-name jcreed-browse-target-file-alist)))
+					(link-text (or (plist-get attrs :title) "link")))
+			 (when (not filename) (error (format "don't know this file: %s" buffer-file-name)))
+			 (kill-new (format "link:[%s/%s][%s]" filename id link-text)))))))
 
 ;; Defining paragraphs
 ;; Useful for delimiting =fill-paragraph=.
