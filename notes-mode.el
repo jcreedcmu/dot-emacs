@@ -262,19 +262,15 @@
 		(jcreed-browse-uuid uuid)))
 	(t (jcreed-browse-uuid target))))
 
+;; Can locally redefine this if desired
+(defun jcreed-browse-thing-at-point-fallback (pos)
+  (browse-url-at-point))
+
 (defun jcreed-browse-thing-at-point (pos)
   (interactive "d")
   (let ((face (or (get-char-property (point) 'read-face-name)
 						(get-char-property (point) 'face))))
-	 (cond ((equal face 'jcreed-person-face)
-			  (browse-url (concat "redacted" (thing-at-point 'word))))
-			 ((equal face 'jcreed-diff-face)
-			  (browse-url (concat "redacted" (thing-at-point 'word))))
-			 ((equal face 'jcreed-task-face)
-			  (browse-url (concat "redacted" (task-at-point))))
-			 ((equal face 'jcreed-paste-face)
-			  (browse-url (concat "redacted" (thing-at-point 'word))))
-			 ((equal face 'jcreed-paper-face)
+	 (cond ((equal face 'jcreed-paper-face)
 			  (browse-url (cadr (assoc (thing-at-point 'word) notes-data))))
 			 ((equal face 'jcreed-path-face)
 			  (let ((thing (thing-at-point 'filename)))
@@ -291,8 +287,7 @@
 							 (when  (string-match regexp str)
 								(match-string 1 str))))))
 				 (jcreed-browse-target target)))
-
-			 (t (browse-url-at-point)))))
+			 (t (jcreed-browse-thing-at-point-fallback pos)))))
 
 (defun jcreed-open-repo-path (repo path)
   (message (concat path " - " repo))
