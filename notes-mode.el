@@ -263,7 +263,7 @@
 	(t (jcreed-browse-uuid target))))
 
 ;; Can locally redefine this if desired
-(defun jcreed-browse-thing-at-point-fallback (pos)
+(defun jcreed-browse-thing-at-point-fallback ()
   (browse-url-at-point))
 
 (defun jcreed-browse-thing-at-point (pos)
@@ -278,6 +278,12 @@
 					(let ((repo (match-string 1 thing))
 							(path (match-string 2 thing)))
 					  (jcreed-browse-repo-path repo path)))))
+			 ((equal face 'jcreed-path2-face)
+			  (let ((thing (face-bounded-thing-at-point (point))))
+				 (when (string-match "\\(.*\\):\\[\\(.*\\)\\]" thing)
+					(let ((repo (match-string 1 thing))
+							(path (match-string 2 thing)))
+					  (jcreed-browse-repo-path repo path)))))
 			 ((equal face 'jcreed-link-face)
 			  (let ((target (save-excursion
 						  (let* ((regexp "link:\\[\\(.*?\\)\\]\\[\\(.*?\\)\\]")
@@ -287,7 +293,7 @@
 							 (when  (string-match regexp str)
 								(match-string 1 str))))))
 				 (jcreed-browse-target target)))
-			 (t (jcreed-browse-thing-at-point-fallback pos)))))
+			 (t (jcreed-browse-thing-at-point-fallback)))))
 
 (defun jcreed-open-repo-path (repo path)
   (message (concat path " - " repo))
