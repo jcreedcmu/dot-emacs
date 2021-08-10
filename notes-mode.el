@@ -116,6 +116,7 @@
 			(4 '(face jcreed-link-face))
 			(5 '(face jcreed-link-face invisible jcreed-meta)))
 		  ("^---\n" . 'jcreed-shell-face)
+		  ("^-~-\n" . 'jcreed-shell-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("^@\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
@@ -250,6 +251,8 @@
 (defun jcreed-browse-target (target)
   (xref-push-marker-stack)
   (cond
+	((string-match "^http" target)
+	 (browse-url target))
 	((string-match "\\(.*?\\)/\\(.*\\)" target)
 	 (let* ((fileid (match-string 1 target))
 			 (uuid (match-string 2 target))
