@@ -361,10 +361,15 @@
   (interactive)
   (insert (concat (format-time-string "---") (format " META: %s\n\n" `(:id ,(jcreed-uuid))))))
 
+(defun jcreed-make-marker ()
+  (let ((id (jcreed-uuid)))
+	 (insert (format "marker:[:id %s]" id))
+	 (kill-new (format "link:[%s][link]" (jcreed-target-in-current-buffer id)))))
+
 (defun jcreed-insert-meta (prefix-arg)
   (interactive "p")
   (cond
-	((eq prefix-arg 4) (insert (format "marker:[:id %s]" (jcreed-uuid))))
+	((eq prefix-arg 4) (jcreed-make-marker))
 	(t (insert (format " META: %s" `(:id ,(jcreed-uuid)))))))
 
 ;; https://www.reddit.com/r/emacs/comments/3ryby6/elisp_equivalente_of_refindall/cwsgbqq/
@@ -380,6 +385,11 @@
 				 (list (intern (concat ":" (match-string 1 x))) (match-string 2 x))))
 			(string-find-all "^\\(@[a-z]+: .*\\)$" txt)))
 
+(defun jcreed-target-in-current-buffer (id)
+  (let ((filename (car (rassoc buffer-file-name jcreed-browse-target-file-alist))))
+	 (when (not filename) (error (format "don't know this file: %s" buffer-file-name)))
+	 (format "%s/%s" filename id)))
+
 (defun jcreed-make-link ()
   (interactive)
   (save-excursion
@@ -390,11 +400,10 @@
 		(setq foobar attrs)
 		(when (string-match "META: \\(.*\\)\n" txt)
 		  (let* ((meta (read (match-string 1 txt)))
-					(id (plist-get meta :id))
-					(filename (car (rassoc buffer-file-name jcreed-browse-target-file-alist)))
 					(link-text (or (plist-get attrs :title) "link")))
-			 (when (not filename) (error (format "don't know this file: %s" buffer-file-name)))
-			 (kill-new (format "link:[%s/%s][%s]" filename id link-text)))))))
+			 (kill-new (format "link:[%s][%s]"
+									 (jcreed-target-in-current-buffer (plist-get meta :id))
+									 link-text)))))))
 
 ;; Defining paragraphs
 ;; Useful for delimiting =fill-paragraph=.
