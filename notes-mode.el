@@ -37,7 +37,7 @@
 
 (define-derived-mode notes-mode fundamental-mode
   (setq font-lock-defaults '(notes-mode-highlights t))
-  (setq font-lock-extra-managed-props '(invisible))
+  (setq font-lock-extra-managed-props '(invisible display))
   (setq buffer-invisibility-spec '((jcreed-meta) t))
   (make-local-variable 'notes-show-metadata)
   (setq notes-show-metadata nil)
@@ -115,6 +115,9 @@
 			(3 '(face jcreed-link-face invisible jcreed-meta))
 			(4 '(face jcreed-link-face))
 			(5 '(face jcreed-link-face invisible jcreed-meta)))
+		  ("\\(marker\\)\\(:\\[:id [^[:space:]]*?\\]\\)"
+			(1 '(face jcreed-link-face display "⬛"))
+			(2 '(face jcreed-link-face invisible jcreed-meta)))
 		  ("^---\n" . 'jcreed-shell-face)
 		  ("^-~-\n" . 'jcreed-shell-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
@@ -286,6 +289,7 @@
 					  (jcreed-browse-repo-path repo path)))))
 			 ((equal face 'jcreed-link-face)
 			  (let ((target (save-excursion
+									(forward-char 5) ;; length of "link:"
 						  (let* ((regexp "link:\\[\\(.*?\\)\\]\\[\\(.*?\\)\\]")
 									(b (re-search-backward "link:"))
 									(e (re-search-forward regexp))
@@ -357,9 +361,11 @@
   (interactive)
   (insert (concat (format-time-string "---") (format " META: %s\n\n" `(:id ,(jcreed-uuid))))))
 
-(defun jcreed-insert-meta ()
-  (interactive)
-  (insert (format " META: %s" `(:id ,(jcreed-uuid)))))
+(defun jcreed-insert-meta (prefix-arg)
+  (interactive "p")
+  (cond
+	((eq prefix-arg 4) (insert (format "marker:[:id %s]" (jcreed-uuid))))
+	(t (insert (format " META: %s" `(:id ,(jcreed-uuid)))))))
 
 ;; https://www.reddit.com/r/emacs/comments/3ryby6/elisp_equivalente_of_refindall/cwsgbqq/
 (defun string-find-all (regexp str &optional start-pos)
