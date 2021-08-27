@@ -1416,8 +1416,6 @@ the hostname ~shufa~, actually.
 ;; Have become fond of iosevka lately
 (ifat baez
 		(set-face-attribute 'default nil :family "iosevka" :width 'normal :height 108))
-(ifat riehl
-		(set-face-attribute 'default nil :family "iosevka" :width 'wide :height 108))
 
 ;; In case I want to go back to using codon, this suffices
 (defun jcreed-pick-codon () (interactive)
