@@ -15,6 +15,7 @@
 (defface jcreed-paper-face nil "Jcreed Paper Face")
 (defface jcreed-meta-face nil "Jcreed Meta Face")
 (defface jcreed-link-face nil "Jcreed Link Face")
+(defface jcreed-strikethrough-face nil "Jcreed Strikethrough Face")
 
 (set-face-attribute 'jcreed-answer-face nil  :foreground "#268bd2")
 (set-face-attribute 'jcreed-bad-face nil  :foreground "yellow" :background "#dc322f")
@@ -31,6 +32,7 @@
 (set-face-attribute 'jcreed-task-face nil  :foreground "#2aa198" :weight 'bold)
 (set-face-attribute 'jcreed-meta-face nil  :background "#99cc55" :foreground "#337733")
 (set-face-attribute 'jcreed-link-face nil  :foreground "#26d" :background nil :weight 'bold)
+(set-face-attribute 'jcreed-strikethrough-face nil  :strike-through t)
 
 (defvar notes-show-metadata nil
   "Non-nil means show entry metadata")
@@ -139,6 +141,7 @@
 		  ("\\bP[0-9]+\\b" . 'jcreed-paste-face)
 		  ("\\b[a-z]+//\\(?:\\w\\|[-_/.]\\)+" . 'jcreed-path-face)
 		  ("\\b[a-z]+:\\[\\(?:[^]]\\)+\\]" . 'jcreed-path2-face)
+		  ("~\\b.*?\\b~" . 'jcreed-strikethrough-face)
 		  ("\\?\\?\\?" . 'jcreed-bad-face)))
 
 (setq auto-mode-alist (cons '("/\\(journal.txt\\)$" . journal-mode) auto-mode-alist))
