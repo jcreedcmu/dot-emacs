@@ -121,7 +121,7 @@
 			(1 '(face jcreed-link-face display "⬛"))
 			(2 '(face jcreed-link-face invisible jcreed-meta)))
 		  ("^---\n" . 'jcreed-shell-face)
-		  ("^-~-\n" . 'jcreed-shell-face)
+		  ("^-~-.*\n" . 'jcreed-shell-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("^@\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
