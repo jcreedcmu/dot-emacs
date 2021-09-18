@@ -1,4 +1,5 @@
 ;; Notes mode
+(require 'xref) ;; needed for xref-push-marker-stack
 
 (defface jcreed-header-face nil "Jcreed Header Face")
 (defface jcreed-minor-header-face nil "Jcreed Minor Header Face")
