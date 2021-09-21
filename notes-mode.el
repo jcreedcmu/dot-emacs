@@ -304,7 +304,7 @@
 			 (t (jcreed-browse-thing-at-point-fallback)))))
 
 (defun jcreed-find-file-prefix (file prefix-arg)
-  (cond ((eq prefix-arg 0) (find-file-other-window file))
+  (cond ((eq prefix-arg 0) (jcreed-find-file-other-window file))
 		  ((eq prefix-arg 0) (find-file file))))
 
 (defun jcreed-open-repo-path (repo path prefix-arg)
