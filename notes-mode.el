@@ -274,7 +274,7 @@
   (browse-url-at-point))
 
 (defun jcreed-browse-thing-at-point (pos prefix-arg)
-  (interactive "dp")
+  (interactive "d\np")
   (let ((face (or (get-char-property (point) 'read-face-name)
 						(get-char-property (point) 'face))))
 	 (cond ((equal face 'jcreed-paper-face)
@@ -324,7 +324,7 @@
 		"")))
 
 (defun jcreed-open-file-at-point (pos prefix-arg)
-  (interactive "dp")
+  (interactive "d\np")
   (let ((face (or (get-char-property (point) 'read-face-name)
 						(get-char-property (point) 'face))))
 	 (cond ((equal face 'jcreed-path-face)
