@@ -362,11 +362,11 @@
 
 (defun jcreed-insert-date ()
   (interactive)
-  (insert (concat (format-time-string "=== %Y.%m.%d") (format " META: %s\n\n" `(:id ,(jcreed-uuid))))))
+  (insert (concat (format-time-string "=== %Y.%m.%d") (format " META: %s\n" `(:id ,(jcreed-uuid))))))
 
 (defun jcreed-insert-minor-separator ()
   (interactive)
-  (insert (concat (format-time-string "---") (format " META: %s\n\n" `(:id ,(jcreed-uuid))))))
+  (insert (concat (format-time-string "---") (format " META: %s\n" `(:id ,(jcreed-uuid))))))
 
 (defun jcreed-make-marker ()
   (let ((id (jcreed-uuid)))
