@@ -1269,6 +1269,12 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+END_SRC
 
+** Lean
+#+BEGIN_SRC emacs-lisp
+(setq lean-rootdir "/home/jcreed/.elan")
+(setq lean-memory-limit 8000)
+#+END_SRC
+
 * Customization for ~chef~
 ~chef~ is a 2015 MacBook Pro which I inherited from my employment at Chef.
 
