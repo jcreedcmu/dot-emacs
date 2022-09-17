@@ -267,6 +267,8 @@ And here's the variables that I did have set:
  '(org-block ((t (:foreground "#999"))))
  '(isearch ((t (:foreground "#ffff00"))))
  '(minibuffer-prompt ((t (:foreground "#999"))))
+ '(tide-hl-identifier-face ((t (:foreground "#ffff00" :background "#004b56"))))
+ '(show-paren-match ((t ( :background "#007198"))))
 )
 
 ;;; light mode
@@ -313,7 +315,9 @@ And here's the variables that I did have set:
 ** Cursor
 Make the cursor a dark red.
 #+BEGIN_SRC emacs-lisp
-(set-cursor-color "#700")
+(if jcreed-dark-mode
+    (set-cursor-color "#dc424f")
+  (set-cursor-color "#700"))
 #+END_SRC
 
 Don't blink the cursor.
