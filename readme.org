@@ -64,6 +64,12 @@ I think this is redundant with what I put in ~init.el~.
 (require 'package)
 #+END_SRC
 
+** Dark mode
+Set this variable so I can use it later in ~notes-mode.el~.
+#+BEGIN_SRC emacs-lisp
+(setq jcreed-dark-mode t)
+#+END_SRC
+
 * General Programming Customization
 ** Indentation
 #+BEGIN_SRC emacs-lisp
@@ -104,7 +110,7 @@ current `node` executable is accessible from inside emacs.
 ; (setq exec-path (append exec-path '("/usr/local/bin")))
 #+END_SRC
 * Custom modes
-** Jounral mode
+** Journal mode
 #+BEGIN_SRC emacs-lisp
 (define-derived-mode journal-mode fundamental-mode
   (setq font-lock-defaults '(journal-mode-highlights))
@@ -239,27 +245,54 @@ And here's the variables that I did have set:
  '(web-mode-enable-auto-quoting nil)
  '(web-mode-extra-keywords (quote (("javascript" "type" "declare" "global")))))
 
+;;; dark mode
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:foreground "black" :background "white"))))
- '(font-lock-comment-face ((t (:foreground "#a34" :slant italic))))
- '(font-lock-constant-face ((t (:foreground "#0070ff"))))
- '(font-lock-doc-face ((t (:foreground "#a34"))))
+ '(default ((t (:foreground "#fdf6e3" :background "#002b36"))))
+ '(font-lock-comment-face ((t (:foreground "#fc523f" :slant italic))))
+ '(font-lock-constant-face ((t (:foreground "#2aa198"))))
+ '(font-lock-doc-face ((t (:foreground "#b58900"))))
  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
- '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
- '(font-lock-string-face ((nil (:foreground "DarkGreen"))))
+ '(font-lock-keyword-face ((nil (:foreground "#6c61e4" :weight bold))))
+ '(font-lock-string-face ((nil (:foreground "#63a363"))))
  '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
  '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
  '(highlight ((t (:background "#ff0"))))
  '(italic ((((supports :underline t)) (:slant italic))))
- '(link ((t (:foreground "#007" :background "#eef"))))
- '(region ((t (:background "#aff"))))
+ '(link ((t (:foreground "#55f" ))))
+ '(region ((t (:background "#004b56"))))
+ '(lazy-highlight  ((t (:background "#66305b"))))
+ '(secondary-selection ((t (:background "#305b66"))))
  '(tex-verbatim ((t (:background "gray90"))))
- '(trailing-whitespace ((t (:background "#ffbfbf"))))
- '(org-block ((t (:foreground "#444")))))
+ '(trailing-whitespace ((t (:background "#00bfbf"))))
+ '(org-block ((t (:foreground "#999"))))
+ '(isearch ((t (:foreground "#ffff00"))))
+ '(minibuffer-prompt ((t (:foreground "#999"))))
+)
+
+;;; light mode
+(when nil
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+  '(default ((t (:foreground "black" :background "white"))))
+  '(font-lock-comment-face ((t (:foreground "#a34" :slant italic))))
+  '(font-lock-constant-face ((t (:foreground "#0070ff"))))
+  '(font-lock-doc-face ((t (:foreground "#a34"))))
+  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
+  '(font-lock-keyword-face ((nil (:foreground "#6c71c4" :weight bold))))
+  '(font-lock-string-face ((nil (:foreground "DarkGreen"))))
+  '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
+  '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
+  '(highlight ((t (:background "#ff0"))))
+  '(italic ((((supports :underline t)) (:slant italic))))
+  '(link ((t (:foreground "#007" :background "#eef"))))
+  '(region ((t (:background "#aff"))))
+  '(tex-verbatim ((t (:background "gray90"))))
+  '(trailing-whitespace ((t (:background "#ffbfbf"))))
+  '(org-block ((t (:foreground "#444")))))
+)
 
 #+END_SRC
 ** Tmp dirs and backups

@@ -35,6 +35,12 @@
 (set-face-attribute 'jcreed-link-face nil  :foreground "#26d" :background nil :weight 'bold)
 (set-face-attribute 'jcreed-strikethrough-face nil  :strike-through t)
 
+(when jcreed-dark-mode
+  (set-face-attribute 'jcreed-shell-face nil  :foreground "#fdf6e3" :background "#001b26")
+  (set-face-attribute 'jcreed-header-face nil  :foreground "#fdf6e3" :background "#004656")
+  (set-face-attribute 'jcreed-minor-header-face nil  :foreground "#fdf6e3" :background "#204646")
+  (set-face-attribute 'jcreed-command-face nil  :foreground "#586e75" :weight 'bold))
+
 (defvar notes-show-metadata nil
   "Non-nil means show entry metadata")
 
