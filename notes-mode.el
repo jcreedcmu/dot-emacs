@@ -403,9 +403,26 @@
 	 (when (not filename) (error (format "don't know this file: %s" buffer-file-name)))
 	 (format "%s/%s" filename id)))
 
+(defun jcreed-current-header-line ()
+  "Returns the text of the current header line, not containing the newline, either the current line if the point
+is on it, or the nearest header line above the point."
+  (save-excursion
+    (end-of-line)
+    (let* ((b (search-backward "===" nil t))
+           (_ (end-of-line))
+           (e (point))
+           (txt (buffer-substring-no-properties b e)))
+      txt)))
+
+(defun jcreed-current-header-date ()
+  "Returns the datestring (e.g. \"2022.10.01\") of the current header line."
+  (let ((line (jcreed-current-header-line)))
+    (when (string-match "^=== \\([0-9]+\\.[0-9]+\\.[0-9]+\\) " line) (match-string 1 line))))
+
 (defun jcreed-make-link ()
   (interactive)
   (save-excursion
+    ;; probably should reuse some code here
 	 (let* ((b (re-search-backward "---\\|===" nil t))
 			  (e (or (search-forward "\n\n" nil t) (buffer-end 1)))
 			  (txt (buffer-substring-no-properties b e))
@@ -417,6 +434,39 @@
 			 (kill-new (format "link:[%s][%s]"
 									 (jcreed-target-in-current-buffer (plist-get meta :id))
 									 link-text)))))))
+
+(defun jcreed-datestring-to-time (datestring)
+  "takes a string like 2020.10.23 and returns an emacs time"
+  (date-to-time (concat (replace-regexp-in-string "\\." "-" datestring) "T12:00:00")))
+
+(defun jcreed-day-offset (offset &optional datestring)
+  "Returns a string that represents the date that is OFFSET days after DATESTRING.
+
+DATESTRING and the return value are in the format \"2020.10.23\".
+If DATESTRING is nil, the current date is used."
+  (let ((base-time (if datestring (jcreed-datestring-to-time datestring) (current-time))))
+    (format-time-string "%Y.%m.%d" (time-add base-time (days-to-time offset)))))
+
+(defun jcreed-reticulate-week-template ()
+  "returns reticulate-week template for current date"
+  (let* ((today (jcreed-current-header-date))
+         (back7 (jcreed-day-offset -7 today))
+         (fore7 (jcreed-day-offset 7 today)))
+    (format "@tag: reticulate-week
+
+Q: What happened last week? (%s - %s)
+A: ???
+
+Q: How do I feel about this?
+A: ???
+
+Q: How do I see next week going? (%s - %s)
+A: ???
+" back7 today today fore7)))
+
+(defun reticulate-week ()
+  (interactive)
+  (insert (jcreed-reticulate-week-template)))
 
 ;; Defining paragraphs
 ;; Useful for delimiting =fill-paragraph=.
