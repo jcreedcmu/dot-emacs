@@ -269,7 +269,7 @@ And here's the variables that I did have set:
  '(minibuffer-prompt ((t (:foreground "#999"))))
  '(tide-hl-identifier-face ((t (:foreground "#ffff00" :background "#004b56"))))
  '(show-paren-match ((t ( :background "#007198"))))
-)
+ '(mode-line ((t (:foreground "#000000" :background "#bbbb88")))))
 
 ;;; light mode
 (when nil

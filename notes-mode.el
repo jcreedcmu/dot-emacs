@@ -439,13 +439,38 @@ is on it, or the nearest header line above the point."
   "takes a string like 2020.10.23 and returns an emacs time"
   (date-to-time (concat (replace-regexp-in-string "\\." "-" datestring) "T12:00:00")))
 
+(defun jcreed-format-date (time)
+  "Returns a string that represents the date of TIME in YYYY.MM.DD format."
+    (format-time-string "%Y.%m.%d" time))
+
 (defun jcreed-day-offset (offset &optional datestring)
   "Returns a string that represents the date that is OFFSET days after DATESTRING.
 
 DATESTRING and the return value are in the format \"2020.10.23\".
 If DATESTRING is nil, the current date is used."
   (let ((base-time (if datestring (jcreed-datestring-to-time datestring) (current-time))))
-    (format-time-string "%Y.%m.%d" (time-add base-time (days-to-time offset)))))
+    (jcreed-format-date (time-add base-time (days-to-time offset)))))
+
+(defun jcreed-first-day-of-month (time)
+  "takes in a time, and returns a time that is during the first day of that month"
+  (let* ((dect (decode-time time)))
+    (setf (nth 3 dect) 1)
+    (apply 'encode-time dect)))
+
+(defun jcreed-last-day-of-month (time)
+"takes in a time, and returns a time that is during the last day of that month"
+  (let* ((dect (decode-time time))
+         (month (nth 4 dect))
+         (year (nth 5 dect)))
+    (setf (nth 3 dect) (timezone-last-day-of-month month year))
+    (apply 'encode-time dect)))
+
+(defun jcreed-next-month (time)
+"takes in a time, and returns a time that is during the next month"
+  (let* ((dect (decode-time time)))
+    (setf (nth 4 dect) (+ (nth 4 dect) 1))
+    (apply 'encode-time dect)))
+
 
 (defun jcreed-reticulate-week-template ()
   "returns reticulate-week template for current date"
@@ -464,9 +489,32 @@ Q: How do I see next week going? (%s - %s)
 A: ???
 " back7 today today fore7)))
 
+(defun jcreed-reticulate-month-template ()
+  "returns reticulate-month template for current date"
+  (let* ((today (jcreed-datestring-to-time (jcreed-current-header-date)))
+         (next-month (jcreed-next-month today)))
+   (format "@tag: reticulate-month
+
+Q: What happened last month? (%s - %s)
+A: ???
+
+Q: How do I feel about this?
+A: ???
+
+Q: How do I see next month going? (%s - %s)
+A: ???
+"
+           (jcreed-format-date (jcreed-first-day-of-month today))
+           (jcreed-format-date (jcreed-last-day-of-month today))
+           (jcreed-format-date (jcreed-first-day-of-month next-month))
+           (jcreed-format-date (jcreed-last-day-of-month next-month)))))
+
 (defun reticulate-week ()
   (interactive)
   (insert (jcreed-reticulate-week-template)))
+(defun reticulate-month ()
+  (interactive)
+  (insert (jcreed-reticulate-month-template)))
 
 ;; Defining paragraphs
 ;; Useful for delimiting =fill-paragraph=.
