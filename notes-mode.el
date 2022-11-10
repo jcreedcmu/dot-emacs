@@ -423,7 +423,7 @@ is on it, or the nearest header line above the point."
   (interactive)
   (save-excursion
     ;; probably should reuse some code here
-	 (let* ((b (re-search-backward "---\\|===" nil t))
+	 (let* ((b (re-search-backward "^---\\|^===" nil t))
 			  (e (or (search-forward "\n\n" nil t) (buffer-end 1)))
 			  (txt (buffer-substring-no-properties b e))
 			  (attrs (jcreed-attrs-of-text txt)))
