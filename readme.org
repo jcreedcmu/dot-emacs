@@ -1223,6 +1223,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (interactive)
   (tide-setup)
 
+  ;; Don't care about these
+  (setq-default tide-disable-suggestions t)
+
   ;; formats the buffer before saving
   (add-hook 'before-save-hook 'tide-format-before-save)
   (eldoc-mode +1)
