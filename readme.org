@@ -230,7 +230,7 @@ And here's the variables that I did have set:
  '(mouse-yank-at-point t)
  '(package-selected-packages
 	(quote
-	 (tide gnu-elpa-keyring-update sass-mode phi-search multiple-cursors magit company racer lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
+	 (tide gnu-elpa-keyring-update sass-mode phi-search multiple-cursors magit company lsp-javascript-typescript lsp-mode yaml-mode web-mode vue-mode typescript-mode typescript tuareg sws-mode sql-indent sml-mode scala-mode rainbow-mode python-mode markdown-mode jade-mode haskell-mode go-mode gnugo erlang coffee-mode clojurescript-mode cider button-lock)))
  '(safe-local-variable-values (quote ((erlang-indent-level . 4) (css-indent-offset . 2))))
  '(sclang-eval-line-forward nil)
  '(search-whitespace-regexp nil)
@@ -244,6 +244,9 @@ And here's the variables that I did have set:
  '(typescript-indent-level 2)
  '(web-mode-enable-auto-quoting nil)
  '(web-mode-extra-keywords (quote (("javascript" "type" "declare" "global")))))
+
+(custom-set-faces
+ '(markdown-code-face ((t (:family nil)))))
 
 ;;; dark mode
 (custom-set-faces
@@ -1086,8 +1089,10 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 ** Rust
 #+BEGIN_SRC emacs-lisp
+(when nil
 (autoload 'rust-mode "rust-mode" "Start rust-mode" t)
 (add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
+)
 #+END_SRC
 
 ** Ruby
@@ -1199,22 +1204,21 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 #+END_SRC
 ** Rust
 #+BEGIN_SRC emacs-lisp
-(add-hook 'rust-mode-hook
-			 '(lambda ()
-				 (company-mode)
-				 (racer-mode)
-				 (define-key rust-mode-map (kbd "C-x ]") #'company-indent-or-complete-common)
-				 (setq company-tooltip-align-annotations t)
-				 (setq compile-command "~/.cargo/bin/cargo build")
-				 (setq compilation-read-command nil)
-				 (define-key rust-mode-map "\C-c\C-f" 'compile)
-				 (define-key rust-mode-map "\C-c\C-d" 'rust-format-buffer)
-				 (define-key rust-mode-map "\M-;" 'company-complete)
-				 (add-hook 'rust-mode-hook #'racer-mode)
-				 (add-hook 'racer-mode-hook #'eldoc-mode)
-				 ))
-
-(add-hook 'racer-mode-hook #'eldoc-mode)
+(when nil
+  (add-hook 'rust-mode-hook
+			   '(lambda ()
+				   (company-mode)
+				   (define-key rust-mode-map (kbd "C-x ]") #'company-indent-or-complete-common)
+				   (setq company-tooltip-align-annotations t)
+				   (setq compile-command "~/.cargo/bin/cargo build")
+				   (setq compilation-read-command nil)
+				   (define-key rust-mode-map "\C-c\C-f" 'compile)
+				   (define-key rust-mode-map "\C-c\C-d" 'rust-format-buffer)
+				   (define-key rust-mode-map "\M-;" 'company-complete)
+				   (add-hook 'rust-mode-hook #'racer-mode)
+				   (add-hook 'racer-mode-hook #'eldoc-mode)
+				   ))
+  (add-hook 'racer-mode-hook #'eldoc-mode))
 #+END_SRC
 
 ** Typescript
