@@ -1047,11 +1047,12 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 						 (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
 						 )))
 
+(add-hook 'notes-mode-hook
+			 (lambda ()
+				(jcreed-add-agda-keys)
+				(set-input-method "Agda")))
+
 (ifat chef
-		(add-hook 'notes-mode-hook
-					 (lambda ()
-						(jcreed-add-agda-keys)
-						(set-input-method "Agda")))
 		(add-hook 'latex-mode-hook
 					 '(lambda ()
 						 (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/xelatex"))))
