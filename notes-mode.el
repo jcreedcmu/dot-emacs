@@ -125,7 +125,7 @@
 			(4 '(face jcreed-link-face))
 			(5 '(face jcreed-link-face invisible jcreed-meta)))
 		  ("\\(marker\\)\\(:\\[:id [^[:space:]]*?\\]\\)"
-			(1 '(face jcreed-link-face display "⬛"))
+			(1 '(face jcreed-link-face display "■"))
 			(2 '(face jcreed-link-face invisible jcreed-meta)))
 		  ("^---\n" . 'jcreed-shell-face)
 		  ("^-~-.*\n" . 'jcreed-shell-face)
