@@ -1,5 +1,6 @@
 ;; Notes mode
 (require 'xref) ;; needed for xref-push-marker-stack
+(require 'timezone) ;; needed for timezone-last-day-of-month
 
 (defface jcreed-header-face nil "Jcreed Header Face")
 (defface jcreed-minor-header-face nil "Jcreed Minor Header Face")
