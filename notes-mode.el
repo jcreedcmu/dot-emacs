@@ -128,8 +128,10 @@
 		  ("\\(marker\\)\\(:\\[:id [^[:space:]]*?\\]\\)"
 			(1 '(face jcreed-link-face display "■"))
 			(2 '(face jcreed-link-face invisible jcreed-meta)))
+		  ("\\(smage:\\[\\([^[:space:]]*?\\)\\]\\)"
+         (0 (jcreed-render-image 0.3)))
 		  ("\\(image:\\[\\([^[:space:]]*?\\)\\]\\)"
-         (0 (jcreed-render-image)))
+         (0 (jcreed-render-image 1)))
 		  ("^---\n" . 'jcreed-shell-face)
 		  ("^-~-.*\n" . 'jcreed-shell-face)
 		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
@@ -155,12 +157,12 @@
 		  ("\\?\\?\\?" . 'jcreed-bad-face)))
 
 ;; from image:[...] matcher above
-(defun jcreed-render-image () (jcreed-render-named-image (match-string-no-properties 2)))
+(defun jcreed-render-image (scale) (jcreed-render-named-image scale (match-string-no-properties 2)))
 
-(defun jcreed-render-named-image (text)
+(defun jcreed-render-named-image (scale text)
   (put-text-property
    (match-beginning 1) (match-end 1)
-   'display `(image :type png :file ,text :scale 1 :transform-smoothing t)))
+   'display `(image :type png :file ,text :scale ,scale :transform-smoothing t)))
 
 (setq auto-mode-alist (cons '("/\\(journal.txt\\)$" . journal-mode) auto-mode-alist))
 
