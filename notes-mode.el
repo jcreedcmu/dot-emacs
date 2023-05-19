@@ -376,8 +376,11 @@
 		(when (eq major-mode 'notes-mode)
 		  (font-lock-refresh-defaults)))))
 
+;; (defun jcreed-uuid ()
+;;   (replace-regexp-in-string "\n$" ""  (shell-command-to-string "python -c 'import uuid; print(uuid.uuid4())'")))
+
 (defun jcreed-uuid ()
-  (replace-regexp-in-string "\n$" ""  (shell-command-to-string "python -c 'import uuid; print(uuid.uuid4())'")))
+  (replace-regexp-in-string "\n$" ""  (shell-command-to-string "uuidgen")))
 
 (defun jcreed-insert-date ()
   (interactive)
