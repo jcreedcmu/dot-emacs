@@ -403,7 +403,17 @@ Don't blink the cursor.
 													 ;(require 'browse-kill-ring)
 													 ;(browse-kill-ring-default-keybindings)
 
-(set-time-zone-rule "EST")
+;; I'm not totally sure why I have this. It might be because I wanted
+;; to show eastern time even on machines whose system clock is set to
+;; UTC.
+(set-time-zone-rule "America/New_York")
+
+;; In any case, this is wrong. It's off by an hour in the summer.
+
+; (set-time-zone-rule "EST")
+
+
+;; I think "paraphrase-mode" might have been a precursor to "notes-mode".
 
 													 ; (load "/home/jcreed/.site-lisp/paraphrase-mode.el")
 													 ; (add-to-list 'auto-mode-alist '("\\.pp$" . latex-paraphrase-mode))
