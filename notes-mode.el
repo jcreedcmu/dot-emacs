@@ -391,6 +391,7 @@
   (insert (concat (format-time-string "---") (format " META: %s\n" `(:id ,(jcreed-uuid))))))
 
 (defun jcreed-make-marker ()
+  (interactive)
   (let ((id (jcreed-uuid)))
 	 (insert (format "marker:[:id %s]" id))
 	 (kill-new (format "link:[%s][link]" (jcreed-target-in-current-buffer id)))))
