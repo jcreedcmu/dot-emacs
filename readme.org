@@ -792,6 +792,12 @@ confused and it deletes my buffer. Instead I can execute
 (define-key global-map "\C-x\C-r" 'jcreed-retangle)
 #+END_SRC
 * Internationalization & Encodings
+** Chinese
+#+BEGIN_SRC emacs-lisp
+;; better fonts for chinese
+(set-fontset-font t 'han "WenQuanYi Micro Hei")
+#+END_SRC
+
 ** Esperanto
 #+BEGIN_SRC emacs-lisp
 (setq file-coding-system-alist
