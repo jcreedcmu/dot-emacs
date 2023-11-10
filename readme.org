@@ -834,7 +834,7 @@ confused and it deletes my buffer. Instead I can execute
 				 (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
 				 (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
 				 (define-key paredit-mode-map (kbd "M-r") 'revert-buffer)
-				 (define-key paredit-mode-map (kbd "M-R") 'paredit-raise-sexp)
+				 (define-key paredit-mode-map (kbd "C-M-r") 'paredit-raise-sexp)
 				 (define-key paredit-mode-map (kbd "M-k") 'jcreed-kill-sexp-tail)))
 #+END_SRC
 
