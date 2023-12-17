@@ -4,7 +4,7 @@
 // ./change-workspace.js 1 # go to next workspace
 // ./change-workspace.js -1 # go to prev workspace
 MIN_WORKSPACE = 1;
-MAX_WORKSPACE = 6;
+MAX_WORKSPACE = 8;
 const util = require('util');
 const exec = util.promisify(require('child_process').execFile);
 
