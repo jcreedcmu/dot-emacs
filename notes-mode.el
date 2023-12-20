@@ -78,7 +78,7 @@
 			  (setq notes-show-metadata t)))
   (font-lock-refresh-defaults))
 
-(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\|RECIPE\\)$" . notes-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("/\\(IDEAS\\|NOTES\\|TODO\\|JOURNAL\\|RECIPE\\|FUTURE\\)$" . notes-mode) auto-mode-alist))
 
 (defun notes-reload-data ()
   (interactive)
