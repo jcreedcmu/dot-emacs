@@ -270,7 +270,7 @@ And here's the variables that I did have set:
  '(org-block ((t (:foreground "#999"))))
  '(isearch ((t (:foreground "#ffff00"))))
  '(minibuffer-prompt ((t (:foreground "#999"))))
- '(eglot-highlight-symbol-face ((t (:foreground "#ffff00" :background "#004b56"))))
+ '(tide-hl-identifier-face ((t (:foreground "#ffff00" :background "#004b56"))))
  '(show-paren-match ((t ( :background "#007198"))))
  '(mode-line ((t (:foreground "#000000" :background "#bbbb88")))))
 
@@ -859,6 +859,31 @@ confused and it deletes my buffer. Instead I can execute
 (setq verilog-auto-indent-on-newline nil)
 #+END_SRC
 
+** Typescript
+#+begin_src emacs-lisp
+
+; getting spurious eslint errors? run this function
+(defun fixup-tide-parse-error ()
+  (defun tide-parse-error (response checker)
+	 (-map
+     (lambda (diagnostic)
+		 (let* ((start (plist-get diagnostic :start))
+              (line (plist-get start :line))
+              (column (plist-get start :offset))
+              (level (if (string= (plist-get diagnostic :category) "suggestion") 'info 'error))
+              (text (plist-get diagnostic :text)))
+			(when (plist-get diagnostic :relatedInformation)
+           (setq text (concat text (propertize " ⮐" 'face 'font-lock-warning-face))))
+			(put-text-property 0 1 'diagnostic diagnostic text)
+			(flycheck-error-new-at line column level text
+                                :checker checker
+                                :id (plist-get diagnostic :code))))
+     (let ((diagnostic (car (tide-plist-get response :body))))
+		 (-concat (plist-get diagnostic :syntaxDiag)
+					 (plist-get diagnostic :semanticDiag)
+													 ;(plist-get diagnostic :suggestionDiag)
+					 )))))
+#+end_src
 ** Python
 #+BEGIN_SRC emacs-lisp
 (setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
@@ -1213,25 +1238,65 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (add-hook 'racer-mode-hook #'eldoc-mode))
 #+END_SRC
 
-** COMMENT Typescript
+** Typescript
 #+BEGIN_SRC emacs-lisp
-(require 'eglot)
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
 
-(add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server" "--stdio")))
+  ;; Don't care about these
+  (setq-default tide-disable-suggestions t)
 
-(defun jcreed-typescript-mode-hook ()
-  (company-mode)
-  (eglot-ensure)
-  (setq-local tab-width 2)
-  (add-hook 'before-save-hook 'eglot-format)
-  (define-key typescript-mode-map (kbd "C-x `") 'flymake-goto-next-error)
-  (define-key typescript-mode-map (kbd "C-c C-r") 'xref-find-references)
-  (define-key typescript-mode-map (kbd "C-c C-s") 'eglot-rename)
-  (define-key typescript-mode-map (kbd "C-c q") 'eglot-code-action-quickfix)
-  (define-key typescript-mode-map (kbd "M-.") 'xref-find-definitions)
-  (define-key typescript-mode-map (kbd "M-;") 'company-complete))
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+  (eldoc-mode +1)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  ;;  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1)
+  (setq company-idle-delay nil)
+  (define-key tide-mode-map "\C-c\C-r" 'tide-references)
+  (define-key tide-mode-map "\C-c\C-s" 'tide-rename-symbol)
+  (define-key tide-mode-map "\M-;" 'company-complete)
+  (fixup-tide-parse-error))
 
-(add-hook 'typescript-mode-hook 'jcreed-typescript-mode-hook)
+(add-hook 'web-mode-hook
+			 (lambda ()
+				(when (string-equal "tsx" (file-name-extension buffer-file-name))
+				  (setup-tide-mode))))
+
+;;; enable typescript-tslint checker
+;; (require 'flycheck)
+;; (flycheck-add-mode 'typescript-tslint 'web-mode)
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+
+
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+(defun tide-references ()
+  "List all references to the symbol at point."
+  (interactive)
+  (let ((response (tide-command:references)))
+	 (tide-on-response-success response
+										(let ((references (tide-plist-get response :body :refs)))
+										  (-if-let (usage (tide-find-single-usage references))
+													  (progn
+														 (message "This is the only usage.")
+														 (tide-jump-to-filespan usage nil nil))
+													  ;; In tide's actual code, this is
+													  ;;    (tide-jump-to-filespan usage nil t)
+													  ;; but I prefer it to do
+													  ;;    (ring-insert find-tag-marker-ring (point-marker)))
+													  ;; when there's only one reference so I can M-, my way back
+													  (display-buffer (tide-insert-references references)))))))
 #+END_SRC
 
 ** Scala
