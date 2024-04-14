@@ -1056,22 +1056,22 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 *** Plumbing
 #+BEGIN_SRC emacs-lisp
-(ifat baez
-		(setq agda2-program-name "/home/jcreed/Idris/.cabal-sandbox/bin/agda")
-		(load-file (let ((coding-system-for-read 'utf-8))
-						 ;; (shell-command-to-string "/home/jcreed/.cabal/sandbox/.cabal-sandbox/bin/agda-mode locate")
-						 (shell-command-to-string "/home/jcreed/Idris/.cabal-sandbox/bin/agda-mode locate")
-						 )))
+(defun jcreed-shell-exit-code-and-output (program &rest args)
+  "Run PROGRAM with ARGS and return the exit code and output in a list."
+  (with-temp-buffer
+    (list (apply 'call-process program nil (current-buffer) nil args)
+          (buffer-string))))
+
+(when (eq (car (jcreed-shell-exit-code-and-output "which" "agda-mode")) 0)
+  (load-file (let ((coding-system-for-read 'utf-8))
+					(shell-command-to-string "agda-mode locate"))))
 
 (add-hook 'notes-mode-hook
 			 (lambda ()
 				(jcreed-add-agda-keys)
 				(set-input-method "Agda")))
 
-(ifat chef
-		(add-hook 'latex-mode-hook
-					 '(lambda ()
-						 (setq tex-command "/usr/local/texlive/2017/bin/x86_64-darwin/xelatex"))))
+
 #+END_SRC
 
 *** Swap Implicit
@@ -1522,7 +1522,7 @@ the hostname ~shufa~, actually.
 #+END_SRC
 ** Twelf
 #+BEGIN_SRC emacs-lisp
-(ifat baez
+(ifat baez-disabled
 		(setq twelf-root "~/tmp/twelf/")
 		(load (concat twelf-root "emacs/twelf-init.el"))
 		)
