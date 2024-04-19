@@ -252,6 +252,8 @@ And here's the variables that I did have set:
 (custom-set-faces
  '(default ((t (:foreground "#fdf6e3" :background "#002b36"))))
  '(font-lock-comment-face ((t (:foreground "#fc523f" :slant italic))))
+ '(lsp-inlay-hint-type-face ((t (:foreground "#566" ))))
+ '(lsp-inlay-hint-face ((t (:foreground "#566" ))))
  '(font-lock-constant-face ((t (:foreground "#2aa198"))))
  '(font-lock-doc-face ((t (:foreground "#b58900"))))
  '(font-lock-function-name-face ((nil (:foreground "#268bd2"))))
