@@ -259,7 +259,7 @@ And here's the variables that I did have set:
  '(font-lock-string-face ((nil (:foreground "#63a363"))))
  '(font-lock-type-face ((nil (:foreground "#859900" :weight bold))))
  '(font-lock-variable-name-face ((nil (:foreground "#d33682"))))
- '(highlight ((t (:background "#0f91b2"))))
+ '(highlight ((t (:background "#0f4553"))))
  '(italic ((((supports :underline t)) (:slant italic))))
  '(link ((t (:foreground "#55f" ))))
  '(region ((t (:background "#004b56"))))
@@ -1236,6 +1236,12 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 				   (add-hook 'racer-mode-hook #'eldoc-mode)
 				   ))
   (add-hook 'racer-mode-hook #'eldoc-mode))
+
+(ifat system76
+		(defun jcreed-rustic-mode-hook ()
+		  (setq rustic-format-on-save t)
+		  (define-key rustic-mode-map (kbd "M-.") 'lsp-find-definition))
+		(add-hook 'rustic-mode-hook 'jcreed-rustic-mode-hook))
 #+END_SRC
 
 ** Typescript
@@ -1489,8 +1495,7 @@ the hostname ~shufa~, actually.
 ** Faces
 #+BEGIN_SRC emacs-lisp
 ;; Have become fond of iosevka lately
-(ifat baez
-		(set-face-attribute 'default nil :family "iosevka" :width 'normal :height 108))
+(set-face-attribute 'default nil :family "iosevka" :width 'normal :height 108)
 
 ;; In case I want to go back to using codon, this suffices
 (defun jcreed-pick-codon () (interactive)
