@@ -1241,7 +1241,22 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 (ifat system76
 		(defun jcreed-rustic-mode-hook ()
+		  ;; these all seem to need lsp-workspace-restart
+		  ;; to take effect
+		  (setq lsp-inlay-hint-enable t)
+		  (setq lsp-enable-on-type-formatting nil)
+		  (setq lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+		  (setq lsp-rust-analyzer-display-chaining-hints t)
+		  (setq lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
+		  (setq lsp-rust-analyzer-display-closure-return-type-hints t)
+		  (setq lsp-rust-analyzer-display-parameter-hints nil)
+		  (setq lsp-rust-analyzer-display-reborrow-hints nil)
 		  (setq rustic-format-on-save t)
+		  (setq rustic-format-on-save-method 'rust-format-buffer)
+		  (define-key rust-mode-map (kbd "M-;") 'company-complete)
+		  (setq rust-format-goto-problem nil)
+		  (setq rust-format-show-buffer nil)
+		  (define-key rustic-mode-map (kbd "C-c C-.") 'lsp-inlay-hints-mode)
 		  (define-key rustic-mode-map (kbd "M-.") 'lsp-find-definition))
 		(add-hook 'rustic-mode-hook 'jcreed-rustic-mode-hook))
 #+END_SRC
