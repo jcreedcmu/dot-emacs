@@ -1,0 +1,279 @@
+\usepackage[PS]{diagrams}
+
+% ??? apparently LaTeX chews up this math family when
+% I call \bf, or something.
+\newfam\crapfamone
+\newfam\crapfamtwo
+
+% I really don't get it, but this fixes things.
+% The symptom was that ${\bf A}{\bb A}$ produced
+% two bold 'A's.
+% 2001.3.8: Arg, it chews up gothic stuff too.
+% adding another crapfam fixes it.
+
+\font\tenbb=msbm10
+\font\sevenbb=msbm7
+\font\fivebb=msbm5
+
+\newfam\bbfam
+\def\bb{\fam\bbfam}
+\textfont\bbfam=\tenbb
+\scriptfont\bbfam=\sevenbb
+\scriptscriptfont\bbfam=\fivebb
+
+\font\tengoth=eufm10
+\font\sevengoth=eufm7
+\font\fivegoth=eufm5
+
+\newfam\gothfam \def\goth{\fam\gothfam}
+\textfont\gothfam=\tengoth
+\scriptfont\gothfam=\sevengoth
+\scriptscriptfont\gothfam=\fivegoth
+
+% These don't seem to work anymore, dunno why??
+
+%% \font\tensans=cmss10
+%% \font\sevensans=cmss7
+%% \font\fivesans=cmss5
+
+%% \newfam\sansfam \def\sans{\fam\sansfam}
+%% \textfont\sansfam=\tensans
+%% \scriptfont\sansfam=\sevensans
+%% \scriptscriptfont\sansfam=\fivesans
+
+\font\sc=cmcsc10
+
+\font\bigcm=cmb10 scaled \magstep2
+
+% general macros
+\def\assign#1#2{\line{{\bigcm #1 Assignment \##2}\hfil Jason Reed}
+\vskip 1mm \hrule}
+\def\spassign#1#2{\line{{\bigcm #1 #2}\hfil Jason Reed}
+\vskip 1mm \hrule}
+\def\spsec#1{\line{\bigcm #1 \hfil} \vskip 1mm \hrule\vskip 5mm}
+\def\problem#1{\vskip 3mm\item{\tt #1}}
+\def\sub#1{\itemitem{#1)} }
+\def\psub#1 {\vskip 3mm\itemitem{#1)}\par\noindent}
+\def\itemitemitem{\par\indent\indent\hangindent3\parindent\textindent}
+\let\iii=\itemitemitem
+\def\manual{\vskip 1.8in}
+\def\littlemanual{\vskip .9in}
+% Dammit, conflicts with LaTeX
+%\def\figure#1{$$\epsfbox{figure.#1}$$\centerline{\sl Figure #1.}\vskip 3mm}
+\def\part#1 {\par\noindent$\bullet$ #1\par\noindent}
+%          ^ this space is necessary!
+
+% macros mostly used for 15-212 homework
+% but they might come in handy whenever I need to write up proofs...
+\def\proc#1{\par\noindent{\sc #1}}
+\def\lit#1{\hbox{\tt #1}}
+\def\rep#1{{\overline{#1}}}
+\def\gsto{\Longrightarrow}
+\def\evto{\hookrightarrow}
+\def\evaluation#1{\vskip 1mm\halign{$##$\quad\strut&$##$\hfil\quad&$##$\hfil\quad&\hfill##\cr#1}}
+\def\qed{\rightline{\vrule width .5em height .5em depth 0em}} % after a $$...$$
+\def\cqed{\hskip2mm{\vrule width .5em height .5em depth 0em}} % at the end of a |P.
+\def\putbefore#1{\llap{#1\enspace}\ignorespaces}
+\def\shout#1{\par\noindent\putbefore{$\triangleright$}{\sc #1}}
+\def\case#1{\par\noindent\putbefore{$\circ$}{\sc Case #1:}}
+\def\floor#1{{\left\lfloor{#1}\right\rfloor}}
+\def\N{{\bb N}}
+\def\Z{{\bb Z}}
+\def\Q{{\bb Q}}
+\def\R{{\bb R}}
+\def\C{{\bb C}}
+\def\MLneg{{\char"7E}}
+
+% macros for either linear algebra or physics
+\def\vect#1{{\vec{\bf #1}}}
+\def\ihat{{\hat{\hbox{\bf \char16}}}}
+\def\jhat{{\hat{\hbox{\bf \char17}}}}
+\def\khat{{\hat{\hbox{\bf k}}}}
+
+% macros for physics
+% I really do loathe physics.
+\def\degrees{^\circ}
+\def\dir#1{{{\vect #1}\over{|\vect #1|}}}
+\def\m{{\rm m}}
+\def\km{{\rm km}}
+\def\s{{\rm s}}
+\def\Newt{{\rm N}}
+\def\kg{{\rm kg}}
+\def\ms{\,^{\rm m}\kern -.5 ex/\kern -.3ex_{\rm s}\kern .2ex}
+\def\mss{\,^{\rm m}\kern -.5 ex/\kern -.3ex_{{\rm s}^2}\kern .2ex}
+\def\perp{{\scriptscriptstyle \bot}}
+\def\parallel{{\scriptscriptstyle \|}}
+\def\normal{{\cal N}}
+\def\J{{\rm J}}
+\def\Col{{\rm C}}
+\def\W{{\rm W}}
+\def\kW{{\rm kW}}
+\def\u#1{\,{\rm #1}}
+
+% macros for 21-241 Matrix algebra
+\def\rref{\mathop{\rm rref}}
+\def\rank{\mathop{\rm rank}}
+\def\image{\mathop{\rm image}}
+\def\im{\mathop{\rm im}}
+%\def\span{\mathop{\rm span}}  % conflicts with package `multirow'
+\def\tr{\mathop{\rm tr}}
+
+%...and plain TeX already gives us \ker. Yay!
+\def\frac#1#2{{#1/ #2}} % for importing stuff from Mathematica
+\def\column{{\vrule height 4ex}}
+\def\coldots{{\vbox to 4ex{\vfil\hbox{$\cdots$}\vfil}}}
+\def\proj{\mathop{\rm proj}\nolimits}
+\def\coord#1#2{\bigl[{#1}\bigr]_{\cal{#2}}}
+
+% For 21-260 Diff Eq
+%\def\L#1{{\cal L}\left\{#1\right\}} % conflicts with polish \L
+
+% For 21-235 Math Studies
+\def\disclaim{\vskip 3mm \par\noindent{\bf Notation caveat}: I use $\subseteq$ for 
+{\sl is a subset of}, and $\subset$ for {\sl is a strict
+subset of}.}
+\def\Rng{\mathop{\rm Rng}}
+\def\Fix{\mathop{\rm Fix}}
+\def\F{{\bb F}}
+\def\P{{\bb P}}
+\def\Pcross{{\bb P}^\times}
+\def\adjust{\big|}
+\def\from{\bigg|}
+\def\st{\mathop|}
+\def\del{\partial}
+
+% For 21-800 Recursion Theory
+\def\marksize{.75em}
+\def\markspace{.125em}
+% 2001.3.9: conflicts with \pagestyle{headings}
+%\def\mark#1{\vcenter{\vbox{\hrule\hbox{\vrule
+%\vbox to \marksize{\vfil \hbox to \marksize
+%{\hfil$\scriptstyle #1$\hfil}\vfil}\vrule}\hrule}}}
+
+\def\bigmark#1{\vcenter{\vbox{\hrule\hbox{\vrule
+\vbox {\vskip\markspace \hbox
+{\hskip\markspace $\scriptstyle #1$\hskip\markspace}\vskip\markspace}\vrule}\hrule}}}
+
+\def\iff{\Leftrightarrow}
+\def\imp{\Rightarrow}
+
+% For 80-413 Category Theory
+
+\def\id{{\rm id}}
+\def\op{{\rm op}}
+\def\Rel{{\bf Rel}}
+\def\Sets{{\bf Sets}}
+\def\Monoids{{\bf Monoids}}
+\def\Posets{{\bf Posets}}
+\def\Cat{{\bf Cat}}
+\def\Mon{{\bf Mon}}
+\def\Grp{{\bf Grp}}
+\def\Grph{{\bf Grph}}
+\def\Ab{{\bf Ab}}
+\def\dash{\hbox{---}}
+\def\hom{{\rm hom}}
+\def\nat{{\rm nat}}
+\newarrow{Bi}>---{>>}
+\newarrow{Cong}=====
+\newarrow{Iso}<--->
+\def\pair#1#2{{\langle #1 , #2 \rangle}}
+\def\invlim{{\lim\limits_{\longleftarrow}}}
+\def\dirlim{{\lim\limits_{\longrightarrow}}}
+
+% For 80-820 Categorical Logic
+
+\def\mod{{\rm mod}}
+\def\T{{\bb T}}
+\def\1{{\bf 1}}
+\def\Graph{{\bf Graph}}
+\def\y{{\bf y}}
+
+% For 21-229 Set Theory
+
+\def\dom{\mathop{\rm dom}}
+\def\cod{\mathop{\rm cod}}
+\def\rng{\mathop{\rm rng}}
+\def\Seq{{\rm Seq}}
+\def\ps{{\cal P}}
+\def\an{{\aleph_0}}
+\def\on{{\rm On}}
+\def\cf{\mathop{\rm cf}}
+
+\catcode`@=11
+\def\bdots{\mathinner{\mkern1mu\raise\p@\vbox{\kern7\p@\hbox{.}}\mkern2mu
+    \raise3\p@\hbox{.}\mkern2mu\raise5\p@\hbox{.}\mkern1mu}}
+\catcode`@=12
+
+% For 21-651 Topology
+
+\def\O{{\cal O}}
+
+% For 15-312 Programming Languages
+
+\def\prov{\vdash}
+%\def\rule#1:{\vskip 3mm\noindent [{\bf#1}]\quad} % 2001.3.14: conflicts with \footnote
+\def\erule#1:{\vskip 3mm\noindent (E)[{\bf#1}]\quad}
+\def\crule#1:{\vskip 3mm\noindent (C)[{\bf#1}]\quad}
+\def\multib{\vskip 3mm\noindent}
+\def\multi#1:{[{\bf#1}]}
+\def\multie{\quad}
+\def\sep{\vskip 3mm \hrule \vskip 3mm}
+%\def\fbox{\vbox{\hrule\hbox{\vrule
+%\vbox to .6em{\vfil \hbox to .6em {\hfil}\vfil}\vrule}\hrule}}
+\def\bif{\mathop{\bf if}}
+\def\bthen{\mathop{\bf then}}
+\def\belse{\mathop{\bf else}}
+\def\bapply{\mathop{\bf apply}}
+\def\bfi{\mathop{\bf fi}}
+\def\bbind{\mathop{\bf bind}}
+\def\bto{\mathop{\bf to}}
+\def\bin{\mathop{\bf in}}
+\def\bbool{\mathop{\bf bool}}
+\def\btrue{\mathop{\bf true}}
+\def\bfalse{\mathop{\bf false}}
+\def\bint{\mathop{\bf int}}
+\def\bfun{\mathop{\bf fun}}
+\def\bis{\mathop{\bf is}}
+\def\bend{\mathop{\bf end}}
+\def\bone{\mathop{\bf 1}}
+\def\btwo{\mathop{\bf 2}}
+\def\babort{\mathop{\bf abort}\nolimits}
+\def\binl{\mathop{\bf inl}\nolimits}
+\def\binr{\mathop{\bf inr}\nolimits}
+\def\bcase{\mathop{\bf case}\nolimits}
+\def\bof{\mathop{\bf of}}
+\def\bfold{\mathop{\bf fold}}
+\def\bunfold{\mathop{\bf unfold}}
+\def\bref{\mathop{\bf ref}}
+\def\btry{\mathop{\bf try}}
+\def\bow{\mathop{\bf ow}}
+\def\bfail{\mathop{\bf fail}}
+\def\braise{\mathop{\bf raise}}
+\def\bexnEq{\mathop{\bf exnEq}}
+\def\bletexn{\mathop{\bf letexn}}
+\def\bexn{\mathop{\bf exn}}
+\def\bstack{\mathop{\bf stack}}
+% used to be \value, conflict with cmu-frontpage.sty
+\def\rvalue{\mathop{\sans value}}
+\def\ok{\mathop{\sans ok}}
+%\def\frame{\mathop{\sans frame}} % garg, conflicts with LaTeX
+\def\stack{\mathop{\sans stack}}
+\def\hstack{\mathop{\sans hstack}}
+\def\empt{\mathop{\langle\rangle}}
+
+\catcode`@=11
+\def\sendl#1{\vbox{\m@th\ialign{##\crcr
+      $\hfil\displaystyle{#1}\hfil$\crcr
+      \noalign{\kern\p@\nointerlineskip}
+      \hbox to 2in{\leftarrowfill}\crcr}}}
+\def\sendr#1{\vbox{\m@th\ialign{##\crcr
+      $\hfil\displaystyle{#1}\hfil$\crcr
+      \noalign{\kern\p@\nointerlineskip}
+      \hbox to 2in{\rightarrowfill}\crcr}}}
+\catcode`@=12 % at signs are no longer letters
+
+% Dammit, these conflict with LaTeX
+%\def\[[{[\![}
+%\def\]]{]\!]}
+
+

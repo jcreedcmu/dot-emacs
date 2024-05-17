@@ -1,0 +1,39 @@
+\def\blet{\mathop{\bf let}}
+\def\bval{\mathop{\bf val}}
+\def\bname{\mathop{\bf name}}
+\def\bin{\mathop{\bf in}}
+\def\blam{\mathop{\bf lam}}
+\def\bfix{\mathop{\bf fix}}
+\def\bfst{\mathop{\bf fst}}
+\def\bsnd{\mathop{\bf snd}}
+\def\Value{\mathrel{Value}}
+\def\Laz{\mathrel{LazyValue}}
+\def\bs{\mathop{\bf s}}
+\def\bz{\mathop{\bf z}}
+\def\celse{\mathrel |}
+\newcommand\valz{{\sans val\_z}}
+\newcommand\valpair{{\sans val\_pair}}
+\newcommand\vals{{\sans val\_s}}
+\newcommand\vallam{{\sans val\_lam}}
+\newcommand\evz{{\sans ev\_z}}
+\newcommand\evpair{{\sans ev\_pair}}
+\newcommand\evs{{\sans ev\_s}}
+\newcommand\evlam{{\sans ev\_lam}}
+\newcommand\jvalz{\using\valz\justifies}
+\newcommand\jvalpair{\using\valpair\justifies}
+\newcommand\jvallam{\using\vallam\justifies}
+\newcommand\jvals{\using\vals\justifies}
+\newcommand\djust{\justifies\thickness 0pt}
+
+% Usage: 
+% \ir proof_rule.
+% instead of
+% {\sans proof\_rule}
+\catcode`@=11
+\def\@r#1.{{\sans #1}\endgroup}
+\def\ir{\begingroup\catcode`_=11 \@r}
+\catcode`@=12
+
+\def\tp{\mathop\triangleright}
+\def\bnil{\mathop{\bf nil}}
+\def\bcons{\mathop{\bf cons}}
