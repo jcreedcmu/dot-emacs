@@ -1024,6 +1024,9 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 (add-hook 'latex-mode-hook
 			 '(lambda ()
 				 (setq tex-command "pdflatex")))
+
+(ifat system76
+		(setenv "TEXINPUTS" ".:/home/jcreed/dot-emacs/tex//:"))
 #+END_SRC
 
 ** Agda
