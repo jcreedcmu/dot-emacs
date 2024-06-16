@@ -70,6 +70,15 @@ Set this variable so I can use it later in ~notes-mode.el~.
 (setq jcreed-dark-mode t)
 #+END_SRC
 
+** Native compilation
+Some modes have a lot of warnings with native compilation
+#+BEGIN_SRC emacs-lisp
+(when (version<= "28.1" emacs-version)
+  (setq native-comp-jit-compilation-deny-list
+        '("paredit"
+          "web-mode")))
+#+END_SRC
+
 * General Programming Customization
 ** Indentation
 #+BEGIN_SRC emacs-lisp
@@ -826,9 +835,6 @@ confused and it deletes my buffer. Instead I can execute
 * Programming Language Configuration
 ** Paredit & Other LISP
 #+BEGIN_SRC emacs-lisp
-
-(when (version<= "28.1" emacs-version)
-  (setq native-comp-jit-compilation-deny-list '("paredit")))
 
 (autoload 'paredit-mode "paredit"
   "Turn on pseudo-structural editing of Lisp code."
