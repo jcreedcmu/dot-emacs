@@ -268,7 +268,6 @@ And here's the variables that I did have set:
 	'(region ((t (:background "#004b56"))))
 	'(lazy-highlight  ((t (:background "#66305b"))))
 	'(secondary-selection ((t (:background "#305b66"))))
-	'(tex-verbatim ((t (:foreground "#999" :background "#103b46"))))
 	'(trailing-whitespace ((t (:background "#00bfbf"))))
 	'(org-block ((t (:foreground "#999"))))
 	'(isearch ((t (:foreground "#ffff00"))))
@@ -276,7 +275,7 @@ And here's the variables that I did have set:
 	'(tide-hl-identifier-face ((t (:foreground "#ffff00" :background "#004b56"))))
 	'(show-paren-match ((t ( :background "#007198"))))
 	'(mode-line ((t (:foreground "#000000" :background "#bbbb88")))))
-  (set-face-attribute 'tex-verbatim nil  :extend t))
+  )
 
 ;;; light mode
 (when nil
@@ -380,6 +379,12 @@ Don't blink the cursor.
 				;;  'browse-url-at-mouse
 				;;  :face 'link :face-policy 'prepend)
 				))
+#+END_SRC
+** Scroll acceleration
+I think default mouse wheel acceleration started around emacs 28 or so. I don't think I care for it.
+#+BEGIN_SRC emacs-lisp
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-scroll-amount '(3 ((shift) . nil)))
 #+END_SRC
 ** Menubar, toolbar, scrollbars
 #+BEGIN_SRC emacs-lisp
@@ -822,6 +827,9 @@ confused and it deletes my buffer. Instead I can execute
 ** Paredit & Other LISP
 #+BEGIN_SRC emacs-lisp
 
+(when (version<= "28.1" emacs-version)
+  (setq native-comp-jit-compilation-deny-list '("paredit")))
+
 (autoload 'paredit-mode "paredit"
   "Turn on pseudo-structural editing of Lisp code."
   t)
@@ -934,11 +942,16 @@ confused and it deletes my buffer. Instead I can execute
 		  (goto-char pm)))
 	 (recenter)))
 
+(defun jcreed-latex-mode-hook ()
+  (custom-set-faces
+	'(tex-verbatim ((t (:foreground "#999" :background "#103b46")))))
+  (set-face-attribute 'tex-verbatim nil  :extend t)
+  (define-key tex-mode-map
+	 "\C-cz"
+	 'jcreed-insert-other))
+
 (add-hook 'latex-mode-hook
-			 '(lambda ()
-				 (define-key tex-mode-map
-					"\C-cz"
-					'jcreed-insert-other)))
+			 'jcreed-latex-mode-hook)
 #+END_SRC
 
 *** Lifecycle

@@ -22,7 +22,7 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(require 'org-install)
+; (require 'org-install)
 
 (defvar init-dir
   (if load-file-name
