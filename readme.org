@@ -75,8 +75,10 @@ Some modes have a lot of warnings with native compilation
 #+BEGIN_SRC emacs-lisp
 (when (version<= "28.1" emacs-version)
   (setq native-comp-jit-compilation-deny-list
-        '("paredit"
-          "web-mode")))
+        '("typescript-mode"
+          "paredit"
+          "web-mode"
+          "rustic-flycheck.el")))
 #+END_SRC
 
 * General Programming Customization
