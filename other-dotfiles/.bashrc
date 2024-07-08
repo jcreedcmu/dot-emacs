@@ -2,8 +2,8 @@
 export PS1="\h:\w (\D{%m-%d %H:%M:%S}) \$ "
 alias vt="export TERM=vt100"
 alias actual="cd \`readlink -f .\`"
-export LANG="en_US.UTF-8"
-export LC_ALL=C
+#export LANG="en_US.UTF-8"
+#export LC_ALL=C
 alias chrome="google-chrome --allow-file-access-from-files"
 
 source ~/.git-completion.bash
@@ -26,4 +26,21 @@ if [[ -n "$IN_NIX_SHELL" ]]; then
 fi
 
 
+export PATH=$PATH:/home/jcreed/bin
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Start SSH agent
+if [ -z "$SSH_AUTH_SOCK" ] ; then
+    eval $(ssh-agent) >/dev/null
+fi
+
 export NIX_SHELL_PRESERVE_PROMPT=1
+. "$HOME/.cargo/env"
+
+# Wasmer
+export WASMER_DIR="/home/jcreed/.wasmer"
+[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
