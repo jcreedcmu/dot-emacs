@@ -1016,7 +1016,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
   (interactive)
   (when jcreed-tex-main-buffer
 	 (set-buffer jcreed-tex-main-buffer))
-  (tex-file)
+  (save-window-excursion (tex-file))
   (jcreed-tex-signal))
 
 (defun jcreed-tex-signal ()
