@@ -134,9 +134,15 @@
          (0 (jcreed-render-image 1)))
 		  ("^---\n" . 'jcreed-shell-face)
 		  ("^-~-.*\n" . 'jcreed-shell-face)
-		  ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
+        ;; These used to be what I was going to use for tag notation.
+        ;; I think I'm going to deprecate this in favor of @tag
+        ;; because # comes up too often in things I want to talk
+        ;; about.
+
+        ;; ("^#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
+		  ;; ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
+
 		  ("^@\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
-		  ("\\s-#\\(?:\\w\\|-\\)+" . 'font-lock-type-face)
 		  ("^Q:" . 'jcreed-question-face)
 		  ("^TODO:" . 'jcreed-question-face)
 		  ("^DONE:" . 'jcreed-answer-face)
