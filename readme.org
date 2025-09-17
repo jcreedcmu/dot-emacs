@@ -1382,6 +1382,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 ** Lean
 #+BEGIN_SRC emacs-lisp
+(setq load-path (cons "/home/jcreed/pgit/lean4-mode" load-path))
+(require 'lean4-mode)
 (setq lean-rootdir "/home/jcreed/.elan")
 (setq lean-memory-limit 8000)
 #+END_SRC
