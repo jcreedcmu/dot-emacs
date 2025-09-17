@@ -1383,7 +1383,32 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 ** Lean
 #+BEGIN_SRC emacs-lisp
 (setq load-path (cons "/home/jcreed/pgit/lean4-mode" load-path))
+(setq exec-path (append exec-path '("/home/jcreed/.elan/bin")))
 (require 'lean4-mode)
+(defun jcreed-lean4-mode-hook ()
+  ;; This one way to prevent spurious "Unknown request method: workspace/inlayHint/refresh"
+  (add-to-list 'warning-suppress-log-types '(lsp-mode))
+
+  ;; This is another
+  ; (setq warning-minimum-level :error)
+
+  ;; I was hoping this would work but no...
+  ;; (setq lsp-inlay-hint-enable t)
+  ;; (lsp-inlay-hints-mode)
+
+  (company-mode)
+  (setq lsp-enable-file-watchers nil)
+  (define-key lean4-mode-map (kbd "M-;") 'company-complete)
+  (define-key lean4-mode-map (kbd "M-.") 'lsp-find-definition)
+  (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
+  (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename))
+
+(add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
+
+; make this more visible
+(custom-set-faces
+ '(font-lock-warning-face ((t (:foreground "yellow" :background "#dc322f")))))
+
 (setq lean-rootdir "/home/jcreed/.elan")
 (setq lean-memory-limit 8000)
 #+END_SRC
