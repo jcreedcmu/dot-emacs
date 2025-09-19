@@ -44,3 +44,6 @@ export NIX_SHELL_PRESERVE_PROMPT=1
 # Wasmer
 export WASMER_DIR="/home/jcreed/.wasmer"
 [ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
+
+# Lean
+. ~/.elan/env
