@@ -216,6 +216,7 @@ At least turn off auto-writing customization, because it's just going
 to mess up my =init.el=:
 #+BEGIN_SRC emacs-lisp
 (setq custom-file null-device)
+(ifat hales (setq custom-file "/tmp/nope.el"))
 #+END_SRC
 
 And here's the variables that I did have set:
@@ -1211,18 +1212,18 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 ** SML
 #+BEGIN_SRC emacs-lisp
-
-(add-to-list 'load-path "/home/jcreed/.site-lisp/sml-mode-4.0")
-(autoload 'sml-mode "sml-mode" "Sml editing mode." t)
+(when nil
+  (add-to-list 'load-path "/home/jcreed/.site-lisp/sml-mode-4.0")
+  (autoload 'sml-mode "sml-mode" "Sml editing mode." t))
 #+END_SRC
 
 ** Lua
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "/home/jcreed/.site-lisp/lua-mode")
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-
+(when nil
+  (add-to-list 'load-path "/home/jcreed/.site-lisp/lua-mode")
+  (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+  (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+  (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
 #+END_SRC
 
 ** Perl
@@ -1382,44 +1383,56 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 ** Lean
 #+BEGIN_SRC emacs-lisp
-(setq load-path (cons "/home/jcreed/pgit/lean4-mode" load-path))
-(setq exec-path (append exec-path '("/home/jcreed/.elan/bin")))
-(require 'lean4-mode)
-(defun jcreed-lean4-mode-hook ()
-  ;; This one way to prevent spurious "Unknown request method: workspace/inlayHint/refresh"
-  (add-to-list 'warning-suppress-log-types '(lsp-mode))
+  (ifat system76
+        (setq load-path (cons "/home/jcreed/pgit/lean4-mode" load-path))
+        (setq exec-path (append exec-path '("/home/jcreed/.elan/bin")))
+        (setq lean-rootdir "/home/jcreed/.elan")
+        (setq has-lean t))
 
-  ;; This is another
-  ; (setq warning-minimum-level :error)
+  (when (boundp 'has-lean)
+    (setq lean-memory-limit 8000)
 
-  ;; I was hoping this would work but no...
-  ;; (setq lsp-inlay-hint-enable t)
-  ;; (lsp-inlay-hints-mode)
+    (defun jcreed-lean4-mode-hook ()
+      ;; This one way to prevent spurious "Unknown request method: workspace/inlayHint/refresh"
+      (add-to-list 'warning-suppress-log-types '(lsp-mode))
 
-  (highlight-indent-guides-mode)
-  (setq highlight-indent-guides-method 'character)
+      ;; This is another
+  					; (setq warning-minimum-level :error)
 
-  (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#364680")
-  (company-mode)
-  (setq lsp-enable-file-watchers nil)
-  (define-key lean4-mode-map (kbd "M-;") 'company-complete)
-  (define-key lean4-mode-map (kbd "M-.") 'lsp-find-definition)
-  (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
-  (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename)
-  (setq lsp-enable-symbol-highlighting t))
+      ;; I was hoping this would work but no...
+      ;; (setq lsp-inlay-hint-enable t)
+      ;; (lsp-inlay-hints-mode)
 
-(add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
+      (highlight-indent-guides-mode)
+      (setq highlight-indent-guides-method 'character)
 
-; make this more visible
-(custom-set-faces
- '(font-lock-warning-face ((t (:foreground "yellow" :background "#dc322f")))))
+      (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#364680")
+      (company-mode)
+      (setq lsp-enable-file-watchers nil)
+      (define-key lean4-mode-map (kbd "M-;") 'company-complete)
+      (define-key lean4-mode-map (kbd "M-.") 'lsp-find-definition)
+      (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
+      (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename)
+      (setq lsp-enable-symbol-highlighting t))
 
-(setq lean-rootdir "/home/jcreed/.elan")
-(setq lean-memory-limit 8000)
+    (add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
+
+    ;; make this more visible
+    (custom-set-faces
+     '(font-lock-warning-face ((t (:foreground "yellow" :background "#dc322f"))))))
+#+END_SRC
+
+* Customization for ~hales~
+
+~hales~ is a 2025 MacBook Pro.
+
+#+BEGIN_SRC emacs-lisp
+(ifat hales
+      (setq mac-command-modifier 'meta))
 #+END_SRC
 
 * Customization for ~chef~
-~chef~ is a 2015 MacBook Pro which I inherited from my employment at Chef.
+~chef~ is a 2015 MacBook Pro.
 
 ** Meta Key
 #+BEGIN_SRC emacs-lisp
