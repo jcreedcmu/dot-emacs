@@ -1383,43 +1383,52 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 ** Lean
 #+BEGIN_SRC emacs-lisp
-  (ifat system76
-        (setq load-path (cons "/home/jcreed/pgit/lean4-mode" load-path))
-        (setq exec-path (append exec-path '("/home/jcreed/.elan/bin")))
-        (setq lean-rootdir "/home/jcreed/.elan")
-        (setq has-lean t))
+(ifat system76
+      (setq load-path (cons "/home/jcreed/pgit/lean4-mode" load-path))
+      (setq exec-path (append exec-path '("/home/jcreed/.elan/bin")))
+      (setq lean-rootdir "/home/jcreed/.elan")
+      (setq has-lean t))
 
-  (when (boundp 'has-lean)
-    (setq lean-memory-limit 8000)
+(ifat hales
+		(require 'warnings) ;; eliminate "void-variable warning-suppress-log-types" warning
+		(require 'highlight-indent-guides)
+		(require 'company)
+      (setq load-path (cons "/Users/jcreed/pgit/lean4-mode" load-path))
+      (setq exec-path (append exec-path '("/Users/jcreed/.elan/bin")))
+      (setq lean-rootdir "/Users/jcreed/.elan")
+      (setq has-lean t))
 
-    (defun jcreed-lean4-mode-hook ()
-      ;; This one way to prevent spurious "Unknown request method: workspace/inlayHint/refresh"
-      (add-to-list 'warning-suppress-log-types '(lsp-mode))
+(when (boundp 'has-lean)
+  (setq lean-memory-limit 8000)
+  (require 'lean4-mode)
+  (defun jcreed-lean4-mode-hook ()
+    ;; This one way to prevent spurious "Unknown request method: workspace/inlayHint/refresh"
+    (add-to-list 'warning-suppress-log-types '(lsp-mode))
 
-      ;; This is another
-  					; (setq warning-minimum-level :error)
+    ;; This is another
+													 ; (setq warning-minimum-level :error)
 
-      ;; I was hoping this would work but no...
-      ;; (setq lsp-inlay-hint-enable t)
-      ;; (lsp-inlay-hints-mode)
+    ;; I was hoping this would work but no...
+    ;; (setq lsp-inlay-hint-enable t)
+    ;; (lsp-inlay-hints-mode)
 
-      (highlight-indent-guides-mode)
-      (setq highlight-indent-guides-method 'character)
+    (highlight-indent-guides-mode)
+    (setq highlight-indent-guides-method 'character)
 
-      (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#364680")
-      (company-mode)
-      (setq lsp-enable-file-watchers nil)
-      (define-key lean4-mode-map (kbd "M-;") 'company-complete)
-      (define-key lean4-mode-map (kbd "M-.") 'lsp-find-definition)
-      (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
-      (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename)
-      (setq lsp-enable-symbol-highlighting t))
+    (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#364680")
+    (company-mode)
+    (setq lsp-enable-file-watchers nil)
+    (define-key lean4-mode-map (kbd "M-;") 'company-complete)
+    (define-key lean4-mode-map (kbd "M-.") 'lsp-find-definition)
+    (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
+    (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename)
+    (setq lsp-enable-symbol-highlighting t))
 
-    (add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
+  (add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
 
-    ;; make this more visible
-    (custom-set-faces
-     '(font-lock-warning-face ((t (:foreground "yellow" :background "#dc322f"))))))
+  ;; make this more visible
+  (custom-set-faces
+   '(font-lock-warning-face ((t (:foreground "yellow" :background "#dc322f"))))))
 #+END_SRC
 
 * Customization for ~hales~
@@ -1428,7 +1437,8 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 
 #+BEGIN_SRC emacs-lisp
 (ifat hales
-      (setq mac-command-modifier 'meta))
+      (setq mac-command-modifier 'meta)
+		(toggle-frame-fullscreen))
 #+END_SRC
 
 * Customization for ~chef~
@@ -1585,6 +1595,10 @@ the hostname ~shufa~, actually.
 #+BEGIN_SRC emacs-lisp
 ;; Have become fond of iosevka lately
 (set-face-attribute 'default nil :family "iosevka" :width 'normal :height 108)
+
+;; Bigger size for retina
+(ifat hales
+		(set-face-attribute 'default nil :height 170))
 
 ;; In case I want to go back to using codon, this suffices
 (defun jcreed-pick-codon () (interactive)
