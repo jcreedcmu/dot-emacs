@@ -1382,7 +1382,20 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 #+END_SRC
 
 ** Lean
+
 #+BEGIN_SRC emacs-lisp
+(defun lean4-input-add-translations (trans)
+  "Add the given translations TRANS to the Lean input method.
+TRANS is a list of pairs (KEY-SEQUENCE . TRANSLATION).  The
+translations are appended to the current translations."
+  (with-temp-buffer
+    (map-do (lambda (key tr)
+              (when (and key (not (equal key "n")))
+                (quail-defrule (concat "\\" key)
+                               tr
+                               "Lean" t)))
+            trans)))
+
 (ifat system76
       (setq load-path (cons "/home/jcreed/pgit/lean4-mode" load-path))
       (setq exec-path (append exec-path '("/home/jcreed/.elan/bin")))
@@ -1411,7 +1424,7 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
     ;; I was hoping this would work but no...
     ;; (setq lsp-inlay-hint-enable t)
     ;; (lsp-inlay-hints-mode)
-
+    (lean4-input-setup)
     (highlight-indent-guides-mode)
     (setq highlight-indent-guides-method 'character)
 
