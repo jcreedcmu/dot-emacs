@@ -158,7 +158,7 @@
 		  ("\\bT[0-9]+\\b" . 'jcreed-task-face)
 		  ("\\bP[0-9]+\\b" . 'jcreed-paste-face)
 		  ("\\b[a-z]+//\\(?:\\w\\|[-_/.]\\)+" . 'jcreed-path-face)
-		  ("\\b[a-z]+:\\[\\(?:[^]]\\)+\\]" . 'jcreed-path2-face)
+		  ("\\b[-a-z0-9]+:\\[\\(?:[^]]\\)+\\]" . 'jcreed-path2-face)
 		  ("~\\b.*?\\b~" . 'jcreed-strikethrough-face)
 		  ("\\?\\?\\?" . 'jcreed-bad-face)))
 
