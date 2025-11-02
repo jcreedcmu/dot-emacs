@@ -1435,6 +1435,8 @@ translations are appended to the current translations."
     (define-key lean4-mode-map (kbd "M-.") 'lsp-find-definition)
     (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
     (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename)
+    (define-key lean4-mode-map (kbd "C-c s") 'jcreed-swap-agda-implicit)
+    (define-key lean4-mode-map (kbd "C-,") 'lsp-execute-code-action)
     (setq lsp-enable-symbol-highlighting t))
 
   (add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
