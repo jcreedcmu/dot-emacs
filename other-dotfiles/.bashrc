@@ -14,7 +14,7 @@ source ~/.git-prompt.bash
 # 48;5 is set background color
 BRANCH_COLOR='\033[38;5;35m'
 RED='\[\033[38;5;196m\]'
-GRAYBACK='\[\033[48;5;153m\]'
+GRAYBACK='\[\033[48;5;33m\]'  # Medium blue (from 256-color palette)
 NIXBACK='\[\033[48;5;177m\]'
 LINE='\[\033[K\033[m\]\n'
 BRANCH_RESET='\033[m'
