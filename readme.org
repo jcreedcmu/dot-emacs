@@ -1266,7 +1266,10 @@ The variable `tex-dvi-view-command' specifies the shell command for preview."
 				   ))
   (add-hook 'racer-mode-hook #'eldoc-mode))
 
-(ifat system76
+(ifat system76 (setq jcreed-rust-enabled t))
+(ifat hales (setq jcreed-rust-enabled t))
+
+(when jcreed-rust-enabled
 		(defun jcreed-rustic-mode-hook ()
 		  ;; these all seem to need lsp-workspace-restart
 		  ;; to take effect
