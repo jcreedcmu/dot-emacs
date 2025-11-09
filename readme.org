@@ -955,6 +955,7 @@ confused and it deletes my buffer. Instead I can execute
   (custom-set-faces
 	'(tex-verbatim ((t (:foreground "#999" :background "#103b46")))))
   (set-face-attribute 'tex-verbatim nil  :extend t)
+  (setq tex-fontify-script nil)
   (define-key tex-mode-map
 	 "\C-cz"
 	 'jcreed-insert-other))
@@ -1439,7 +1440,7 @@ translations are appended to the current translations."
     (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
     (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename)
     (define-key lean4-mode-map (kbd "C-c s") 'jcreed-swap-agda-implicit)
-    (define-key lean4-mode-map (kbd "C-,") 'lsp-execute-code-action)
+    (define-key lean4-mode-map (kbd "C-c C-,") 'lsp-execute-code-action)
     (setq lsp-enable-symbol-highlighting t))
 
   (add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
