@@ -1435,13 +1435,16 @@ translations are appended to the current translations."
     (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#364680")
     (company-mode)
     (setq lsp-enable-file-watchers nil)
+    (setq lsp-ui-doc-show-with-mouse nil)
     (define-key lean4-mode-map (kbd "M-;") 'company-complete)
     (define-key lean4-mode-map (kbd "M-.") 'lsp-find-definition)
     (define-key lean4-mode-map (kbd "C-c C-r") 'lsp-find-references)
     (define-key lean4-mode-map (kbd "C-c C-s") 'lsp-rename)
     (define-key lean4-mode-map (kbd "C-c s") 'jcreed-swap-agda-implicit)
     (define-key lean4-mode-map (kbd "C-c C-,") 'lsp-execute-code-action)
-    (setq lsp-enable-symbol-highlighting t))
+    (setq lsp-enable-symbol-highlighting t)
+    (setq lsp-eldoc-render-all t)
+    (setq lsp-ui-sideline-show-diagnostics nil))
 
   (add-hook 'lean4-mode-hook #'jcreed-lean4-mode-hook)
 
@@ -1614,6 +1617,8 @@ the hostname ~shufa~, actually.
 #+BEGIN_SRC emacs-lisp
 ;; Have become fond of iosevka lately
 (set-face-attribute 'default nil :family "iosevka" :width 'normal :height 108)
+(ifat system76
+      (global-text-scale-adjust 15))
 
 ;; Bigger size for retina
 (ifat hales
